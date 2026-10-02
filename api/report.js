@@ -1,0 +1,107 @@
+// Função serverless (Vercel): confere o login (Supabase), checa o perfil e devolve as tabelas report_* do Nekt.
+// A chave do Nekt só existe aqui (variável de ambiente), nunca no navegador.
+const NEKT_URL = 'https://api.nekt.ai/api/v1/sql-query/';
+const DB = process.env.NEKT_DATABASE || 'fourlabnutri_trusted';
+
+// perfil -> seções que pode ver
+const ACESSO = { diretoria: ['receber', 'producao'], comercial: ['receber'] };
+
+const T = t => `${DB}.${t}`;
+const SECOES = {
+  receber: {
+    titulos: `select titulo_id, origem, cliente_chave, cliente_nome, cast(vencimento as string) as vencimento, valor, forma, pedido, parcela, dias_atraso, situacao, faixa_atraso, escopo from ${T('report_receber_titulos')}`,
+    clientes: `select cliente_chave, nome, email, telefone, telefone_valido, cidade_uf, titulos_historico, pagos_em_dia, titulos_atrasados, atraso_medio_dias, atraso_max_dias, compras_total, pago_total, vencido, a_vencer, em_aberto, maior_atraso_dias, score, classe_score, status_cliente from ${T('report_receber_clientes')}`,
+  },
+  producao: {
+    ops: `select op_id, op_numero, produto, sku, tipo, unidade, quantidade, status_op, cast(emissao as string) as emissao, cast(inicio_planejado as string) as inicio_planejado, cast(previsao_entrega as string) as previsao_entrega, cast(conclusao as string) as conclusao from ${T('report_producao_ops')}`,
+    etapas: `select op_id, etapa, etapa_ordem, status_etapa from ${T('report_producao_etapas')}`,
+  },
+};
+
+const NUM = new Set(['valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
+const BOOL = new Set(['telefone_valido']);
+
+function parseCsv(txt) {
+  const rows = []; let row = [], f = '', q = false;
+  if (txt.charCodeAt(0) === 0xfeff) txt = txt.slice(1);
+  for (let i = 0; i < txt.length; i++) {
+    const c = txt[i];
+    if (q) { if (c === '"') { if (txt[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(f); f = ''; }
+    else if (c === '\n') { row.push(f); rows.push(row); row = []; f = ''; }
+    else if (c !== '\r') f += c;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  return rows;
+}
+
+function toObjects(csvs) {
+  const out = [];
+  for (const txt of csvs) {
+    const [head, ...body] = parseCsv(txt);
+    if (!head) continue;
+    for (const r of body) {
+      if (r.length === 1 && r[0] === '') continue;
+      const o = {};
+      head.forEach((h, i) => {
+        const v = r[i];
+        o[h] = v === '' || v === undefined ? null : NUM.has(h) ? Number(v) : BOOL.has(h) ? v === 'true' : v;
+      });
+      out.push(o);
+    }
+  }
+  return out;
+}
+
+async function runQuery(sql) {
+  const r = await fetch(NEKT_URL, {
+    method: 'POST',
+    headers: { 'x-api-key': process.env.NEKT_API_KEY, 'content-type': 'application/json' },
+    body: JSON.stringify({ sql, mode: 'csv' }),
+  });
+  const j = await r.json();
+  if (!r.ok || j.state !== 'SUCCEEDED') throw new Error(`Nekt: ${r.status} ${j.state || ''} ${JSON.stringify(j).slice(0, 300)}`);
+  const csvs = await Promise.all((j.presigned_urls || []).map(u => fetch(u).then(x => x.text())));
+  return toObjects(csvs);
+}
+
+// cache em memória por instância (os dados são os mesmos para todo usuário autorizado da seção)
+const cache = new Map(); const TTL = 5 * 60 * 1000;
+async function secao(nome) {
+  const hit = cache.get(nome);
+  if (hit && Date.now() - hit.t < TTL) return hit.v;
+  const defs = SECOES[nome];
+  const v = Object.fromEntries(await Promise.all(Object.entries(defs).map(async ([k, sql]) => [k, await runQuery(sql)])));
+  cache.set(nome, { t: Date.now(), v });
+  return v;
+}
+
+async function quem(req) {
+  const token = (req.headers.authorization || '').replace(/^Bearer /i, '');
+  if (!token) return null;
+  const h = { apikey: process.env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` };
+  const u = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, { headers: h });
+  if (!u.ok) return null;
+  const user = await u.json();
+  const p = await fetch(`${process.env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=nome,role,ativo`, { headers: h });
+  const perfil = (await p.json())[0];
+  if (!perfil || !perfil.ativo || !ACESSO[perfil.role]) return null;
+  return { nome: perfil.nome || user.email, role: perfil.role, email: user.email };
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'private, no-store');   // nunca no cache compartilhado: dados de clientes
+  try {
+    const perfil = await quem(req);
+    if (!perfil) return res.status(401).json({ erro: 'não autenticado' });
+    const paginas = ACESSO[perfil.role];
+    const s = req.query.s;
+    if (!s) return res.status(200).json({ perfil: { ...perfil, paginas } });
+    if (!paginas.includes(s)) return res.status(403).json({ erro: 'sem acesso a esta área' });
+    return res.status(200).json({ perfil: { ...perfil, paginas }, dados: await secao(s) });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ erro: 'falha ao consultar os dados' });
+  }
+}
