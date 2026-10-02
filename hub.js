@@ -9,11 +9,11 @@ async function hubSair() { await sb.auth.signOut(); location.href = 'login.html'
 
 // ---- adaptadores: tabelas report_* -> arrays esperados pelas páginas ----
 const hojeBR = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
-const FORMA = { boleto: 'B', pix: 'X', cartao: 'C' };
+const FORMA_COD = { boleto: 'B', pix: 'X', cartao: 'C' };
 function adaptarReceber(d) {
   return {
     gerado: hojeBR(),
-    titulos: d.titulos.map(t => [t.cliente_chave, t.origem === 'asaas' ? 'A' : 'B', t.vencimento, t.valor, FORMA[t.forma] || 'B', t.pedido || '', t.parcela || '']),
+    titulos: d.titulos.map(t => [t.cliente_chave, t.origem === 'asaas' ? 'A' : 'B', t.vencimento, t.valor, FORMA_COD[t.forma] || 'B', t.pedido || '', t.parcela || '']),
     // [chave, nome, email, tel, cidade/uf, n, emDia, atrasos, atrasoMedio, atrasoMax, pagoV, emitidoV, emDiaV, atrasoV]; score vem pronto da tabela
     clientes: d.clientes.map(c => Object.assign(
       [c.cliente_chave, c.nome, c.email, c.telefone_valido ? c.telefone : (c.telefone ? '0000000000' : ''), c.cidade_uf, c.titulos_historico, c.pagos_em_dia, c.titulos_atrasados, c.atraso_medio_dias, c.atraso_max_dias, c.pago_total, c.compras_total, 0, 0],
