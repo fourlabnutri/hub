@@ -34,6 +34,12 @@ function adaptarProducao(d) {
 const ADAPTADORES = { receber: adaptarReceber, producao: adaptarProducao };
 
 async function hubBoot(secao) {
+  document.getElementById('main').innerHTML = '<div class="empty-state"><span class="loader" style="border-top-color:var(--orange);border-color:rgba(0,0,0,0.1);"></span><div class="desc" style="margin-top:12px">Carregando dados…</div></div>';
+  try { await hubBootInterno(secao); }
+  catch (e) { console.error(e); hubTela('Erro ao montar a página: ' + (e && e.message ? e.message : e)); }
+}
+
+async function hubBootInterno(secao) {
   const { data } = await sb.auth.getSession();
   const sess = data && data.session;
   if (!sess) { location.href = 'login.html'; return; }
