@@ -31,7 +31,8 @@ function adaptarProducao(d) {
     ops: d.ops.map(o => [o.op_id, o.op_numero, o.produto, o.tipo === 'produto_acabado' ? '04' : '03', o.unidade, o.sku || '', o.quantidade, ST_OP[o.status_op] || 'A', o.emissao, o.inicio_planejado || '', '', o.previsao_entrega || '', o.conclusao || '', (por[o.op_id] || []).join(','), '']),
   };
 }
-const ADAPTADORES = { receber: adaptarReceber, producao: adaptarProducao };
+function adaptarPagar(d) { return { gerado: hojeBR(), titulos: d.titulos }; }
+const ADAPTADORES = { receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao };
 
 async function hubBoot(secao) {
   document.getElementById('main').innerHTML = '<div class="empty-state"><span class="loader" style="border-top-color:var(--orange);border-color:rgba(0,0,0,0.1);"></span><div class="desc" style="margin-top:12px">Carregando dados…</div></div>';

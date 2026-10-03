@@ -4,7 +4,7 @@ const NEKT_URL = 'https://api.nekt.ai/api/v1/sql-query/';
 const DB = process.env.NEKT_DATABASE || 'fourlabnutri_trusted';
 
 // perfil -> seções que pode ver
-const ACESSO = { diretoria: ['receber', 'producao'], comercial: ['receber'] };
+const ACESSO = { diretoria: ['receber', 'pagar', 'producao'], comercial: ['receber'] };
 
 const T = t => `${DB}.${t}`;
 const SECOES = {
@@ -12,14 +12,17 @@ const SECOES = {
     titulos: `select titulo_id, origem, cliente_chave, cliente_nome, cast(vencimento as string) as vencimento, valor, forma, pedido, parcela, dias_atraso, situacao, faixa_atraso, escopo from ${T('report_receber_titulos')}`,
     clientes: `select cliente_chave, nome, email, telefone, telefone_valido, cidade_uf, titulos_historico, pagos_em_dia, titulos_atrasados, atraso_medio_dias, atraso_max_dias, compras_total, pago_total, vencido, a_vencer, em_aberto, maior_atraso_dias, score, classe_score, status_cliente from ${T('report_receber_clientes')}`,
   },
+  pagar: {
+    titulos: `select titulo_id, fornecedor_chave, fornecedor_nome, fornecedor_documento, email, telefone, categoria, eh_comissao, descricao, numero_documento, cast(emissao as string) as emissao, cast(vencimento_original as string) as vencimento_original, cast(vencimento as string) as vencimento, valor, saldo, situacao_titulo, dias_atraso, situacao_prazo, faixa_atraso from ${T('report_pagar_titulos')}`,
+  },
   producao: {
     ops: `select op_id, op_numero, produto, sku, tipo, unidade, quantidade, status_op, cast(emissao as string) as emissao, cast(inicio_planejado as string) as inicio_planejado, cast(previsao_entrega as string) as previsao_entrega, cast(conclusao as string) as conclusao from ${T('report_producao_ops')}`,
     etapas: `select op_id, etapa, etapa_ordem, status_etapa from ${T('report_producao_etapas')}`,
   },
 };
 
-const NUM = new Set(['valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
-const BOOL = new Set(['telefone_valido']);
+const NUM = new Set(['saldo','valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
+const BOOL = new Set(['telefone_valido', 'eh_comissao']);
 
 function parseCsv(txt) {
   const rows = []; let row = [], f = '', q = false;
