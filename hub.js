@@ -44,7 +44,7 @@ async function hubBootInterno(secao) {
   const { data } = await sb.auth.getSession();
   const sess = data && data.session;
   if (!sess) { location.href = 'login.html'; return; }
-  const r = await fetch('/api/report?s=' + secao, { headers: { Authorization: 'Bearer ' + sess.access_token } });
+  const r = await fetch('/api/report' + (secao === 'home' ? '' : '?s=' + secao), { headers: { Authorization: 'Bearer ' + sess.access_token } });
   if (r.status === 401) { await sb.auth.signOut(); location.href = 'login.html'; return; }
   if (r.status === 403) { hubTela('Seu perfil não tem acesso a esta área.'); return; }
   if (!r.ok) { hubTela('Não foi possível carregar os dados agora. Tente novamente em instantes.'); return; }
@@ -53,12 +53,17 @@ async function hubBootInterno(secao) {
   // menu: só as áreas permitidas + usuário e sair
   document.querySelectorAll('.nav-btn[href]').forEach(a => {
     const id = a.getAttribute('href').replace('.html', '');
-    if (!j.perfil.paginas.includes(id)) a.style.display = 'none';
+    if (id !== 'home' && !j.perfil.paginas.includes(id)) a.style.display = 'none';
+  });
+  // some o título da área (e o separador) quando nenhum módulo dela está liberado
+  document.querySelectorAll('.nav-area').forEach(cap => {
+    const area = cap.dataset.areaCap, vis = [...document.querySelectorAll(`.nav-btn[data-area="${area}"]`)].some(x => x.style.display !== 'none');
+    if (!vis) { cap.style.display = 'none'; if (cap.previousElementSibling) cap.previousElementSibling.style.display = 'none'; }
   });
   const nav = document.querySelector('.sidebar');
   if (nav) nav.insertAdjacentHTML('beforeend', `<div class="sidebar-footer">${j.perfil.nome} · ${ROLES[j.perfil.role] || j.perfil.role}<br><button onclick="hubSair()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;margin-top:6px">Sair</button></div>`);
 
-  window.__DATA__ = ADAPTADORES[secao](j.dados);
+  window.__DATA__ = secao === 'home' ? { perfil: j.perfil } : ADAPTADORES[secao](j.dados);
   const s = document.createElement('script');
   s.textContent = 'const DATA = window.__DATA__;\n' + document.getElementById('app').textContent;
   document.body.appendChild(s);
