@@ -6,7 +6,7 @@ A chave do Nekt só existe no Vercel. Os dados têm contatos de clientes: o app 
 ## Perfis
 | Perfil | Vê |
 |---|---|
-| `diretoria` | Contas a receber + Produção |
+| `diretoria` | Contas a receber, Contas a pagar, Produção, Vendas por produto e Campanhas |
 | `comercial` | Contas a receber |
 
 Para mudar, edite `ACESSO` em `api/report.js`.
