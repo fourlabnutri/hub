@@ -143,7 +143,7 @@ function render(){
   const campRows=Object.values(camp).sort((a,b)=>b.n-a.n).slice(0,10);
   // carrinhos
   const etapas={}; M.listaCar.forEach(x=>{ const k=x.etapa||'não informada'; etapas[k]=(etapas[k]||0)+1; });
-  const ETP={identification:'Identificação',shippment:'Entrega',shipment:'Entrega',payment:'Pagamento','não informada':'Não informada'};
+  const ETP={personal_info:'Dados pessoais',identification:'Identificação',shippment:'Entrega',shipment:'Entrega',payment:'Pagamento','não informada':'Não informada'};
   const iniciados = M.criados + M.car;
 
   document.getElementById('main').innerHTML = `
