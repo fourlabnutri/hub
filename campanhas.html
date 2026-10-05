@@ -21,13 +21,17 @@
   @media (max-width:1080px){ .tiles4{ grid-template-columns:1fr 1fr; } }
   @media (max-width:720px){ .tiles3,.tiles4{ grid-template-columns:1fr; } }
   .tile .t-value{ font-size:22px; }
-  .cols{ display:flex; align-items:flex-end; gap:4px; height:150px; padding-top:8px; overflow-x:auto; }
+  .grid-2 > *{ min-width:0; }
+  .chart-scroll{ overflow-x:auto; padding-bottom:4px; }
+  .cols{ display:flex; align-items:flex-end; gap:4px; height:150px; padding-top:8px; }
   .cols .c{ flex:1 0 14px; min-width:14px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; }
   .cols .b{ width:100%; border-radius:6px 6px 2px 2px; background:linear-gradient(0deg, #e96709 0%, #f28a0c 55%, #fdcc03 100%); min-height:2px; }
   .cols.alt .b{ background:linear-gradient(0deg, var(--purple) 0%, var(--pink) 100%); }
   .cols .v{ font-size:9.5px; font-weight:700; color:var(--ink-2); margin-bottom:2px; }
-  .cols-l{ display:flex; gap:4px; font-size:9.5px; color:var(--muted); overflow-x:hidden; }
-  .cols-l span{ flex:1 0 14px; min-width:14px; text-align:center; }
+  .cols-l{ display:flex; gap:4px; font-size:9.5px; color:var(--muted); }
+  .cols-l span{ flex:1 0 14px; min-width:14px; text-align:center; line-height:1.25; }
+  .cols-l i{ display:block; font-style:normal; font-weight:800; text-transform:uppercase; color:var(--ink-2); font-size:8.5px; }
+  tr.clk{ cursor:pointer; } tr.clk:hover td{ background:var(--surface-2); }
   .bar-row{ margin-bottom:10px; } .bar-row .top{ display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px; gap:10px; }
   .bar-row .track{ background:var(--surface-2); border-radius:999px; height:12px; overflow:hidden; } .bar-row .fill{ height:100%; border-radius:999px; }
   .crv{ display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--ink-2); text-decoration:none; flex-shrink:0; overflow:hidden; }
@@ -71,6 +75,7 @@ const div = (a,b) => b ? a/b : null;
 
 const ADS = DATA.anuncios, CAT = DATA.catalogo || [];                 // anúncio x dia (Meta)
 const RES = DATA.resultado || [];          // campanha x produto x dia (cruzado com a Yampi)
+const TODAS = '__todas';
 const S = {preset:'u30', ini:'', fim:'', camp:null};
 const vinc = {}; RES.forEach(r=>{ vinc[r.campanha_id] = r.sku; });
 
@@ -84,27 +89,33 @@ function campanhas(){
   const m={}; ADS.filter(noPer).forEach(r=>{ const x=m[r.campanha_id]=m[r.campanha_id]||{id:r.campanha_id,nome:r.campanha,sit:r.situacao_campanha,inv:0}; x.inv+=r.investimento; });
   return Object.values(m).sort((a,b)=>(vinc[b.id]?1:0)-(vinc[a.id]?1:0) || b.inv-a.inv); }
 
+const MES3 = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 function colunas(rows, rot, alt){
   const max=Math.max(1,...rows.map(r=>r.v));
-  return `<div class="cols ${alt?'alt':''}">${rows.map(r=>`<div class="c" title="${esc(r.l)}: ${esc(rot(r.v))}"><div class="v">${r.v?NUM(r.v):''}</div><div class="b" style="height:${r.v/max*100}%"></div></div>`).join('')}</div>
-    <div class="cols-l">${rows.map(r=>`<span>${r.l.slice(8)}</span>`).join('')}</div>`; }
+  // dia embaixo de cada barra; o mês aparece na 1ª barra e a cada virada de mês. O gráfico rola por dentro quando o período é longo.
+  return `<div class="chart-scroll"><div style="min-width:${rows.length*20}px"><div class="cols ${alt?'alt':''}">${rows.map(r=>`<div class="c" title="${esc(dBR(r.l))}: ${esc(rot(r.v))}"><div class="v">${r.v?NUM(r.v):''}</div><div class="b" style="height:${r.v/max*100}%"></div></div>`).join('')}</div>
+    <div class="cols-l">${rows.map((r,i)=>`<span>${r.l.slice(8)}${i===0||r.l.slice(8)==='01'?`<i>${MES3[+r.l.slice(5,7)-1]}</i>`:''}</span>`).join('')}</div></div></div>`; }
 
 function render(){
   const cs=campanhas();
-  if(!S.camp) S.camp = (cs[0]||{}).id || null;
-  const c = cs.find(x=>x.id===S.camp) || {id:S.camp,nome:S.camp,inv:0};
-  const ads = ADS.filter(r=>r.campanha_id===S.camp && noPer(r));
+  if(!S.camp) S.camp = TODAS;
+  const geral = S.camp===TODAS;
+  const c = geral ? {id:TODAS,nome:'Todas as campanhas',inv:soma(cs,'inv')} : (cs.find(x=>x.id===S.camp) || {id:S.camp,nome:S.camp,inv:0});
+  const ads = ADS.filter(r=>(geral||r.campanha_id===S.camp) && noPer(r));
   // pedidos só contam a partir do 1º dia com investimento da campanha (antes dela não é resultado dela) e até o último dia que o Meta já trouxe (chega com 1 dia de atraso)
-  const inicioCamp = RES.filter(r=>r.campanha_id===S.camp && r.investimento>0).reduce((m,r)=>(!m||r.dia<m)?r.dia:m,null);
-  const res = RES.filter(r=>r.campanha_id===S.camp && noPer(r) && r.dia_com_dados_meta && inicioCamp && r.dia>=inicioCamp);
-  const sku = vinc[S.camp];
+  const iniCamp = {}; RES.filter(r=>r.investimento>0).forEach(r=>{ if(!iniCamp[r.campanha_id]||r.dia<iniCamp[r.campanha_id]) iniCamp[r.campanha_id]=r.dia; });
+  const res = RES.filter(r=>(geral||r.campanha_id===S.camp) && noPer(r) && r.dia_com_dados_meta && iniCamp[r.campanha_id] && r.dia>=iniCamp[r.campanha_id]);
+  const sku = geral ? (res.length ? 'vinculados' : null) : vinc[S.camp];
   const inv=soma(ads,'investimento'), imp=soma(ads,'impressoes'), alc=soma(ads,'alcance'), cl=soma(ads,'cliques_link'), lp=soma(ads,'visualizacoes_lp'), ck=soma(ads,'inicios_checkout'), cm=soma(ads,'compras_meta'), vm=soma(ads,'valor_compras_meta');
   const ped=soma(res,'pedidos_produto'), rec=soma(res,'receita_produto'), cup=soma(res,'pedidos_com_cupom'), cli=soma(res,'clientes');
   const [ia,ib]=intervalo();
   const diasC=[...new Set(ads.map(r=>r.dia))].sort(); const serieInv=[], seriePed=[];
   if(diasC.length){ for(let d=diasC[0]; d<=diasC[diasC.length-1]; d=addDias(d,1)){ serieInv.push({l:d,v:soma(ads.filter(r=>r.dia===d),'investimento')}); seriePed.push({l:d,v:soma(res.filter(r=>r.dia===d),'pedidos_produto')}); } }
+  const porCamp={}; if(geral){ ads.forEach(r=>{ const x=porCamp[r.campanha_id]=porCamp[r.campanha_id]||{id:r.campanha_id,nome:r.campanha,sit:r.situacao_campanha,inv:0,imp:0,cl:0,lp:0,ck:0,cm:0,ped:0,rec:0}; x.inv+=r.investimento; x.imp+=r.impressoes; x.cl+=r.cliques_link; x.lp+=r.visualizacoes_lp; x.ck+=r.inicios_checkout; x.cm+=r.compras_meta; });
+    res.forEach(r=>{ const x=porCamp[r.campanha_id]; if(x){ x.ped+=Number(r.pedidos_produto)||0; x.rec+=Number(r.receita_produto)||0; } }); }
+  const campanhasLin = Object.values(porCamp).sort((a,b)=>b.inv-a.inv);
   const porAd={}; ads.forEach(r=>{ const k=r.ad_id||r.anuncio; const x=porAd[k]=porAd[k]||{anuncio:r.anuncio,conjunto:r.conjunto,ad:r.ad_id,conta:r.conta_id,camp:r.campanha_id,conj:r.conjunto_id,prev:r.link_preview,mini:r.criativo_miniatura,tit:r.criativo_titulo,tipo:r.criativo_tipo,inv:0,imp:0,cl:0,lp:0,ck:0,cm:0}; x.inv+=r.investimento; x.imp+=r.impressoes; x.cl+=r.cliques_link; x.lp+=r.visualizacoes_lp; x.ck+=r.inicios_checkout; x.cm+=r.compras_meta; });
-  CAT.filter(c=>c.campanha_id===S.camp && !porAd[c.ad_id]).forEach(c=>{ porAd[c.ad_id]={anuncio:c.anuncio,conjunto:c.conjunto,ad:c.ad_id,conta:c.conta_id,camp:c.campanha_id,conj:c.conjunto_id,semEntrega:true,inv:0,imp:0,cl:0,lp:0,ck:0,cm:0}; });   // anúncio ativo sem entrega no período também aparece
+  CAT.filter(c=>!geral && c.campanha_id===S.camp && !porAd[c.ad_id]).forEach(c=>{ porAd[c.ad_id]={anuncio:c.anuncio,conjunto:c.conjunto,ad:c.ad_id,conta:c.conta_id,camp:c.campanha_id,conj:c.conjunto_id,semEntrega:true,inv:0,imp:0,cl:0,lp:0,ck:0,cm:0}; });   // anúncio ativo sem entrega no período também aparece
   const anuncios=Object.values(porAd).sort((a,b)=>b.inv-a.inv);
   // abre o anúncio no Meta: link de pré-visualização, se o Meta informou; senão o Gerenciador de Anúncios já com o anúncio selecionado
   const linkAd = a => a.prev || (a.ad ? 'https://adsmanager.facebook.com/adsmanager/manage/ads?act=' + (a.conta||'') + (a.camp ? '&selected_campaign_ids=' + a.camp : '') + (a.conj ? '&selected_adset_ids=' + a.conj : '') + '&selected_ad_ids=' + a.ad : '');   // abre o Gerenciador de Anúncios já na campanha > conjunto > anúncio
@@ -126,9 +137,9 @@ function render(){
     <div class="filter-pills">${pill('tudo','Tudo')}${pill('hoje','Hoje')}${pill('u7','Últimos 7 dias')}${pill('u30','Últimos 30 dias')}${pill('u90','Últimos 90 dias')}${pill('mes','Este mês')}${pill('mesant','Mês passado')}${pill('custom','Personalizado')}</div>
     ${S.preset==='custom'?`<div class="dates"><input type="date" value="${S.ini}" onchange="S.ini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.fim}" onchange="S.fim=this.value;render()"></div>`:''}
   </div>
-  <div class="filters"><select onchange="S.camp=this.value;render()">${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===S.camp?'selected':''}>${esc(x.nome)} · ${BRL(x.inv)}${vinc[x.id]?' · com vendas cruzadas':''}</option>`).join('')}</select><span class="note">${dBR(ia)} a ${dBR(ib)}</span></div>
+  <div class="filters"><select onchange="S.camp=this.value;render()"><option value="${TODAS}" ${geral?'selected':''}>Todas as campanhas · visão geral · ${BRL(soma(cs,'inv'))}</option>${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===S.camp?'selected':''}>${esc(x.nome)} · ${BRL(x.inv)}${vinc[x.id]?' · com vendas cruzadas':''}</option>`).join('')}</select><span class="note">${S.preset==='tudo'?'Todo o período':dBR(ia)+' a '+dBR(ib)}</span></div>
 
-  ${sku?`<div class="aviso"><b>Como ler o resultado:</b> sem UTM nem pixel de origem, o vínculo entre campanha e venda é feito por <b>produto e data</b> (pedidos do SKU ${esc(sku)} nos dias em que a campanha esteve no ar). É uma estimativa útil, mas pedidos de outras origens (orgânico, indicação) no mesmo dia entram na conta. Quando houver UTM, o cruzamento passa a ser direto.</div>`:''}
+  ${sku?`<div class="aviso"><b>Como ler o resultado:</b> sem UTM nem pixel de origem, o vínculo entre campanha e venda é feito por <b>produto e data</b> (${geral?'pedidos dos produtos vinculados às campanhas, nos dias em que cada uma esteve no ar; campanhas sem produto vinculado só têm as métricas do Meta':'pedidos do SKU '+esc(sku)+' nos dias em que a campanha esteve no ar'}). É uma estimativa útil, mas pedidos de outras origens (orgânico, indicação) no mesmo dia entram na conta. Quando houver UTM, o cruzamento passa a ser direto.</div>`:''}
 
   <div class="grid-4" style="margin-bottom:18px;">
     <div class="card kpi"><div class="kpi-label">Investimento</div><div class="kpi-value">${BRL(inv)}</div><div class="kpi-foot">${NUM(imp)} impressões · ${NUM(alc)} pessoas alcançadas</div></div>
@@ -143,22 +154,28 @@ function render(){
       <div class="tile t-purple"><div class="t-label" style="font-weight:700">Custo por pedido real</div><div class="t-foot"><div><div class="t-value">${ped?BRL(inv/ped):'—'}</div><div class="t-label">investimento ÷ pedidos reais</div></div></div></div>
       <div class="tile t-yellow"><div class="t-label" style="font-weight:700">Retorno sobre o investimento</div><div class="t-foot"><div><div class="t-value">${inv?NUM(rec/inv,2)+'x':'—'}</div><div class="t-label">receita do produto ÷ investimento</div></div></div></div>
       <div class="tile t-pink"><div class="t-label" style="font-weight:700">Conversão clique → pedido</div><div class="t-foot"><div><div class="t-value">${cl?NUM(ped/cl*100,1)+'%':'—'}</div><div class="t-label">${razao!=null?'Yampi vê '+NUM(razao*100,0)+'% das compras do pixel':'pedidos reais ÷ cliques no link'}</div></div></div></div>
-    </div></div>`:'<div class="panel"><h2>Sucesso da campanha</h2><div class="desc">Esta campanha ainda não tem produto vinculado, então só aparecem as métricas do Meta. O vínculo campanha → produto é cadastrado no cruzamento (tabela <code>report_campanha_resultado_dia</code>).</div></div>'}
+    </div></div>`:`<div class="panel"><h2>Sucesso da campanha</h2><div class="desc">${geral?'Nenhuma campanha do período tem produto vinculado':'Esta campanha ainda não tem produto vinculado'}, então só aparecem as métricas do Meta. O vínculo campanha → produto é cadastrado no cruzamento (tabela <code>report_campanha_resultado_dia</code>).</div></div>`}
 
   <div class="grid-2" style="margin-bottom:18px;">
     <div class="panel" style="margin-bottom:0"><h2>Investimento por dia</h2><div class="desc">${esc(c.nome)}</div>${serieInv.length?colunas(serieInv, v=>BRL(v)):'<div class="desc">Sem dados no período.</div>'}</div>
-    ${sku?`<div class="panel" style="margin-bottom:0"><h2>Pedidos reais por dia</h2><div class="desc">Produto ${esc(sku)} (Yampi)</div>${colunas(seriePed, v=>NUM(v)+' pedidos', true)}</div>`:`<div class="panel" style="margin-bottom:0"><h2>Funil</h2><div class="desc">Do alcance à compra</div></div>`}
+    ${sku?`<div class="panel" style="margin-bottom:0"><h2>Pedidos reais por dia</h2><div class="desc">${geral?'Campanhas com produto vinculado':'Produto '+esc(sku)} (Yampi)</div>${colunas(seriePed, v=>NUM(v)+' pedidos', true)}</div>`:`<div class="panel" style="margin-bottom:0"><h2>Funil</h2><div class="desc">Do alcance à compra</div></div>`}
   </div>
 
-  <div class="panel"><h2>Funil da campanha</h2><div class="desc">Do anúncio à venda${sku?', incluindo o pedido real na Yampi':''}</div>
+  <div class="panel"><h2>Funil ${geral?'geral':'da campanha'}</h2><div class="desc">Do anúncio à venda${sku?', incluindo o pedido real na Yampi':''}</div>
     ${funil.map((f,i)=>`<div class="bar-row"><div class="top"><b>${f.l}</b><span class="muted">${NUM(f.v)}${i>0&&funil[i-1].v&&f.l.indexOf('Pedidos')<0?` · ${NUM(f.v/funil[i-1].v*100,1)}% da etapa anterior`:''}</span></div><div class="track"><div class="fill" style="width:${Math.max(1.5,f.v/fmax*100)}%;background:${f.l.indexOf('Pedidos')===0?'var(--green)':'var(--orange)'}"></div></div></div>`).join('')}</div>
 
-  <div class="panel">
+  ${geral?`<div class="panel">
+    <div class="card-head"><div><h2>Campanhas</h2><div class="desc">Desempenho de cada campanha no período · clique em uma linha para abrir a campanha</div></div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Campanha</th><th class="num">Investimento</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC</th><th class="num">Compras (Meta)</th><th class="num">Custo/compra</th><th class="num">Pedidos reais</th><th class="num">Retorno</th></tr></thead><tbody>
+    ${campanhasLin.map(x=>`<tr class="clk" onclick="S.camp='${esc(x.id)}';render();window.scrollTo(0,0)"><td><b>${esc(x.nome)}</b><div class="sub2">${esc(x.sit||'')}${vinc[x.id]?' · com vendas cruzadas':''}</div></td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.imp)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${x.imp?NUM(x.cl/x.imp*100,2)+'%':'—'}</td><td class="num">${x.cl?BRL(x.inv/x.cl):'—'}</td><td class="num">${NUM(x.cm)}</td><td class="num">${x.cm?BRL(x.inv/x.cm):'—'}</td><td class="num">${vinc[x.id]?NUM(x.ped):'—'}</td><td class="num">${vinc[x.id]&&x.inv?NUM(x.rec/x.inv,2)+'x':'—'}</td></tr>`).join('') || '<tr><td colspan="10"><div class="empty-state">Sem campanhas no período.</div></td></tr>'}
+    </tbody></table></div>
+  </div>`:`<div class="panel">
     <div class="card-head"><div><h2>Anúncios</h2><div class="desc">Desempenho por anúncio no período</div></div></div>
     <div class="tbl-wrap"><table><thead><tr><th>Criativo / anúncio</th><th class="num">Investimento</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC</th><th class="num">Página</th><th class="num">Checkout</th><th class="num">Compras (Meta)</th><th class="num">Custo/compra</th></tr></thead><tbody>
     ${anuncios.map(a=>`<tr><td>${celulaAd(a)}</td><td class="num">${BRL(a.inv)}</td><td class="num">${NUM(a.imp)}</td><td class="num">${NUM(a.cl)}</td><td class="num">${a.imp?NUM(a.cl/a.imp*100,2)+'%':'—'}</td><td class="num">${a.cl?BRL(a.inv/a.cl):'—'}</td><td class="num">${NUM(a.lp)}</td><td class="num">${NUM(a.ck)}</td><td class="num">${NUM(a.cm)}</td><td class="num">${a.cm?BRL(a.inv/a.cm):'—'}</td></tr>`).join('') || '<tr><td colspan="10"><div class="empty-state">Sem anúncios no período.</div></td></tr>'}
     </tbody></table></div>
-  </div>`;
+  </div>`}`;
+  document.querySelectorAll('.chart-scroll').forEach(e=>{ e.scrollLeft = e.scrollWidth; });   // abre no dia mais recente
 }
 render();
 </script>
