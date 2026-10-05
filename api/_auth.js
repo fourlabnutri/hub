@@ -9,6 +9,25 @@ export const ACESSO = {
   marketing: MARKETING,
 };
 
+export const TODAS = ['receber', 'pagar', 'producao', 'loja', 'vendas', 'campanhas', 'canais', 'app-atletas', ...GESTAO, 'usuarios'];
+
+// cargo (tabela cargos, editável na tela Usuários) + acessos extras da pessoa. Sem a chave service ou sem a tabela, cai no ACESSO fixo acima.
+async function paginasDe(perfil) {
+  let base = ACESSO[perfil.role], cargo = perfil.role;
+  const sk = process.env.SUPABASE_SERVICE_KEY;
+  if (sk) {
+    try {
+      const c = await fetch(`${process.env.SUPABASE_URL}/rest/v1/cargos?id=eq.${encodeURIComponent(perfil.role)}&select=nome,paginas`, { headers: { apikey: sk, Authorization: `Bearer ${sk}` } });
+      const j = await c.json();
+      if (Array.isArray(j) && j[0]) { base = j[0].paginas; cargo = j[0].nome; }
+    } catch (e) { /* mantém o fixo */ }
+  }
+  const set = new Set([...(base || []), ...(perfil.extras || [])]);
+  if (perfil.role === 'diretoria') [...ACESSO.diretoria, 'usuarios'].forEach(p => set.add(p));   // diretoria nunca perde acesso
+  if ([...set].some(p => p.startsWith('gestao-'))) set.add('app-atletas');
+  return { cargo, paginas: [...set].filter(p => TODAS.includes(p)) };
+}
+
 export async function quem(req) {
   const token = (req.headers.authorization || '').replace(/^Bearer /i, '');
   if (!token) return null;
@@ -16,8 +35,10 @@ export async function quem(req) {
   const u = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, { headers: h });
   if (!u.ok) return null;
   const user = await u.json();
-  const p = await fetch(`${process.env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=nome,role,ativo`, { headers: h });
+  const p = await fetch(`${process.env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=*`, { headers: h });
   const perfil = (await p.json())[0];
-  if (!perfil || !perfil.ativo || !ACESSO[perfil.role]) return null;
-  return { nome: perfil.nome || user.email, role: perfil.role, email: user.email, paginas: ACESSO[perfil.role] };
+  if (!perfil || !perfil.ativo) return null;
+  const { cargo, paginas } = await paginasDe(perfil);
+  if (!paginas.length) return null;
+  return { id: user.id, nome: perfil.nome || user.email, role: perfil.role, cargo, email: user.email, paginas };
 }

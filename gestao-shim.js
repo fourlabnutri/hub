@@ -55,7 +55,7 @@ const GESTAO = (() => {
     if (r.status === 401) { await hub.auth.signOut(); paraLogin(); return null; }
     if (!r.ok) { document.getElementById('main').innerHTML = '<div class="empty-state">Não foi possível carregar agora. Tente novamente em instantes.</div>'; return null; }
     const { perfil } = await r.json();
-    if (!perfil.paginas.includes('gestao-' + id)) { document.getElementById('main').innerHTML = '<div class="empty-state"><div class="big">🔒</div>Seu perfil não tem acesso a esta área.</div>'; return null; }
+    if (!perfil.paginas.includes(id[0] === '@' ? id.slice(1) : 'gestao-' + id)) { document.getElementById('main').innerHTML = '<div class="empty-state"><div class="big">🔒</div>Seu perfil não tem acesso a esta área.</div>'; return null; }
     document.querySelectorAll('.nav-btn[href]').forEach(a => { const p = a.getAttribute('href').replace('.html', ''); if (p !== 'home' && !perfil.paginas.includes(p)) a.style.display = 'none'; });
     document.querySelectorAll('.nav-area').forEach(cap => {
       const vis = [...document.querySelectorAll('.nav-btn[data-area="' + cap.dataset.areaCap + '"]')].some(x => x.style.display !== 'none');

@@ -65,7 +65,7 @@ async function hubBootInterno(secao) {
     if (!vis) { cap.style.display = 'none'; if (cap.previousElementSibling) cap.previousElementSibling.style.display = 'none'; }
   });
   const nav = document.querySelector('.sidebar');
-  if (nav) nav.insertAdjacentHTML('beforeend', `<div class="sidebar-footer">${j.perfil.nome} · ${ROLES[j.perfil.role] || j.perfil.role}<br><button onclick="hubSair()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;margin-top:6px">Sair</button></div>`);
+  if (nav) nav.insertAdjacentHTML('beforeend', `<div class="sidebar-footer">${j.perfil.nome} · ${j.perfil.cargo || ROLES[j.perfil.role] || j.perfil.role}<br><button onclick="hubSair()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;margin-top:6px">Sair</button></div>`);
 
   window.__DATA__ = secao === 'home' ? { perfil: j.perfil } : ADAPTADORES[secao](j.dados);
   const s = document.createElement('script');

@@ -50,3 +50,8 @@ Elas leem e gravam no **mesmo banco do app dos atletas** (outro projeto do Supab
 - Perfil novo: rode `supabase/002_perfil_marketing.sql` no Supabase do hub e cadastre os usuários.
 - Envio de arquivo (Briefing) passa pela ponte e vale para arquivos de até ~3 MB (limite do Vercel).
 - As funções de IA/cupom/Yampi continuam no projeto dos atletas; a ponte chama as mesmas.
+
+## Usuários e acessos (Administração)
+Tela `usuarios.html` (só quem tem o acesso `usuarios`, a Diretoria sempre tem): cria pessoas (login + senha provisória), define cargo, acessos extras, ativa/desativa, redefine senha e edita o que cada cargo enxerga.
+- Rode `supabase/003_cargos_usuarios.sql` no Supabase do hub (cria `cargos` e `profiles.extras`).
+- Variável no Vercel (Secret): `SUPABASE_SERVICE_KEY` = chave service_role do Supabase do HUB (não a dos atletas). Sem ela, o hub segue com os cargos fixos de `api/_auth.js`.
