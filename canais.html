@@ -55,7 +55,7 @@
 
 <script type="text/plain" id="app">
 const HOJE = DATA.gerado;
-const CANAL = DATA.canais, ADS = DATA.anuncios;
+const CANAL = DATA.canais, ADS = DATA.anuncios, CAT = DATA.catalogo || [];
 const addDias = (iso,n)=>new Date(Date.parse(iso)+n*864e5).toISOString().slice(0,10);
 const diffDias = (a,b)=>Math.round((Date.parse(a)-Date.parse(b))/864e5);
 const mesIni = (iso,off=0)=>{ const [y,m]=iso.split('-').map(Number); return new Date(Date.UTC(y,m-1+off,1)).toISOString().slice(0,10); };
@@ -106,6 +106,9 @@ function render(){
   const ord={pedidos:(a,b)=>b.ped-a.ped||b.inv-a.inv, investimento:(a,b)=>b.inv-a.inv, retorno:(a,b)=>(dv(b.rec,b.inv)||0)-(dv(a.rec,a.inv)||0), cpa:(a,b)=>(a.ped?a.inv/a.ped:1e9)-(b.ped?b.inv/b.ped:1e9)};
   adRows.sort(ord[S.ordemAd]);
   const semPedido=adRows.filter(x=>x.inv>=30&&x.ped===0).sort((a,b)=>b.inv-a.inv).slice(0,5);
+  // anúncios ativos, de campanhas que gastaram no período, que não tiveram nenhuma entrega
+  const campGasto=new Set(adsP.filter(r=>r.investimento>0).map(r=>r.campanha_id)), comLinha=new Set(adsP.map(r=>r.ad_id));
+  const semEntrega=CAT.filter(c=>campGasto.has(c.campanha_id)&&!comLinha.has(c.ad_id)).slice(0,8);
   const linkAd = a => a.ad ? 'https://adsmanager.facebook.com/adsmanager/manage/ads?act='+(a.conta||'')+(a.camp?'&selected_campaign_ids='+a.camp:'')+(a.conj?'&selected_adset_ids='+a.conj:'')+'&selected_ad_ids='+a.ad : '';
   const OLHO='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   const celula = a => '<div class="adcell">'+(linkAd(a)?'<a class="crv no-print" href="'+esc(linkAd(a))+'" target="_blank" rel="noopener" title="Ver o criativo no Meta">'+OLHO+'</a>':'')+'<div><b>'+esc(a.anuncio)+'</b><div class="sub2">'+esc(a.campanha)+'</div></div></div>';
@@ -154,6 +157,7 @@ function render(){
     </tbody></table></div></div>
 
   <div class="panel"><div class="card-head"><div><h2>Criativos (anúncios do Meta)</h2><div class="desc">Qual criativo vende de verdade. O olho abre o anúncio no Gerenciador de Anúncios do Meta (campanha > conjunto > anúncio). <a class="lnk" target="_blank" rel="noopener" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=104419281852083">Ver todos na Biblioteca de Anúncios ↗</a>. Clique no título da coluna para ordenar.</div></div></div>
+    ${semEntrega.length?`<div class="aviso">Ativos sem entrega no período (o Meta ainda não distribuiu verba para eles): ${semEntrega.map(a=>`<b>${esc(a.anuncio)}</b> <span class="muted">(${esc(a.campanha)})</span>`).join(' · ')}.</div>`:''}
     ${semPedido.length?`<div class="aviso" style="background:var(--red-soft);border-color:#eec8c2;color:#7a2a20">Atenção: ${semPedido.map(a=>`<b>${esc(a.anuncio)}</b> (${BRL(a.inv)})`).join(' · ')} — investimento sem nenhum pedido atribuído no período.</div>`:''}
     <div class="tbl-wrap"><table><thead><tr><th>Criativo / campanha</th>${th('investimento','Investimento')}<th class="num">Cliques</th><th class="num">Compras (Meta)</th>${th('pedidos','Pedidos (Yampi)')}<th class="num">Receita</th>${th('cpa','Custo/pedido')}${th('retorno','Retorno')}</tr></thead><tbody>
     ${adRows.slice(0,S.pagAd).map(x=>{ const r=dv(x.rec,x.inv)||0, s=sel(r); return `<tr><td>${celula(x)}</td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${NUM(x.cp)}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.ped&&x.inv?BRL(x.inv/x.ped):'—'}</td><td class="num">${x.inv?`<span class="pill-c ${s[0]}">${NUM(r,2)}x</span>`:'—'}</td></tr>`; }).join('') || '<tr><td colspan="8"><div class="empty-state">Sem anúncios no período.</div></td></tr>'}

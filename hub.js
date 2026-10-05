@@ -33,9 +33,9 @@ function adaptarProducao(d) {
 }
 function adaptarPagar(d) { return { gerado: hojeBR(), titulos: d.titulos }; }
 function adaptarVendas(d) { return { gerado: hojeBR(), dia: d.dia, resultado: d.resultado }; }
-function adaptarCampanhas(d) { return { gerado: hojeBR(), anuncios: d.anuncios, resultado: d.resultado }; }
+function adaptarCampanhas(d) { return { gerado: hojeBR(), anuncios: d.anuncios, resultado: d.resultado, catalogo: d.catalogo }; }
 function adaptarLoja(d) { return { gerado: hojeBR(), pedidos: d.pedidos, carrinhos: d.carrinhos, produtos: d.produtos }; }
-function adaptarCanais(d) { return { gerado: hojeBR(), canais: d.canais, anuncios: d.anuncios }; }
+function adaptarCanais(d) { return { gerado: hojeBR(), canais: d.canais, anuncios: d.anuncios, catalogo: d.catalogo }; }
 const ADAPTADORES = { canais: adaptarCanais, loja: adaptarLoja, receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao, vendas: adaptarVendas, campanhas: adaptarCampanhas };
 
 async function hubBoot(secao) {
