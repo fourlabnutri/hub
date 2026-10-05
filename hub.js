@@ -34,7 +34,8 @@ function adaptarProducao(d) {
 function adaptarPagar(d) { return { gerado: hojeBR(), titulos: d.titulos }; }
 function adaptarVendas(d) { return { gerado: hojeBR(), dia: d.dia, resultado: d.resultado }; }
 function adaptarCampanhas(d) { return { gerado: hojeBR(), anuncios: d.anuncios, resultado: d.resultado }; }
-const ADAPTADORES = { receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao, vendas: adaptarVendas, campanhas: adaptarCampanhas };
+function adaptarLoja(d) { return { gerado: hojeBR(), pedidos: d.pedidos, carrinhos: d.carrinhos, produtos: d.produtos }; }
+const ADAPTADORES = { loja: adaptarLoja, receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao, vendas: adaptarVendas, campanhas: adaptarCampanhas };
 
 async function hubBoot(secao) {
   document.getElementById('main').innerHTML = '<div class="empty-state"><span class="loader" style="border-top-color:var(--orange);border-color:rgba(0,0,0,0.1);"></span><div class="desc" style="margin-top:12px">Carregando dados…</div></div>';

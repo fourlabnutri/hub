@@ -4,7 +4,7 @@ const NEKT_URL = 'https://api.nekt.ai/api/v1/sql-query/';
 const DB = process.env.NEKT_DATABASE || 'fourlabnutri_trusted';
 
 // perfil -> seções que pode ver
-const ACESSO = { diretoria: ['receber', 'pagar', 'producao', 'vendas', 'campanhas'], comercial: ['receber'] };
+const ACESSO = { diretoria: ['receber', 'pagar', 'producao', 'loja', 'vendas', 'campanhas'], comercial: ['receber'] };
 
 const T = t => `${DB}.${t}`;
 const RESULTADO = `select cast(dia as string) as dia, campanha_id, campanha, sku, produto, investimento, impressoes, alcance, cliques_link, visualizacoes_lp, inicios_checkout, compras_meta, pedidos_produto, unidades_produto, receita_produto, clientes, pedidos_com_cupom, dia_com_dados_meta from ${T('report_campanha_resultado_dia')}`;
@@ -16,12 +16,17 @@ const SECOES = {
   pagar: {
     titulos: `select titulo_id, fornecedor_chave, fornecedor_nome, fornecedor_documento, email, telefone, categoria, eh_comissao, descricao, numero_documento, cast(emissao as string) as emissao, cast(vencimento_original as string) as vencimento_original, cast(vencimento as string) as vencimento, valor, saldo, situacao_titulo, dias_atraso, situacao_prazo, faixa_atraso from ${T('report_pagar_titulos')}`,
   },
+  loja: {
+    pedidos: `select cast(dia as string) as dia, status, status_grupo, valor_total, forma_pagamento, parcelas, uf, cliente_id, cliente_recorrente, utm_source, utm_medium, utm_campaign from ${T('report_loja_pedidos')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
+    carrinhos: `select cast(dia as string) as dia, valor, etapa, utm_source, recuperado from ${T('report_loja_carrinhos')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
+    produtos: `select cast(dia as string) as dia, sku, produto, pedidos, unidades from ${T('report_vendas_produto_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
+  },
   vendas: {
     dia: `select cast(dia as string) as dia, sku, produto, pedidos, unidades, receita_produtos, receita_frete, receita_total, clientes, pedidos_com_cupom, pedidos_aguardando_pagamento, pedidos_cancelados from ${T('report_vendas_produto_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
     resultado: RESULTADO,
   },
   campanhas: {
-    anuncios: `select cast(dia as string) as dia, campanha_id, campanha, situacao_campanha, conjunto, anuncio, investimento, impressoes, alcance, cliques_link, visualizacoes_lp, inicios_checkout, compras_meta, valor_compras_meta from ${T('report_marketing_anuncio_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
+    anuncios: `select cast(dia as string) as dia, campanha_id, campanha, situacao_campanha, conjunto, anuncio, ad_id, conta_id, criativo_tipo, criativo_titulo, criativo_miniatura, link_preview, investimento, impressoes, alcance, cliques_link, visualizacoes_lp, inicios_checkout, compras_meta, valor_compras_meta from ${T('report_marketing_anuncio_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
     resultado: RESULTADO,
   },
   producao: {
@@ -30,8 +35,8 @@ const SECOES = {
   },
 };
 
-const NUM = new Set(['pedidos','unidades','receita_produtos','receita_frete','receita_total','clientes','pedidos_com_cupom','pedidos_aguardando_pagamento','pedidos_cancelados','investimento','impressoes','alcance','cliques_link','visualizacoes_lp','inicios_checkout','compras_meta','valor_compras_meta','pedidos_produto','unidades_produto','receita_produto','saldo','valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
-const BOOL = new Set(['telefone_valido', 'eh_comissao', 'dia_com_dados_meta']);
+const NUM = new Set(['valor_total','parcelas','pedidos','unidades','receita_produtos','receita_frete','receita_total','clientes','pedidos_com_cupom','pedidos_aguardando_pagamento','pedidos_cancelados','investimento','impressoes','alcance','cliques_link','visualizacoes_lp','inicios_checkout','compras_meta','valor_compras_meta','pedidos_produto','unidades_produto','receita_produto','saldo','valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
+const BOOL = new Set(['telefone_valido', 'eh_comissao', 'dia_com_dados_meta', 'cliente_recorrente', 'recuperado']);
 
 function parseCsv(txt) {
   const rows = []; let row = [], f = '', q = false;
