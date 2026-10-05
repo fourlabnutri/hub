@@ -2,7 +2,7 @@
 // perfil -> módulos que pode abrir (o arquivo build.py define os nomes/ordem na tela)
 const GESTAO = ['gestao-home', 'gestao-briefing', 'gestao-ciclo', 'gestao-acompanhamento', 'gestao-blog', 'gestao-biblioteca', 'gestao-ia',
   'gestao-atletas', 'gestao-crm', 'gestao-vendas', 'gestao-avisos', 'gestao-produtos'];
-const MARKETING = ['loja', 'vendas', 'campanhas', 'canais', ...GESTAO];
+const MARKETING = ['loja', 'vendas', 'campanhas', 'canais', 'app-atletas', ...GESTAO];
 export const ACESSO = {
   diretoria: ['receber', 'pagar', 'producao', ...MARKETING],
   comercial: ['receber'],
