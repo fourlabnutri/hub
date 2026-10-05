@@ -1,10 +1,10 @@
 // Função serverless (Vercel): confere o login (Supabase), checa o perfil e devolve as tabelas report_* do Nekt.
 // A chave do Nekt só existe aqui (variável de ambiente), nunca no navegador.
+import { quem } from './_auth.js';
+
 const NEKT_URL = 'https://api.nekt.ai/api/v1/sql-query/';
 const DB = process.env.NEKT_DATABASE || 'fourlabnutri_trusted';
 
-// perfil -> seções que pode ver
-const ACESSO = { diretoria: ['receber', 'pagar', 'producao', 'loja', 'vendas', 'campanhas', 'canais'], comercial: ['receber'] };
 
 const T = t => `${DB}.${t}`;
 const RESULTADO = `select cast(dia as string) as dia, campanha_id, campanha, sku, produto, investimento, impressoes, alcance, cliques_link, visualizacoes_lp, inicios_checkout, compras_meta, pedidos_produto, unidades_produto, receita_produto, clientes, pedidos_com_cupom, dia_com_dados_meta from ${T('report_campanha_resultado_dia')}`;
@@ -100,29 +100,16 @@ async function secao(nome) {
   return v;
 }
 
-async function quem(req) {
-  const token = (req.headers.authorization || '').replace(/^Bearer /i, '');
-  if (!token) return null;
-  const h = { apikey: process.env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` };
-  const u = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, { headers: h });
-  if (!u.ok) return null;
-  const user = await u.json();
-  const p = await fetch(`${process.env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=nome,role,ativo`, { headers: h });
-  const perfil = (await p.json())[0];
-  if (!perfil || !perfil.ativo || !ACESSO[perfil.role]) return null;
-  return { nome: perfil.nome || user.email, role: perfil.role, email: user.email };
-}
-
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');   // nunca no cache compartilhado: dados de clientes
   try {
     const perfil = await quem(req);
     if (!perfil) return res.status(401).json({ erro: 'não autenticado' });
-    const paginas = ACESSO[perfil.role];
+    const paginas = perfil.paginas;
     const s = req.query.s;
-    if (!s) return res.status(200).json({ perfil: { ...perfil, paginas } });
+    if (!s) return res.status(200).json({ perfil });
     if (!paginas.includes(s)) return res.status(403).json({ erro: 'sem acesso a esta área' });
-    return res.status(200).json({ perfil: { ...perfil, paginas }, dados: await secao(s) });
+    return res.status(200).json({ perfil, dados: await secao(s) });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ erro: 'falha ao consultar os dados' });

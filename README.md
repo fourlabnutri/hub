@@ -6,7 +6,8 @@ A chave do Nekt só existe no Vercel. Os dados têm contatos de clientes: o app 
 ## Perfis
 | Perfil | Vê |
 |---|---|
-| `diretoria` | Contas a receber, Contas a pagar, Produção, Vendas por produto e Campanhas |
+| `diretoria` | Tudo |
+| `marketing` | Gestão de atletas, Conteúdo, Marketing e E-commerce |
 | `comercial` | Contas a receber |
 
 Para mudar, edite `ACESSO` em `api/report.js`.
@@ -40,3 +41,12 @@ git push -u origin main
 ## Manutenção
 - Dados: as Queries do Nekt atualizam as tabelas `report_*` todo dia às 07:00 (BRT). A API guarda os dados 5 min em memória.
 - Visual: os dashboards são gerados de `../receber.src.html` e `../producao.src.html` (`python3 ../build.py` regera esta pasta).
+
+## Gestão de atletas (equipe)
+As telas da equipe (atletas, CRM, roteiros, avisos…) são as do app dos atletas, portadas para o hub (`../gestao-src/` -> `gestao-*.html` via `build.py`).
+Elas leem e gravam no **mesmo banco do app dos atletas** (outro projeto do Supabase) por uma ponte: `api/gestao.js`.
+- Variáveis do Vercel (Secret): `ATLETAS_URL` (Project URL do projeto dos atletas) e `ATLETAS_SERVICE_KEY` (chave service_role do mesmo projeto).
+- A ponte só aceita as tabelas e funções listadas em `api/gestao.js`; perfis `marketing` e `diretoria` passam.
+- Perfil novo: rode `supabase/002_perfil_marketing.sql` no Supabase do hub e cadastre os usuários.
+- Envio de arquivo (Briefing) passa pela ponte e vale para arquivos de até ~3 MB (limite do Vercel).
+- As funções de IA/cupom/Yampi continuam no projeto dos atletas; a ponte chama as mesmas.

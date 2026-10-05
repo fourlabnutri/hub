@@ -1,6 +1,6 @@
 // Login, chamada à /api/report e adaptação das linhas para o formato que os dashboards já usam.
 const sb = window.supabase.createClient(HUB_CONFIG.SUPABASE_URL, HUB_CONFIG.SUPABASE_ANON_KEY);
-const ROLES = { diretoria: 'Diretoria', comercial: 'Comercial' };
+const ROLES = { diretoria: 'Diretoria', comercial: 'Comercial', marketing: 'Marketing' };
 
 function hubTela(msg) {
   document.getElementById('main').innerHTML = `<div class="empty-state"><div class="big">🔒</div>${msg}</div>`;
