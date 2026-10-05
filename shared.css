@@ -70,7 +70,12 @@
     gap:6px;
     flex:1;
     align-self:stretch;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:none;
   }
+  .sidebar-nav::-webkit-scrollbar{ display:none; }
   .nav-btn{
     display:flex;
     align-items:center;
