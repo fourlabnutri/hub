@@ -18,7 +18,7 @@ const SECOES = {
   },
   canais: {
     canais: `select cast(dia as string) as dia, canal, investimento, impressoes, cliques, compras_plataforma, pedidos, receita from ${T('report_marketing_canal_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 120 day)`,
-    anuncios: `select cast(dia as string) as dia, campanha_id, campanha, anuncio, ad_id, conta_id, investimento, cliques_link, compras_meta, pedidos, receita from ${T('report_marketing_anuncio_utm_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 120 day) and (investimento > 0 or pedidos > 0)`,
+    anuncios: `select cast(dia as string) as dia, campanha_id, campanha, anuncio, conjunto_id, ad_id, conta_id, investimento, cliques_link, compras_meta, pedidos, receita from ${T('report_marketing_anuncio_utm_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 120 day) and (investimento > 0 or pedidos > 0)`,
   },
   loja: {
     pedidos: `select cast(dia as string) as dia, status, status_grupo, valor_total, forma_pagamento, parcelas, uf, cliente_id, cliente_recorrente, utm_source, utm_medium, utm_campaign from ${T('report_loja_pedidos')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
@@ -30,7 +30,7 @@ const SECOES = {
     resultado: RESULTADO,
   },
   campanhas: {
-    anuncios: `select cast(dia as string) as dia, campanha_id, campanha, situacao_campanha, conjunto, anuncio, ad_id, conta_id, criativo_tipo, criativo_titulo, criativo_miniatura, link_preview, investimento, impressoes, alcance, cliques_link, visualizacoes_lp, inicios_checkout, compras_meta, valor_compras_meta from ${T('report_marketing_anuncio_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
+    anuncios: `select cast(dia as string) as dia, campanha_id, campanha, situacao_campanha, conjunto, conjunto_id, anuncio, ad_id, conta_id, criativo_tipo, criativo_titulo, criativo_miniatura, link_preview, investimento, impressoes, alcance, cliques_link, visualizacoes_lp, inicios_checkout, compras_meta, valor_compras_meta from ${T('report_marketing_anuncio_dia')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 180 day)`,
     resultado: RESULTADO,
   },
   producao: {
