@@ -6,6 +6,9 @@
 
 const sb = GESTAO.sb;   // ponte do hub (login do hub, chave secreta só no servidor)
 
+// Endereços limpos: atleta.fourlabnutrition.com.br/home em vez de /home.html.
+// Links antigos com .html continuam abrindo e a barra de endereço é corrigida sem recarregar.
+
 const YAMPI_ALIAS = "fourlab";
 /* ---------- Equipes / pastas (tabela `teams`; estes são os valores padrão se a tabela não existir) ----------
    tipo: 'equipe' (atletas) ou 'profissional' (profissionais parceiros: médicos, nutricionistas...) */
@@ -60,6 +63,8 @@ const ICONS = {
   like: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v10H4.5a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1Z"/><path d="M7 10l4-6.5a1.8 1.8 0 0 1 3.3 1.2L13.5 9h5.2a2 2 0 0 1 2 2.3l-1.2 7a2 2 0 0 1-2 1.7H7"/></svg>`,
   blog: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z"/><path d="M14 3.5v5h5M8.5 12.5h7M8.5 16h5"/></svg>`,
   avisos: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1Z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>`,
+  ideia: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1.1 1.3 1.1 2.2h5c0-.9.5-1.7 1.1-2.2A6 6 0 0 0 12 3z"/></svg>`,
+  idcard: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.3 1.7-2 3-2s2.4.7 3 2"/><path d="M15 10h3M15 13h3"/></svg>`,
   menu: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>`,
   sair: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h4M16 17l4-5-4-5M20 12H9"/></svg>`,
 };
@@ -69,6 +74,7 @@ const STAFF_NAV = [
   {id:'home', label:'Home', ic:ICONS.home, href:'gestao-home.html'},
   {id:'briefing', label:'Briefing', ic:ICONS.briefing, href:'gestao-briefing.html'},
   {id:'ciclo', label:'Mês / Roteiros', ic:ICONS.roteiro, href:'gestao-ciclo.html'},
+  {id:'sugestoes', label:'Sugestões de conteúdo', ic:ICONS.ideia, href:'gestao-sugestoes.html'},
   {id:'acompanhamento', label:'Acompanhamento', ic:ICONS.acompanhamento, href:'gestao-acompanhamento.html'},
   {id:'crm', label:'Pipeline / CRM', ic:ICONS.kanban, href:'gestao-crm.html'},
   {id:'blog', label:'Blog (parceiros)', ic:ICONS.blog, href:'gestao-blog.html'},
@@ -81,12 +87,13 @@ const STAFF_NAV = [
 ];
 
 const ATLETA_NAV = [
-  {id:'inicio', label:'Início', curto:'Início', ic:ICONS.inicio, href:'atleta-home.html'},
-  {id:'roteiros', label:'Meus Roteiros', curto:'Roteiros', ic:ICONS.roteiro, href:'atleta-roteiros.html', so:'equipe'},
-  {id:'blog', label:'Meus textos (blog)', curto:'Textos', ic:ICONS.blog, href:'parceiro-blog.html', so:'profissional'},
-  {id:'avisos', label:'Avisos', curto:'Avisos', ic:ICONS.avisos, href:'atleta-avisos.html'},
-  {id:'vendas', label:'Minhas Vendas', curto:'Vendas', ic:ICONS.vendas, href:'atleta-vendas.html'},
-  {id:'perfil', label:'Meu Perfil', curto:'Perfil', ic:ICONS.perfil, href:'atleta-perfil.html'},
+  {id:'inicio', label:'Início', curto:'Início', ic:ICONS.inicio, href:'atleta-home'},
+  {id:'roteiros', label:'Meus Roteiros', curto:'Roteiros', ic:ICONS.roteiro, href:'atleta-roteiros', so:'equipe'},
+  {id:'blog', label:'Meus textos (blog)', curto:'Textos', ic:ICONS.blog, href:'parceiro-blog', so:'profissional'},
+  {id:'ideias', label:'Ideias pra gravar', curto:'Ideias', ic:ICONS.ideia, href:'atleta-ideias'},
+  {id:'avisos', label:'Avisos', curto:'Avisos', ic:ICONS.avisos, href:'atleta-avisos'},
+  {id:'vendas', label:'Minhas Vendas', curto:'Vendas', ic:ICONS.vendas, href:'atleta-vendas'},
+  {id:'perfil', label:'Meu Perfil', curto:'Perfil', ic:ICONS.perfil, href:'atleta-perfil'},
 ];
 
 /* ---------- Utilitários ---------- */
@@ -113,11 +120,14 @@ function toast(msg){
   toast._h = setTimeout(()=> t.classList.remove('show'), 2400);
 }
 
-function openModal(html){
+// openModal(html, {largo:true}) = janela mais larga (editores com muito conteúdo)
+function openModal(html, opts){
+  document.getElementById('modalBox').classList.toggle('largo', !!(opts && opts.largo));
   document.getElementById('modalBox').innerHTML = html;
   document.getElementById('modalBg').classList.add('active');
 }
 function closeModal(){
+  document.getElementById('modalBox').classList.remove('largo');
   document.getElementById('modalBg').classList.remove('active');
   document.getElementById('modalBox').innerHTML = '';
 }
@@ -668,6 +678,9 @@ async function carregarDashboardVendas(cupomCode, ym, descontoCupomPct, comissao
    - o saldo vai acumulando mês a mês; quando passa de R$ 100 fica "liberado" pra pagamento */
 const META_PAGAMENTO_COMISSAO = 100;
 const MESES_HISTORICO = 12;
+// As comissões passam a contar a partir deste mês (as anteriores já foram pagas por fora).
+// Meses antes disso continuam aparecendo nos gráficos de vendas, mas não geram comissão nem saldo.
+const INICIO_COMISSOES = '2026-09';
 
 // roda várias chamadas com no máximo `n` ao mesmo tempo
 async function emLotes(itens, n, fn){
@@ -694,18 +707,20 @@ async function historicoComissao(a, opts){
     catch(err){ console.warn('Yampi', ym, err); falhas++; }
     feitos++; if(opts.onProgresso) opts.onProgresso(feitos, yms.length);
   });
-  let saldo = 0; const linhas = [];
+  let saldo = 0, saldoMesesFechados = 0; const linhas = [];
   yms.forEach(ym=>{
     const d = porMes[ym] || {valorVendido:0, comissaoMes:0, numeroPedidos:0};
-    const comissao = a.recebeComissao ? Number(d.comissaoMes||0) : 0;
-    const pagosNoMes = pag.pagamentos.filter(p=> (p.ym || String(p.pago_em||'').slice(0,7)) === ym);
+    const antes = ym < INICIO_COMISSOES;
+    const comissao = a.recebeComissao && !antes ? Number(d.comissaoMes||0) : 0;
+    const pagosNoMes = antes ? [] : pag.pagamentos.filter(p=> (p.ym || String(p.pago_em||'').slice(0,7)) === ym);
     const pagoValor = pagosNoMes.reduce((t,p)=> t + Number(p.valor||0), 0);
     saldo = Math.max(0, saldo + comissao - pagoValor);
     linhas.push({ ym, valor_vendido:Number(d.valorVendido||0), numero_pedidos:Number(d.numeroPedidos||0), comissao_mes:comissao,
       pago_valor:pagoValor, pago_em: pagosNoMes.length ? pagosNoMes[pagosNoMes.length-1].pago_em : null, saldo_total:saldo,
-      status: pagosNoMes.length ? 'pago' : saldo >= META_PAGAMENTO_COMISSAO ? 'liberado' : 'acumulando', semDados: !porMes[ym] });
+      status: antes ? 'antes' : pagosNoMes.length ? 'pago' : saldo >= META_PAGAMENTO_COMISSAO ? 'liberado' : 'acumulando', semDados: !porMes[ym], antes });
+    if(ym < ate) saldoMesesFechados = saldo;   // saldo sem o mês atual (que ainda está em andamento)
   });
-  return { linhas: linhas.reverse(), saldoAtual: saldo, pagamentos: pag.pagamentos, tabelaPagamentosOk: pag.tabelaOk, falhas,
+  return { linhas: linhas.reverse(), saldoAtual: saldo, saldoMesesFechados, pagamentos: pag.pagamentos, tabelaPagamentosOk: pag.tabelaOk, falhas,
     comissaoTotal: linhas.reduce((t,l)=> t + l.comissao_mes, 0) };
 }
 function statusComissaoHtml(l){
@@ -727,4 +742,367 @@ function barrasMensaisHtml(rows, ateYM, n, campo){
       badge: pct==null ? (qtd ? fmtNum(v) : `R$ ${compactNum(v)}`) : `${pct>=0?'+':''}${pct.toFixed(1).replace('.',',')}%`});
   }
   return pillBarChartHtml(data, {ariaLabel: campo==='numero_pedidos' ? 'Pedidos por mês' : 'Vendas por mês'});
+}
+
+/* ---------- Cadastro interno (CPF, nascimento...) ---------- */
+const soDigitos = (v)=> String(v||'').replace(/\D/g,'');
+function fmtCPF(v){ const d = soDigitos(v).slice(0,11); return d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'); }
+function fmtCNPJ(v){ const d = soDigitos(v).slice(0,14); return d.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2'); }
+function cpfValido(v){
+  const d = soDigitos(v); if(d.length !== 11 || /^(\d)\1+$/.test(d)) return false;
+  const dig = (n)=>{ let s = 0; for(let i=0; i<n; i++) s += Number(d[i]) * (n+1-i); const r = (s*10) % 11; return r===10 ? 0 : r; };
+  return dig(9) === Number(d[9]) && dig(10) === Number(d[10]);
+}
+function idadeDe(nascISO){
+  if(!nascISO) return null;
+  const [y,m,d] = nascISO.split('-').map(Number), h = new Date();
+  return h.getFullYear() - y - ((h.getMonth()+1 < m || (h.getMonth()+1 === m && h.getDate() < d)) ? 1 : 0);
+}
+function aniversarioNoMes(nascISO, ref){ ref = ref || new Date(); return !!nascISO && Number(nascISO.slice(5,7)) === ref.getMonth()+1; }
+function mapCadastroFromDB(r){
+  r = r || {};
+  return { nomeCompleto:r.nome_completo||'', cpf:r.cpf||'', rg:r.rg||'', cnpj:r.cnpj||'', dataNascimento:r.data_nascimento||'',
+    tamanhoCamiseta:r.tamanho_camiseta||'', inicioParceria:r.inicio_parceria||'', fimContrato:r.fim_contrato||'', observacoes:r.observacoes||'',
+    cupomCompras:r.cupom_compras||'' };
+}
+// Cupom de compras do atleta na Yampi: primeiro nome + 6 primeiros dígitos do CPF (ex.: LUIZ529982)
+function sugerirCupomCompras(nome, cpf){
+  const primeiro = String(nome||'').trim().split(/\s+/)[0] || '';
+  const semAcento = primeiro.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase();
+  const d = soDigitos(cpf).slice(0,6);
+  return semAcento && d.length === 6 ? semAcento + d : '';
+}
+
+/* ---------- Compras do atleta na Yampi (função yampi-compras-atleta, tabela atleta_compras) ---------- */
+const MIGRACAO_COMPRAS = 'migrations/2026-10-09_compras_atleta.sql';
+const normTexto = (s)=> String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+// Produto do catálogo que corresponde ao nome do item da Yampi (ex.: "Recovery FourLab 500g Morango" → Recovery)
+function produtoDoCatalogo(nomeYampi, produtos){
+  const n = ' ' + normTexto(nomeYampi) + ' ';
+  return (produtos||[]).slice().sort((a,b)=> b.name.length - a.name.length).find(p=> normTexto(p.name) && n.includes(' ' + normTexto(p.name) + ' ')) || null;
+}
+// Chips dos produtos mais pedidos. opts: {produtos (catálogo), max, clicavel (atributo data com o id do atleta)}
+function comprasChipsHtml(compra, opts){
+  opts = opts || {};
+  if(!compra) return '';
+  if(compra.erro) return `<span style="font-size:11px; color:var(--red);">Yampi: ${escHtml(compra.erro)}</span>`;
+  // junta sabores/tamanhos do mesmo produto do catálogo (ex.: Recovery Morango + Recovery Chocolate → Recovery)
+  const grupos = [];
+  (compra.itens||[]).forEach(it=>{
+    const p = produtoDoCatalogo(it.nome, opts.produtos), chave = p ? 'p:'+p.id : 'n:'+normTexto(it.nome);
+    const g = grupos.find(x=>x.chave===chave);
+    if(g){ g.quantidade += it.quantidade; g.pedidos += it.pedidos; if(it.ultima_compra > g.ultima_compra) g.ultima_compra = it.ultima_compra; g.nomes.push(it.nome); }
+    else grupos.push({chave, p, nome:it.nome, nomes:[it.nome], quantidade:it.quantidade, pedidos:it.pedidos, ultima_compra:it.ultima_compra});
+  });
+  grupos.sort((x,y)=> y.pedidos - x.pedidos || y.quantidade - x.quantidade);
+  const itens = grupos.slice(0, opts.max || 4);
+  if(!itens.length) return `<span style="font-size:11px; color:var(--muted);">🛒 nenhum pedido com o cupom ${escHtml(compra.cupom||'')} nos últimos meses</span>`;
+  return `<div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center;"><span style="font-size:11px; color:var(--muted); font-weight:700;">🛒 Pediu:</span>${itens.map(it=>{
+    const p = it.p;
+    const titulo = `${it.nomes.join(' + ')} — ${it.quantidade} un., último pedido em ${fmtDateBR(it.ultima_compra)}`;
+    return p && opts.clicavel
+      ? `<button type="button" class="chip" data-usar-produto="${escHtml(p.id)}" data-atleta-compra="${escHtml(opts.clicavel)}" title="${escHtml(titulo)} · clique pra escolher" style="padding:3px 9px; font-size:11px; color:var(--green); border-color:#bfe6cd;">${escHtml(p.name)} ×${it.quantidade}</button>`
+      : `<span class="chip static" title="${escHtml(titulo)}" style="padding:3px 9px; font-size:11px;">${escHtml(p ? p.name : it.nome)} ×${it.quantidade}</span>`;
+  }).join('')}</div>`;
+}
+async function atualizarComprasYampi(athleteIds){
+  const { data, error } = await invocarFuncao('yampi-compras-atleta', { athleteIds, meses:6 });
+  if(error){
+    const semFuncao = error.name==='FunctionsFetchError' || /Failed to send a request/i.test(error.message||'');
+    throw new Error(semFuncao ? 'A função yampi-compras-atleta não respondeu. Ela precisa estar publicada no Supabase (Edge Functions).' : (error.message||'Erro ao buscar na Yampi'));
+  }
+  if(data?.error) throw new Error(data.error);
+  return data;
+}
+const TAMANHOS_CAMISETA = ['PP','P','M','G','GG','XGG'];
+
+/* ---------- Sugestões de conteúdo (reels, stories, carrosséis...) ---------- */
+// passo = como chamar cada tela; proporcao = formato da tela na prévia visual
+const SUGESTAO_TIPOS = {
+  reels:{label:'Reels', emoji:'🎬', passo:'Cena', plural:'cenas', proporcao:'9 / 16'},
+  stories:{label:'Sequência de stories', curto:'Stories', emoji:'📱', passo:'Story', plural:'stories', proporcao:'9 / 16'},
+  carrossel:{label:'Carrossel', emoji:'🖼️', passo:'Slide', plural:'slides', proporcao:'4 / 5'},
+  post:{label:'Post', emoji:'📸', passo:'Imagem', plural:'imagens', proporcao:'4 / 5'},
+  tiktok:{label:'TikTok', emoji:'🎵', passo:'Cena', plural:'cenas', proporcao:'9 / 16'},
+  outro:{label:'Outro', emoji:'✨', passo:'Parte', plural:'partes', proporcao:'1 / 1'},
+};
+const SUGESTAO_DIFICULDADE = { facil:{label:'Fácil', cor:'var(--green)', fundo:'var(--green-soft)'}, medio:{label:'Médio', cor:'#b5680a', fundo:'#fdf1dc'}, avancado:{label:'Avançado', cor:'var(--red)', fundo:'var(--red-soft)'} };
+const SUGESTAO_PUBLICO = { todos:'Atletas e profissionais', atletas:'Só atletas', profissionais:'Só profissionais parceiros' };
+function tipoSugestao(t){ return SUGESTAO_TIPOS[t] || SUGESTAO_TIPOS.outro; }
+function passosDaSugestao(s){ return Array.isArray(s && s.passos) ? s.passos.filter(p=> p && (p.texto || p.dica || p.imagem)) : []; }
+function capaDaSugestao(s){ return s.capa_url || (passosDaSugestao(s).find(p=>p.imagem)||{}).imagem || ''; }
+
+// Texto com **negrito**, listas com "-" e links clicáveis
+function textoRicoHtml(t){
+  const linhas = String(t||'').split('\n'); let html = '', lista = false;
+  const inline = (x)=> escHtml(x).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:var(--orange); font-weight:600; word-break:break-all;">$1</a>');
+  linhas.forEach(l=>{ const m = l.trim().match(/^[-*•]\s+(.*)/), h = l.trim().match(/^#{1,4}\s+(.*)/);
+    if(h){ if(lista){ html += '</ul>'; lista = false; } html += `<div style="font-family:var(--font-title); font-weight:700; font-size:14.5px; margin:12px 0 4px;">${inline(h[1])}</div>`; return; }
+    if(m){ if(!lista){ html += '<ul style="margin:4px 0 8px 18px;">'; lista = true; } html += `<li>${inline(m[1])}</li>`; return; }
+    if(lista){ html += '</ul>'; lista = false; }
+    html += l.trim() ? `<p style="margin:0 0 6px;">${inline(l)}</p>` : '<div style="height:6px;"></div>';
+  });
+  return html + (lista ? '</ul>' : '');
+}
+
+// opts: {extra (html no rodapé), rascunho}
+function sugestaoCardHtml(s, opts){
+  opts = opts || {};
+  const tipo = tipoSugestao(s.tipo), dif = SUGESTAO_DIFICULDADE[s.dificuldade] || SUGESTAO_DIFICULDADE.facil, capa = capaDaSugestao(s), n = passosDaSugestao(s).length;
+  return `<div class="sug-card" data-abrir-sugestao="${s.id}" tabindex="0">
+    <div class="sug-capa" style="${capa ? `background-image:url('${escHtml(capa)}');` : ''}">
+      ${capa ? '' : `<span class="sug-emoji">${tipo.emoji}</span>`}
+      <div class="sug-capa-top">
+        <span class="badge" style="background:rgba(255,255,255,0.92); color:var(--ink);">${tipo.emoji} ${escHtml(tipo.curto||tipo.label)}</span>
+        ${s.fixada ? '<span class="badge" style="background:var(--grad-accent); color:#fff;">📌 Destaque</span>' : ''}
+        ${opts.rascunho ? '<span class="badge" style="background:var(--ink); color:#fff;">Rascunho</span>' : ''}
+      </div>
+    </div>
+    <div class="sug-corpo">
+      <div class="sug-titulo">${escHtml(s.titulo || 'Sem título')}</div>
+      ${s.objetivo ? `<div class="sug-desc">${escHtml(s.objetivo)}</div>` : ''}
+      <div class="row" style="gap:6px; margin-top:auto; padding-top:12px;">
+        <span class="badge" style="background:${dif.fundo}; color:${dif.cor};">${dif.label}</span>
+        ${n ? `<span class="chip static">${n} ${n===1 ? tipo.passo.toLowerCase() : tipo.plural}</span>` : ''}
+        ${s.produto ? `<span class="chip static">${escHtml(s.produto)}</span>` : ''}
+        ${Number(s.pontos) > 0 ? `<span class="chip static" style="color:#b5680a;">⭐ ${Number(s.pontos)} pts</span>` : ''}
+      </div>
+      ${opts.extra || ''}
+    </div>
+  </div>`;
+}
+
+// Prévia visual: as telas lado a lado no formato do tipo (9:16 stories/reels, 4:5 carrossel)
+function sugestaoTelasHtml(s){
+  const tipo = tipoSugestao(s.tipo), passos = passosDaSugestao(s);
+  if(!passos.length) return '';
+  return `<div class="sug-telas">${passos.map((p,i)=>`
+    <div class="sug-tela">
+      <div class="sug-tela-img" style="aspect-ratio:${tipo.proporcao}; ${p.imagem ? `background-image:url('${escHtml(p.imagem)}');` : ''}">
+        <span class="sug-tela-num">${tipo.passo} ${i+1}</span>
+        ${p.imagem ? `<a href="${escHtml(p.imagem)}" target="_blank" rel="noopener" class="sug-tela-zoom" title="Abrir imagem">⤢</a>` : `<div class="sug-tela-texto">${escHtml(p.texto || '')}</div>`}
+      </div>
+      ${p.texto && p.imagem ? `<div class="sug-tela-legenda">${escHtml(p.texto)}</div>` : ''}
+      ${p.dica ? `<div class="sug-tela-dica">💡 ${escHtml(p.dica)}</div>` : ''}
+    </div>`).join('')}</div>`;
+}
+
+function sugestaoDetalheHtml(s){
+  const tipo = tipoSugestao(s.tipo), dif = SUGESTAO_DIFICULDADE[s.dificuldade] || SUGESTAO_DIFICULDADE.facil;
+  const refs = String(s.referencias||'').split('\n').map(l=>l.trim()).filter(Boolean);
+  return `
+    <div class="row" style="gap:6px; margin-bottom:8px;">
+      <span class="badge" style="background:var(--orange-soft); color:#b5480a;">${tipo.emoji} ${escHtml(tipo.label)}</span>
+      <span class="badge" style="background:${dif.fundo}; color:${dif.cor};">${dif.label}</span>
+      ${s.produto ? `<span class="chip static">${escHtml(s.produto)}</span>` : ''}
+      ${Number(s.pontos) > 0 ? `<span class="chip static" style="color:#b5680a;">⭐ ${Number(s.pontos)} pts</span>` : ''}
+    </div>
+    <h3 style="font-family:var(--font-title); font-size:22px; margin:0 0 6px;">${escHtml(s.titulo || 'Sem título')}</h3>
+    ${s.objetivo ? `<div style="font-size:13.5px; color:var(--ink-2); line-height:1.55;">${escHtml(s.objetivo)}</div>` : ''}
+    ${sugestaoTelasHtml(s) ? `<div class="section-title">Passo a passo visual</div>${sugestaoTelasHtml(s)}` : ''}
+    ${s.roteiro ? `<div class="section-title row" style="justify-content:space-between;"><span>Roteiro / texto</span><button class="btn btn-ghost btn-sm" data-copiar-roteiro-sug="${s.id}">${ICONS.copy.replace('width="18" height="18"','width="13" height="13"')} Copiar</button></div>
+      <div style="font-size:13.5px; line-height:1.6; background:var(--surface-2); border-radius:14px; padding:14px 16px;">${textoRicoHtml(s.roteiro)}</div>` : ''}
+    ${refs.length ? `<div class="section-title">Inspirações</div><div style="display:flex; flex-direction:column; gap:6px;">${refs.map(r=> /^https?:\/\//.test(r)
+      ? `<a href="${escHtml(r)}" target="_blank" rel="noopener" class="chip" style="justify-content:flex-start; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔗 ${escHtml(r.replace(/^https?:\/\/(www\.)?/,''))}</a>`
+      : `<div style="font-size:13px;">• ${escHtml(r)}</div>`).join('')}</div>` : ''}`;
+}
+
+// Diminui a foto antes de enviar (máx. 1440px, JPEG) e sobe pro Storage "sugestoes". Devolve a URL pública.
+async function enviarImagemSugestao(file){
+  let blob = file, ext = (file.name.split('.').pop()||'jpg').toLowerCase();
+  if(/^image\/(jpeg|png|webp|heic|heif)$/.test(file.type)){
+    try{
+      const bmp = await createImageBitmap(file);
+      const esc = Math.min(1, 1440 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width*esc); c.height = Math.round(bmp.height*esc);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      blob = await new Promise(r=> c.toBlob(r, 'image/jpeg', 0.85)); ext = 'jpg';
+    }catch(e){ console.warn('sem compressão', e); blob = file; }
+  }
+  const path = `${new Date().toISOString().slice(0,7)}/${Date.now()}_${uid()}.${ext}`;
+  const { error } = await sb.storage.from('sugestoes').upload(path, blob, { contentType: blob.type || file.type || 'image/jpeg' });
+  if(error) throw error;
+  return sb.storage.from('sugestoes').getPublicUrl(path).data.publicUrl;
+}
+
+/* ---------- IA de sugestões (função gerar-sugestao) ---------- */
+const IA_MAX_PEDIDO = 600;   // mesmo limite da função pra quem não é da equipe
+// Formulário do pedido (usado pela equipe e pelos atletas). opts: {produtos, maxPedido, tipo}
+function iaFormHtml(opts){
+  opts = opts || {};
+  const max = opts.maxPedido || IA_MAX_PEDIDO, tipo = opts.tipo || 'stories';
+  return `<div class="field"><label>O que você quer gravar?</label>
+      <div class="seg" id="iaTipo">${Object.entries(SUGESTAO_TIPOS).filter(([k])=>k!=='outro').map(([k,t])=>`<button type="button" data-ia-tipo="${k}" class="${k===tipo?'active':''}">${t.emoji} ${t.curto||t.label}</button>`).join('')}</div></div>
+    <div class="grid-2" style="gap:12px;">
+      <div class="field"><label>Produto (opcional)</label><select id="iaProduto"><option value="">Nenhum / a IA escolhe se fizer sentido</option>${(opts.produtos||[]).map(p=>`<option>${escHtml(p)}</option>`).join('')}</select></div>
+      <div class="field"><label>Quantas telas / cenas</label><select id="iaTelas">${[3,4,5,6,7,8].map(n=>`<option ${n===5?'selected':''}>${n}</option>`).join('')}</select></div></div>
+    <div class="field"><label>Conte a ideia (opcional)</label>
+      <textarea id="iaPedido" maxlength="${max}" style="min-height:90px;" placeholder="Ex: mostrar meu café da manhã antes do longão de domingo, com enquete no final"></textarea>
+      <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted); margin-top:4px;"><span>A IA cria só ideias de conteúdo da FourLab (treino, prova, recuperação, rotina, produtos).</span><span id="iaConta">0/${max}</span></div></div>`;
+}
+function ligarIaForm(){
+  let tipo = document.querySelector('[data-ia-tipo].active')?.dataset.iaTipo || 'stories';
+  document.querySelectorAll('[data-ia-tipo]').forEach(b=> b.onclick = ()=>{ tipo = b.dataset.iaTipo; document.querySelectorAll('[data-ia-tipo]').forEach(x=>x.classList.toggle('active', x===b)); });
+  const ped = document.getElementById('iaPedido'), conta = document.getElementById('iaConta');
+  ped.oninput = ()=>{ conta.textContent = `${ped.value.length}/${ped.maxLength}`; };
+  return ()=>({ tipo, produto:document.getElementById('iaProduto').value, telas:Number(document.getElementById('iaTelas').value), pedido:ped.value.trim() });
+}
+// Chama a função e devolve {sugestao, pedidoId, restantes} ou lança erro com a mensagem pronta pra tela
+async function gerarSugestaoIA(dados){
+  const { data, error } = await invocarFuncao('gerar-sugestao', dados);
+  if(error){
+    const semFuncao = error.name==='FunctionsFetchError' || /Failed to send a request/i.test(error.message||'');
+    const e = new Error(semFuncao ? 'A função gerar-sugestao não respondeu. Ela precisa estar publicada no Supabase (Edge Functions).' : (error.message||'Erro ao chamar a IA'));
+    throw e;
+  }
+  if(data?.error){ const e = new Error(data.error); e.restantes = data.restantes; throw e; }
+  return data;
+}
+function botaoCarregandoIA(btn, texto){ btn.disabled = true; btn.innerHTML = `<span class="loader"></span> ${texto || 'Criando ideia… (leva uns 30s)'}`; }
+
+/* ---------- Roteiros do mês: rascunho → enviado pro atleta → marca de "alterado" ----------
+   enviado_em vazio = rascunho (só a equipe vê). Depois de enviado, qualquer edição da equipe ou do atleta
+   fica marcada (alterado_equipe_em / alterado_atleta_em) e o texto original fica em roteiro_enviado. */
+const MIGRACAO_ENVIO = 'migrations/2026-10-08_envio_roteiros.sql';
+function camposEnvioDeLinha(r){
+  return { enviadoEm:r.enviado_em||null, roteiroEnviado:r.roteiro_enviado||'', avaliacao:r.avaliacao||null,
+    alteradoEquipeEm:r.alterado_equipe_em||null, alteradoAtletaEm:r.alterado_atleta_em||null, envioDisponivel: 'enviado_em' in r, manual: !!r.manual };
+}
+function fmtDataCurta(iso){ return iso ? new Date(iso).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}) : ''; }
+// Tags de situação do roteiro. opts.paraAtleta: textos do ponto de vista do atleta
+function tagsRoteiroHtml(e, opts){
+  opts = opts || {};
+  const t = [];
+  if(!opts.paraAtleta){
+    if(!e.roteiro || !e.roteiro.trim()) t.push('<span class="chip static" style="color:var(--muted);">sem roteiro</span>');
+    else if(e.enviadoEm) t.push(`<span class="chip static" style="color:var(--green); border-color:#bfe6cd; background:var(--green-soft);">✓ Enviado ${fmtDataCurta(e.enviadoEm)}</span>`);
+    else t.push('<span class="chip static" style="color:#b5680a;">Rascunho — o atleta ainda não vê</span>');
+  }
+  if(e.manual && !opts.paraAtleta) t.push('<span class="chip static" style="color:var(--purple);">✍️ Manual</span>');
+  if(e.alteradoAtletaEm) t.push(`<span class="chip static" style="color:var(--purple); border-color:#e4cbe1; background:var(--purple-soft);">✏️ ${opts.paraAtleta ? 'Você alterou' : 'Alterado pelo atleta'} · ${fmtDataCurta(e.alteradoAtletaEm)}</span>`);
+  if(e.alteradoEquipeEm) t.push(`<span class="chip static" style="color:#b5480a; border-color:#f8d6ba; background:var(--orange-soft);">✏️ Alterado pela FourLab · ${fmtDataCurta(e.alteradoEquipeEm)}</span>`);
+  return t.join(' ');
+}
+// Modal da equipe pra ver/editar um roteiro (usado em Acompanhamento e na pasta do atleta).
+// e: entrada com {id, roteiro, date, product, format, + camposEnvioDeLinha}. onMudou(e) é chamado depois de salvar.
+function abrirRoteiroDaEquipe(e, nome, onMudou){
+  const desenhar = ()=>{
+    openModal(`<button class="modal-close" id="modalCloseBtn">&times;</button>
+      <h3>Roteiro — ${escHtml(nome)}</h3>
+      <div style="font-size:12.5px; color:var(--muted); margin:-8px 0 10px;">${fmtDateBR(e.date)} · ${escHtml(e.product||'')} · ${escHtml(e.format||'')}</div>
+      <div class="row" style="gap:6px; margin-bottom:12px;">${tagsRoteiroHtml(e)}</div>
+      <textarea id="rtTexto" style="min-height:300px; font-size:13px; line-height:1.5;">${escHtml(e.roteiro||'')}</textarea>
+      ${e.enviadoEm ? '<div style="font-size:11.5px; color:var(--muted); margin-top:6px;">Este roteiro já está com o atleta: se você salvar uma mudança, ele vê a versão nova com a marca “Alterado pela FourLab”.</div>' : ''}
+      <div class="row" style="justify-content:space-between; gap:8px; margin-top:14px; flex-wrap:wrap;">
+        <div class="row" style="gap:6px;">
+          ${e.roteiro ? '<button class="btn btn-danger btn-sm" id="rtExcluir">Excluir roteiro</button>' : ''}
+          ${e.enviadoEm ? '<button class="btn btn-ghost btn-sm" id="rtRecolher" title="O atleta deixa de ver e o roteiro volta pra Mês / Roteiros">Voltar pra rascunho</button>' : ''}
+          ${e.roteiroEnviado && e.roteiroEnviado !== e.roteiro ? '<button class="btn btn-ghost btn-sm" id="rtOriginal">Ver o original enviado</button>' : ''}</div>
+        <div class="row" style="gap:6px;">
+          ${!e.enviadoEm && e.roteiro ? '<button class="btn btn-outline btn-sm" id="rtEnviar">Enviar pro atleta</button>' : ''}
+          <button class="btn btn-primary btn-sm" id="rtSalvar">Salvar</button></div></div>`, {largo:true});
+    document.getElementById('modalCloseBtn').onclick = closeModal;
+    const atualizar = async (campos, msg)=>{
+      const { error } = await sb.from('entries').update(campos).eq('id', e.id);
+      if(error){ erroBanco(error, MIGRACAO_ENVIO); return false; }
+      if('roteiro' in campos) e.roteiro = campos.roteiro;
+      if('enviado_em' in campos) e.enviadoEm = campos.enviado_em;
+      if('roteiro_enviado' in campos) e.roteiroEnviado = campos.roteiro_enviado;
+      if('alterado_equipe_em' in campos) e.alteradoEquipeEm = campos.alterado_equipe_em;
+      if('alterado_atleta_em' in campos) e.alteradoAtletaEm = campos.alterado_atleta_em;
+      toast(msg); if(onMudou) onMudou(e); return true;
+    };
+    document.getElementById('rtSalvar').onclick = async ()=>{
+      const texto = document.getElementById('rtTexto').value;
+      if(texto === (e.roteiro||'')){ closeModal(); return; }
+      const campos = { roteiro:texto };
+      if(e.enviadoEm) campos.alterado_equipe_em = new Date().toISOString();
+      if(await atualizar(campos, e.enviadoEm ? 'Salvo — o atleta já vê a versão nova' : 'Roteiro salvo')) closeModal();
+    };
+    const env = document.getElementById('rtEnviar');
+    if(env) env.onclick = async ()=>{ const texto = document.getElementById('rtTexto').value; if(!texto.trim()) return;
+      if(await atualizar({ roteiro:texto, enviado_em:new Date().toISOString(), roteiro_enviado:texto, alterado_equipe_em:null, alterado_atleta_em:null }, 'Enviado pro atleta')) closeModal(); };
+    const rec = document.getElementById('rtRecolher');
+    if(rec) rec.onclick = async ()=>{ if(!confirm('O atleta deixa de ver este roteiro e ele volta pra Mês / Roteiros como rascunho. Continuar?')) return;
+      if(await atualizar({ enviado_em:null }, 'Voltou pra rascunho')) closeModal(); };
+    const exc = document.getElementById('rtExcluir');
+    if(exc) exc.onclick = async ()=>{ if(!confirm('Excluir o texto deste roteiro? O post continua agendado e dá pra gerar outro em Mês / Roteiros.')) return;
+      if(await atualizar({ roteiro:'', enviado_em:null, roteiro_enviado:'', alterado_equipe_em:null, alterado_atleta_em:null }, 'Roteiro excluído')) closeModal(); };
+    const ori = document.getElementById('rtOriginal');
+    if(ori) ori.onclick = ()=>{ const ta = document.getElementById('rtTexto');
+      if(ori.dataset.vendo){ ta.value = ori.dataset.atual; ta.readOnly = false; ori.textContent = 'Ver o original enviado'; delete ori.dataset.vendo; }
+      else { ori.dataset.atual = ta.value; ta.value = e.roteiroEnviado; ta.readOnly = true; ori.textContent = 'Voltar pra versão atual'; ori.dataset.vendo = '1'; } };
+  };
+  desenhar();
+}
+
+/* ---------- Post manual (roteiro, stories, reels... adicionado à mão pela equipe) ----------
+   Usado em Mês / Roteiros e na pasta do atleta. Cria uma linha em entries com manual = true,
+   que nunca é mexida quando o calendário é gerado/atualizado. Dá pra escrever o texto ou pedir pra IA. */
+const MIGRACAO_MANUAIS = 'migrations/2026-10-10_posts_manuais.sql';
+const FORMATOS_MANUAIS = ['Vídeo','Carrossel','Stories','Reels','Post','Outro'];
+const SEM_PRODUTO = 'Sem produto (tema livre)';
+async function garantirCiclo(ym){
+  const { data } = await sb.from('cycles').select('*').eq('ym', ym).maybeSingle();
+  if(data) return data;
+  const r = await sb.from('cycles').insert({ ym }).select().single();
+  if(r.error) throw r.error;
+  return r.data;
+}
+// opts: {atletas (mapAthleteFromDB), produtos ({id,name,desc}), athleteId, data, onCriado(linhaDoBanco)}
+function abrirPostManual(opts){
+  const atletas = (opts.atletas||[]).filter(a=> !isProfissional(a) || a.id===opts.athleteId);
+  const hoje = todayISO();
+  openModal(`<button class="modal-close" id="modalCloseBtn">&times;</button><h3>✍️ Novo post manual</h3>
+    <div style="font-size:12.5px; color:var(--ink-2); background:var(--surface-2); border-radius:12px; padding:10px 12px; margin-bottom:14px;">Pra um pedido específico (produto diferente, uma instrução, um stories extra...). Não mexe no calendário nem nos outros atletas.</div>
+    <div class="grid-2" style="gap:12px;">
+      <div class="field"><label>Atleta</label><select id="pmAtleta">${atletas.map(a=>`<option value="${a.id}" ${a.id===opts.athleteId?'selected':''}>${escHtml(a.name)} · ${escHtml(a.team||'')}</option>`).join('')}</select></div>
+      <div class="field"><label>Data do post</label><input id="pmData" type="date" value="${escHtml(opts.data || hoje)}"></div></div>
+    <div class="grid-2" style="gap:12px;">
+      <div class="field"><label>Formato</label><select id="pmFormato">${FORMATOS_MANUAIS.map(f=>`<option>${f}</option>`).join('')}</select></div>
+      <div class="field"><label>Produto</label><select id="pmProduto"><option value="">— ${SEM_PRODUTO} —</option>${(opts.produtos||[]).map(p=>`<option value="${escHtml(p.id)}">${escHtml(p.name)}</option>`).join('')}</select></div></div>
+    <div class="field"><label>Instrução / tema</label><textarea id="pmTema" style="min-height:70px;" placeholder="Ex: ele já tem parceria com a Liquidz — falar só do gel em sachê, sem citar hidratação"></textarea></div>
+    <div class="field"><div class="row" style="justify-content:space-between; margin-bottom:6px;"><label style="margin:0;">Roteiro / texto</label>
+        <button type="button" class="btn btn-ghost btn-sm" id="pmIA">✨ Escrever com IA</button></div>
+      <textarea id="pmTexto" style="min-height:200px; font-size:13px; line-height:1.5;" placeholder="Escreva o roteiro, a sequência de stories... ou peça pra IA escrever a partir da instrução."></textarea>
+      <div id="pmIAStatus" style="font-size:12px; color:var(--muted); margin-top:4px;"></div></div>
+    <label style="display:flex; gap:8px; align-items:center; font-size:13px; cursor:pointer; text-transform:none; letter-spacing:0; color:var(--ink); margin:4px 0 12px;">
+      <input type="checkbox" id="pmEnviar" style="width:18px; height:18px;"> Revisei — já enviar pro atleta</label>
+    <div class="row" style="justify-content:flex-end;"><button class="btn btn-primary" id="pmSalvar">Salvar post</button></div>`, {largo:true});
+  document.getElementById('modalCloseBtn').onclick = closeModal;
+  const val = (id)=> document.getElementById(id).value;
+  const atletaSel = ()=> (opts.atletas||[]).find(a=>a.id===val('pmAtleta'));
+  const produtoSel = ()=> (opts.produtos||[]).find(p=>p.id===val('pmProduto')) || null;
+  document.getElementById('pmEnviar').onchange = (e)=>{ document.getElementById('pmSalvar').textContent = e.target.checked ? 'Salvar e enviar pro atleta' : 'Salvar post'; };
+  document.getElementById('pmIA').onclick = async (ev)=>{
+    const btn = ev.currentTarget, st = document.getElementById('pmIAStatus'), a = atletaSel(), p = produtoSel();
+    if(!a){ toast('Escolha o atleta'); return; }
+    btn.disabled = true; btn.innerHTML = '<span class="loader" style="border-top-color:var(--orange);border-color:rgba(0,0,0,0.1);"></span> Escrevendo…'; st.textContent = 'A IA está escrevendo… pode levar até 1 minuto.';
+    try{
+      const ciclo = await sb.from('cycles').select('theme_geral, trends_notes, briefing_text').eq('ym', val('pmData').slice(0,7)).maybeSingle();
+      const { data, error } = await invocarFuncao('gerar-roteiro', {
+        athlete:a, produto: p ? {name:p.name, desc:p.desc||''} : {name:'__SEM_PRODUTO__', desc:''},
+        entry:{ date:val('pmData'), format:val('pmFormato'), theme:val('pmTema').trim() },
+        temaGeral:ciclo.data?.theme_geral||'', trendsNotes:ciclo.data?.trends_notes||'', briefingText:ciclo.data?.briefing_text||'', histAnterior:null });
+      if(error) throw error; if(data?.error) throw new Error(data.error);
+      document.getElementById('pmTexto').value = data.roteiro || ''; st.textContent = 'Pronto — revise e ajuste se precisar.';
+    }catch(err){ st.innerHTML = `<span style="color:var(--red);">${escHtml(err.message||String(err))}</span>`; }
+    btn.disabled = false; btn.textContent = '✨ Escrever com IA de novo';
+  };
+  document.getElementById('pmSalvar').onclick = async (ev)=>{
+    const a = atletaSel(), p = produtoSel(), data = val('pmData'), texto = val('pmTexto'), enviar = document.getElementById('pmEnviar').checked;
+    if(!a || !data){ toast('Escolha o atleta e a data'); return; }
+    if(enviar && !texto.trim()){ toast('Escreva o roteiro antes de enviar'); return; }
+    const btn = ev.currentTarget; btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Salvando…';
+    try{
+      const ciclo = await garantirCiclo(data.slice(0,7));
+      const agora = new Date().toISOString();
+      const linha = { cycle_id:ciclo.id, athlete_id:a.id, team:a.team, product: p ? p.name : SEM_PRODUTO, theme:val('pmTema').trim(), format:val('pmFormato'),
+        post_date:data, roteiro:texto, manual:true, ...(enviar ? { enviado_em:agora, roteiro_enviado:texto } : {}) };
+      const { data: criada, error } = await sb.from('entries').insert(linha).select().single();
+      if(error) throw error;
+      closeModal(); toast(enviar ? `Post criado e enviado pra ${a.name.split(' ')[0]} ✓` : 'Post manual criado (rascunho)');
+      if(opts.onCriado) opts.onCriado(criada);
+    }catch(err){ btn.disabled = false; btn.textContent = enviar ? 'Salvar e enviar pro atleta' : 'Salvar post'; erroBanco(err, MIGRACAO_MANUAIS); }
+  };
 }

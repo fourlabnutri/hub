@@ -4,11 +4,12 @@ import { createClient } from '@supabase/supabase-js';
 import { quem } from './_auth.js';
 
 const TABELAS = new Set(['athletes', 'cycles', 'entries', 'products', 'teams', 'roteiro_exemplos', 'roteiro_biblioteca', 'crm_cards',
-  'blog_textos', 'avisos', 'vendas_mensais', 'comissao_pagamentos', 'ia_contexto']);
+  'blog_textos', 'avisos', 'vendas_mensais', 'comissao_pagamentos', 'ia_contexto',
+  'atleta_cadastro', 'atleta_compras', 'ia_acesso', 'ia_pedidos', 'sugestao_exemplos', 'sugestao_gravacoes', 'sugestoes', 'sugestoes_conteudo']);
 const METODOS = new Set(['from', 'select', 'insert', 'update', 'upsert', 'delete', 'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in',
   'contains', 'containedBy', 'or', 'not', 'filter', 'match', 'order', 'limit', 'range', 'single', 'maybeSingle', 'textSearch']);
 const FILTROS = new Set(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in', 'contains', 'containedBy', 'or', 'not', 'filter', 'match', 'textSearch']);
-const FUNCOES = new Set(['gerar-roteiro', 'buscar-trends', 'gerar-cupom', 'yampi-sync-atleta', 'criar-acesso-atleta']);
+const FUNCOES = new Set(['gerar-roteiro', 'buscar-trends', 'gerar-cupom', 'yampi-sync-atleta', 'yampi-compras-atleta', 'gerar-sugestao', 'criar-acesso-atleta']);
 const BUCKETS = new Set(['briefings']);
 
 let cliente;
