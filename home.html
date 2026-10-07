@@ -33,6 +33,18 @@
   .home-btn:hover{ background:var(--orange); border-color:var(--orange); color:#fff; }
   .home-btn svg{ width:14px; height:14px; }
   @media print{ .home-btn{ display:none; } }
+</style><style>
+  @media print{
+    @page{ size:A4; margin:20mm 12mm 18mm;
+      @top-left{ content:url(assets/logo-print.svg) "  FourLab Nutrition"; font:700 10pt Arial, Helvetica, sans-serif; color:#222; vertical-align:middle; }
+      @bottom-left{ content:"Documento interno · FourLab Nutrition"; font:8.5pt Arial, Helvetica, sans-serif; color:#666; }
+      @bottom-right{ content:"Página " counter(page) " de " counter(pages); font:8.5pt Arial, Helvetica, sans-serif; color:#666; }
+    }
+    html, body, .shell, main{ background:#fff !important; }
+    *{ box-shadow:none !important; text-shadow:none !important; }
+    .card, .panel, .tile, .kpi{ border:1px solid #e3ddd5 !important; }
+    body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
 </style>
 </head>
 <body>
