@@ -55,3 +55,9 @@ Elas leem e gravam no **mesmo banco do app dos atletas** (outro projeto do Supab
 Tela `usuarios.html` (só quem tem o acesso `usuarios`, a Diretoria sempre tem): cria pessoas (login + senha provisória), define cargo, acessos extras, ativa/desativa, redefine senha e edita o que cada cargo enxerga.
 - Rode `supabase/003_cargos_usuarios.sql` no Supabase do hub (cria `cargos` e `profiles.extras`).
 - Variável no Vercel (Secret): `SUPABASE_SERVICE_KEY` = chave service_role do Supabase do HUB (não a dos atletas). Sem ela, o hub segue com os cargos fixos de `api/_auth.js`.
+
+## Pagamentos a atletas (Contas a pagar)
+Todo dia 1, às 08:00 (Brasília), o Vercel Cron chama `/api/fechamento`: cria a pendência de fee (+ rebate) de quem tem fee e a de comissão de quem passou de R$ 100 de saldo. Roda também sob demanda pelo botão "Atualizar fechamento do mês". Idempotente.
+- SQL: `supabase-atletas/001_fechamentos_pagamento.sql` no Supabase **dos atletas**.
+- Variável no Vercel (Secret): `CRON_SECRET` (qualquer texto longo e aleatório; o Vercel o envia no cron).
+- `api/pagamentos-atletas.js` registra o pagamento nas mesmas tabelas do app (`fee_pagamentos`, `comissao_pagamentos`, `comprovantes`) e guarda o arquivo na pasta privada `comprovantes`, para o atleta ver no Meu Perfil. Arquivo até 3 MB.
