@@ -1,7 +1,7 @@
 // Login (Supabase do hub) + perfil -> páginas liberadas. Usado por /api/report e /api/gestao.
 // perfil -> módulos que pode abrir (o arquivo build.py define os nomes/ordem na tela)
 const GESTAO = ['gestao-home', 'gestao-briefing', 'gestao-ciclo', 'gestao-sugestoes', 'gestao-acompanhamento', 'gestao-blog', 'gestao-biblioteca', 'gestao-ia',
-  'gestao-atletas', 'gestao-crm', 'gestao-vendas', 'gestao-avisos', 'gestao-produtos'];
+  'gestao-atletas', 'gestao-crm', 'gestao-vendas', 'gestao-avisos', 'gestao-produtos', 'gestao-programa-creators'];
 const MARKETING = ['loja', 'vendas', 'campanhas', 'canais', 'app-atletas', ...GESTAO];
 export const ACESSO = {
   diretoria: ['receber', 'pagar', 'producao', ...MARKETING],

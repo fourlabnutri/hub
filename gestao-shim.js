@@ -34,12 +34,15 @@ const GESTAO = (() => {
     from: t => cadeia([{ m: 'from', a: [t] }]),
     storage: { from: bucket => ({
       async upload(path, file, opts) {
+        if (file.size > 3 * 1024 * 1024) return { data: null, error: { message: 'Arquivo maior que 3 MB. Reduza ou tire um print do comprovante.' } };
         const buf = await file.arrayBuffer(); let bin = ''; const bytes = new Uint8Array(buf);
         for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
         const r = await chamar({ storage: { bucket, path, base64: btoa(bin), contentType: file.type, upsert: !!(opts && opts.upsert) } });
         if (r.data && r.data.publicUrl) publicas[bucket + '/' + path] = r.data.publicUrl;
         return r;
       },
+      createSignedUrl: (path, expires) => chamar({ storage: { bucket, path, acao: 'signed', expires } }),
+      remove: async paths => { for (const p of paths) { const r = await chamar({ storage: { bucket, path: p, acao: 'remove' } }); if (r.error) return r; } return { data: paths, error: null }; },
       getPublicUrl: path => ({ data: { publicUrl: publicas[bucket + '/' + path] || '' } }),
     }) },
   };

@@ -5,12 +5,13 @@ import { quem } from './_auth.js';
 
 const TABELAS = new Set(['athletes', 'cycles', 'entries', 'products', 'teams', 'roteiro_exemplos', 'roteiro_biblioteca', 'crm_cards',
   'blog_textos', 'avisos', 'vendas_mensais', 'comissao_pagamentos', 'ia_contexto',
-  'atleta_cadastro', 'atleta_compras', 'ia_acesso', 'ia_pedidos', 'sugestao_exemplos', 'sugestao_gravacoes', 'sugestoes', 'sugestoes_conteudo']);
+  'atleta_cadastro', 'atleta_compras', 'ia_acesso', 'ia_pedidos', 'sugestao_exemplos', 'sugestao_gravacoes', 'sugestoes', 'sugestoes_conteudo',
+  'fee_pagamentos', 'comprovantes', 'creators', 'creator_calendario', 'creator_entregas', 'creator_envios', 'creator_eventos', 'creator_mensagens', 'creator_semanas']);
 const METODOS = new Set(['from', 'select', 'insert', 'update', 'upsert', 'delete', 'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in',
   'contains', 'containedBy', 'or', 'not', 'filter', 'match', 'order', 'limit', 'range', 'single', 'maybeSingle', 'textSearch']);
 const FILTROS = new Set(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in', 'contains', 'containedBy', 'or', 'not', 'filter', 'match', 'textSearch']);
-const FUNCOES = new Set(['gerar-roteiro', 'buscar-trends', 'gerar-cupom', 'yampi-sync-atleta', 'yampi-compras-atleta', 'gerar-sugestao', 'criar-acesso-atleta']);
-const BUCKETS = new Set(['briefings']);
+const FUNCOES = new Set(['gerar-roteiro', 'buscar-trends', 'gerar-cupom', 'yampi-sync-atleta', 'yampi-compras-atleta', 'gerar-sugestao', 'criar-acesso-atleta', 'criar-acesso-creator']);
+const BUCKETS = new Set(['briefings', 'sugestoes', 'comprovantes']);   // comprovantes é privado: só abre com link temporário
 
 let cliente;
 const atletas = () => cliente || (cliente = createClient(process.env.ATLETAS_URL, process.env.ATLETAS_SERVICE_KEY, { auth: { persistSession: false, autoRefreshToken: false } }));
@@ -55,10 +56,17 @@ export default async function handler(req, res) {
       return res.status(200).json({ data, error: null });
     }
     if (corpo.storage) {
-      const { bucket, path, base64, contentType, upsert } = corpo.storage;
+      const { bucket, path, base64, contentType, upsert, acao } = corpo.storage;
       if (!BUCKETS.has(bucket) || typeof path !== 'string' || path.includes('..') || path.startsWith('/')) return res.status(400).json({ erro: 'arquivo inválido' });
+      if (acao === 'signed' || acao === 'remove') {       // só no bucket privado de comprovantes
+        if (bucket !== 'comprovantes') return res.status(400).json({ erro: 'ação não permitida' });
+        if (acao === 'remove') { const r = await atletas().storage.from(bucket).remove([path]); return res.status(200).json({ data: r.data ?? null, error: r.error ? { message: r.error.message } : null }); }
+        const r = await atletas().storage.from(bucket).createSignedUrl(path, Math.min(Number(corpo.storage.expires) || 300, 600));
+        return res.status(200).json({ data: r.data ?? null, error: r.error ? { message: r.error.message } : null });
+      }
       const up = await atletas().storage.from(bucket).upload(path, Buffer.from(base64, 'base64'), { upsert: !!upsert, contentType });
       if (up.error) return res.status(200).json({ data: null, error: { message: up.error.message } });
+      if (bucket === 'comprovantes') return res.status(200).json({ data: { path }, error: null });
       const { data } = atletas().storage.from(bucket).getPublicUrl(path);
       return res.status(200).json({ data: { path, publicUrl: data.publicUrl }, error: null });
     }
