@@ -35,6 +35,7 @@
   .more{ text-align:center; margin-top:10px; }
   .atl-mes{ border:1px solid var(--line); border-radius:14px; margin-top:12px; background:#fff; } .atl-mes>summary{ cursor:pointer; padding:12px 16px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; font-weight:700; list-style:none; } .atl-mes>summary::-webkit-details-marker{ display:none; }
   .atl-mes>summary .tot{ margin-left:auto; font-weight:600; font-size:12.5px; color:var(--muted); } .atl-mes .tbl-wrap{ padding:0 12px 12px; }
+  .atl-resumo{ display:flex; flex-wrap:wrap; align-items:center; gap:0 18px; background:var(--orange-soft); border-radius:14px; padding:12px 18px; margin:6px 0 4px; } .atl-resumo .l{ font-weight:700; font-size:13px; } .atl-resumo .v{ font-size:22px; font-weight:800; padding-left:18px; border-left:1px solid rgba(0,0,0,.18); } .atl-resumo .n{ font-size:13px; color:var(--ink-2); padding-left:18px; border-left:1px solid rgba(0,0,0,.18); }
   #atlModal{ margin:auto; border:0; border-radius:20px; padding:24px; width:min(480px,calc(100% - 32px)); max-height:calc(100vh - 32px); overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.25); } #atlModal::backdrop{ background:rgba(0,0,0,.4); }
   #atlModal h3{ margin-bottom:6px; } #atlModal .f{ display:flex; flex-direction:column; gap:4px; margin:12px 0; font-size:12px; font-weight:700; } #atlModal input{ font:inherit; font-weight:500; font-size:14px; border:1px solid rgba(0,0,0,.18); border-radius:10px; padding:9px 11px; }
   @media print{ .sidebar,.filters,.no-print{ display:none !important; } .shell{ display:block; } }
@@ -220,7 +221,8 @@ function csv(tipo){
   const txt='﻿'+[cab,...rows].map(r=>r.map(v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`).join(';')).join('\r\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'})); a.download=`pagar_${nome}_${HOJE}.csv`; a.click(); }
 // ---------- Pagamentos a atletas (fechamento do dia 1: fee + rebate e comissão acima de R$ 100) ----------
-const ATL = { linhas:null, erro:'' };
+const ATL = { linhas:null, erro:'', fechando:false };
+const atlRoda = '<span class="loader" style="width:12px;height:12px;border-width:2px;border-top-color:var(--orange);border-color:rgba(0,0,0,0.12);vertical-align:-2px;margin-right:6px"></span>';
 const MES_NOME = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const atlTotal = l => (Number(l.valor_fee)||0) + (Number(l.valor_comissao)||0);
 async function atlApi(acao, corpo){
@@ -239,14 +241,14 @@ function atlDesenhar(){
   if(typeof sb === 'undefined'){ el.innerHTML=''; return; }
   const L = ATL.linhas;
   const cab = `<div class="card-head"><div><h2>Pagamentos a atletas</h2><div class="desc">Fee mensal + rebate e comissão (só quando o saldo passa de R$ 100). O fechamento roda sozinho todo dia 1; o comprovante fica guardado e o atleta vê o dele no perfil.</div></div>
-    <div class="row no-print"><button class="btn btn-ghost btn-sm" onclick="atlFechar()">Atualizar fechamento do mês</button></div></div>`;
+    <div class="row no-print"><button class="btn btn-ghost btn-sm" onclick="atlFechar()" ${ATL.fechando?'disabled':''}>${ATL.fechando?atlRoda+'Atualizando…':'Atualizar fechamento do mês'}</button></div></div>`;
   if(L===null){ el.innerHTML = `<div class="panel">${cab}<div class="desc">Carregando…</div></div>`; return; }
   if(ATL.erro){ el.innerHTML = `<div class="panel">${cab}<div class="aviso" style="margin:0">${esc(ATL.erro)}</div></div>`; return; }
   const pend = L.filter(l=>l.status==='pendente');
   const grupos = {}; L.forEach(l=>{ (grupos[l.vencimento.slice(0,7)] = grupos[l.vencimento.slice(0,7)] || []).push(l); });
   const meses = Object.keys(grupos).sort().reverse();
   el.innerHTML = `<div class="panel">${cab}
-    <div class="tiles4" style="margin:6px 0 0"><div class="tile t-orange"><div class="t-label" style="font-weight:700">A pagar</div><div class="t-foot"><div><div class="t-value">${BRL(pend.reduce((t,l)=>t+atlTotal(l),0))}</div><div class="t-label">${pend.length} pagamento(s) pendente(s)</div></div></div></div></div>
+    <div class="atl-resumo"><span class="l">A pagar</span><span class="v">${BRL(pend.reduce((t,l)=>t+atlTotal(l),0))}</span><span class="n">${pend.length} pagamento(s) pendente(s)</span></div>
     ${meses.length ? meses.map((m,i)=>{ const g = grupos[m].sort((a,b)=>(a.status==='pago')-(b.status==='pago') || a.vencimento.localeCompare(b.vencimento)); const p = g.filter(l=>l.status==='pendente');
       return `<details class="atl-mes" ${p.length?'open':''}><summary><span>${MES_NOME[Number(m.slice(5,7))-1]} de ${m.slice(0,4)}</span><span class="tot">${g.length} pagamento(s) · pendente ${BRL(p.reduce((t,l)=>t+atlTotal(l),0))} de ${BRL(g.reduce((t,l)=>t+atlTotal(l),0))}</span></summary>
       <div class="tbl-wrap"><table><thead><tr><th>Atleta</th><th>Tipo</th><th class="num">Total</th><th>Vencimento</th><th>Situação</th><th>PIX</th><th></th></tr></thead><tbody>
@@ -258,10 +260,12 @@ function atlDesenhar(){
   </div>`;
 }
 async function atlFechar(){
-  if(!confirm('Gerar (ou atualizar) as pendências deste mês agora? Quem já foi pago não muda.')) return;
+  if(ATL.fechando || !confirm('Gerar (ou atualizar) as pendências deste mês agora? Quem já foi pago não muda.')) return;
+  ATL.fechando = true; atlDesenhar();
   try{ const { data } = await sb.auth.getSession(); const r = await fetch('/api/fechamento', { headers:{ Authorization:'Bearer '+data.session.access_token } }); const j = await r.json(); if(!r.ok) throw new Error(j.erro||('erro '+r.status));
     alert(`Fechamento de ${j.mes}\n\nNovas pendências: ${j.criados.length}\nAtualizadas: ${j.atualizados.length}${j.erros.length?'\n\nNão calculei:\n'+j.erros.join('\n'):''}`); await atlCarregar();
   }catch(e){ alert('Não consegui fechar: '+e.message); }
+  finally{ ATL.fechando = false; atlDesenhar(); }
 }
 async function atlArquivo(id){ const w = window.open('', '_blank'); try{ const j = await atlApi('arquivo',{ id }); w.location = j.url; }catch(e){ w.close(); alert(e.message); } }
 function atlPagar(id){
@@ -278,14 +282,14 @@ function atlPagar(id){
   const tot = ()=>{ document.getElementById('atlTot').innerHTML = 'Total: <b>'+BRL((Number((document.getElementById('atlFee')||{}).value)||0)+(Number(document.getElementById('atlCom').value)||0))+'</b>'; };
   m.querySelectorAll('input[type=number]').forEach(i=>i.oninput=tot); tot();
   document.getElementById('atlOk').onclick = async ev=>{
-    const er = document.getElementById('atlErro'); er.style.display='none'; const btn = ev.currentTarget; btn.disabled = true;
+    const er = document.getElementById('atlErro'); er.style.display='none'; const btn = ev.currentTarget; btn.disabled = true; btn.innerHTML = atlRoda + 'Salvando…';
     try{
       const f = document.getElementById('atlArq').files[0]; let arquivo = null;
       if(f){ if(f.size > 3*1024*1024) throw new Error('O comprovante passa de 3 MB. Envie um print ou PDF menor.');
         arquivo = { nome:f.name, tipo:f.type, base64: await new Promise((ok,no)=>{ const r=new FileReader(); r.onload=()=>ok(String(r.result).split(',')[1]); r.onerror=()=>no(new Error('Não consegui ler o arquivo')); r.readAsDataURL(f); }) }; }
       const j = await atlApi('pagar',{ id, valor_fee:(document.getElementById('atlFee')||{}).value||0, valor_comissao:document.getElementById('atlCom').value, data:document.getElementById('atlData').value, obs:document.getElementById('atlObs').value, arquivo });
       m.close(); if(j.aviso) alert(j.aviso); await atlCarregar();
-    }catch(e){ er.textContent = e.message; er.style.display=''; btn.disabled = false; }
+    }catch(e){ er.textContent = e.message; er.style.display=''; btn.disabled = false; btn.textContent = 'Registrar pagamento'; }
   };
   m.showModal();
 }
