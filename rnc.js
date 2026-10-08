@@ -1,6 +1,5 @@
 // RNC de recebimento: formulário (celular primeiro), registros e códigos de avaria. Fala com /api/rnc.
 (async () => {
-  const sb = window.supabase.createClient(HUB_CONFIG.SUPABASE_URL, HUB_CONFIG.SUPABASE_ANON_KEY);
   const u = await GESTAO.entrar('@rnc');
   if (!u) return;
   const $ = s => document.querySelector(s);
@@ -9,13 +8,8 @@
   const hoje = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
   const nRNC = n => 'RNC-' + String(n).padStart(4, '0');
 
-  async function api(acao, corpo) {
-    const { data } = await sb.auth.getSession();
-    const r = await fetch('/api/rnc', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.session.access_token }, body: JSON.stringify({ acao, ...corpo }) });
-    const j = await r.json().catch(() => ({ erro: 'Resposta inválida do servidor.' }));
-    if (!r.ok) throw new Error(j.erro || 'Erro ' + r.status);
-    return j;
-  }
+  const B = window.RNC_ADAPTER;
+  if (B.aviso) { const a = document.createElement('div'); a.className = 'aviso'; a.style.cssText = 'background:#fff4c9;border:1px solid #f5e39a;color:#6b5200;border-radius:14px;padding:10px 14px;font-size:12.5px;margin-bottom:14px;max-width:880px'; a.textContent = B.aviso; $('.r-tabs').before(a); }
 
   // ---- abas ----
   let aba = 'nova';
@@ -34,10 +28,10 @@
   $('#data').value = hoje();
   async function carregarOpcoes() {
     try {
-      const o = await api('opcoes', {}), atual = $('#codigo_avaria').value;
+      const o = await B.opcoes(), atual = $('#codigo_avaria').value;
       $('#codigo_avaria').innerHTML = '<option value="">Escolha…</option>' + o.codigos.map(c => `<option value="${esc(c.codigo)}">${esc(c.codigo)} - ${esc(c.descricao)}</option>`).join('');
       $('#codigo_avaria').value = atual;
-      if (o.codigosAdmin) $('#tabCodigos').hidden = false;
+      if (o.podeGerenciar) $('#tabCodigos').hidden = false;
     } catch (e) { mostrarErro(e.message); }
   }
   await carregarOpcoes();
@@ -78,19 +72,8 @@
     if (!v('data')) { mostrarErro('Informe a data de recebimento.'); return; }
     const btn = $('#enviar'); btn.disabled = true; const rotulo = btn.textContent;
     try {
-      let paths = [];
-      if (fotos.length) {
-        btn.textContent = 'Preparando fotos…';
-        const { fotos: slots } = await api('fotos', { qtd: fotos.length, exts: fotos.map(f => f.ext) });
-        for (let i = 0; i < slots.length; i++) {
-          btn.textContent = `Enviando foto ${i + 1} de ${slots.length}…`;
-          const up = await sb.storage.from('rnc-fotos').uploadToSignedUrl(slots[i].path, slots[i].token, fotos[i].blob, { contentType: fotos[i].blob.type || 'image/jpeg' });
-          if (up.error) throw new Error('Não consegui enviar a foto ' + (i + 1) + ': ' + up.error.message);
-          paths.push(slots[i].path);
-        }
-      }
-      btn.textContent = 'Salvando…';
-      const r = await api('criar', { nf: v('nf'), transportadora: v('transportadora'), data_recebimento: v('data'), fornecedor: v('fornecedor'), item_nome: v('item_nome'), item_codigo: v('item_codigo'), codigo_avaria: v('codigo_avaria'), descricao: v('descricao'), fotos: paths });
+      btn.textContent = fotos.length ? 'Enviando fotos…' : 'Salvando…';
+      const r = await B.criar({ nf: v('nf'), transportadora: v('transportadora'), data_recebimento: v('data'), fornecedor: v('fornecedor'), item_nome: v('item_nome'), item_codigo: v('item_codigo'), codigo_avaria: v('codigo_avaria'), descricao: v('descricao') }, fotos.map(f => ({ blob: f.blob, ext: f.ext })), (i, n) => { btn.textContent = `Enviando foto ${i} de ${n}…`; });
       sucesso(r.numero);
     } catch (e) { mostrarErro(e.message); }
     btn.disabled = false; btn.textContent = rotulo;
@@ -116,7 +99,7 @@
   let registros = [];
   async function carregarLista() {
     $('#lista').innerHTML = '<tr><td colspan="7" style="padding:18px">Carregando…</td></tr>';
-    try { registros = (await api('listar', {})).registros; desenharLista(); }
+    try { registros = await B.listar(); desenharLista(); }
     catch (e) { $('#lista').innerHTML = `<tr><td colspan="7" style="padding:18px">${esc(e.message)}</td></tr>`; }
   }
   function desenharLista() {
@@ -136,7 +119,7 @@
   async function abrirDetalhe(id) {
     mostrar('detalhe'); $('#detalhe').innerHTML = 'Carregando…';
     try {
-      const r = (await api('detalhe', { id })).registro;
+      const r = await B.detalhe(id);
       $('#detalhe').innerHTML = `<div class="r-btns no-print" style="margin-bottom:16px"><button class="r-btn sec" id="volta">← Voltar</button><button class="r-btn sec" onclick="window.print()">Imprimir / PDF</button></div>
         <h2 style="margin-bottom:12px">${nRNC(r.numero)}</h2>
         <dl><dt>Data de recebimento</dt><dd>${dBR(r.data_recebimento)}</dd><dt>Número da NF</dt><dd>${esc(r.nf)}</dd><dt>Transportadora</dt><dd>${esc(r.transportadora)}</dd><dt>Fornecedor</dt><dd>${esc(r.fornecedor)}</dd>
@@ -150,9 +133,9 @@
   // ---- códigos de avaria ----
   async function carregarCodigos(corpo) {
     try {
-      const j = await api(corpo ? 'salvarCodigo' : 'codigos', corpo || {});
+      const lista = corpo ? await B.salvarCodigo(corpo) : await B.codigos();
       if (corpo) carregarOpcoes();   // a lista do formulário acompanha
-      $('#codigos').innerHTML = j.codigos.map(c => `<div class="r-cod" data-c="${esc(c.codigo)}"><b>${esc(c.codigo)}</b><input type="text" value="${esc(c.descricao)}" class="d"><label class="ac" style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" class="a" ${c.ativo ? 'checked' : ''}> Ativo</label><div class="ac"><button class="r-btn sec s">Salvar</button></div></div>`).join('');
+      $('#codigos').innerHTML = lista.map(c => `<div class="r-cod" data-c="${esc(c.codigo)}"><b>${esc(c.codigo)}</b><input type="text" value="${esc(c.descricao)}" class="d"><label class="ac" style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" class="a" ${c.ativo ? 'checked' : ''}> Ativo</label><div class="ac"><button class="r-btn sec s">Salvar</button></div></div>`).join('');
       $('#codigos').querySelectorAll('.r-cod').forEach(el => el.querySelector('.s').onclick = async () => {
         try { await carregarCodigos({ codigo: el.dataset.c, descricao: el.querySelector('.d').value, ativo: el.querySelector('.a').checked }); $('#erroCod').style.display = 'none'; }
         catch (e) { $('#erroCod').textContent = e.message; $('#erroCod').style.display = 'block'; }
