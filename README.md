@@ -61,3 +61,12 @@ Todo dia 1, às 08:00 (Brasília), o Vercel Cron chama `/api/fechamento`: cria a
 - SQL: `supabase-atletas/001_fechamentos_pagamento.sql` no Supabase **dos atletas**.
 - Variável no Vercel (Secret): `CRON_SECRET` (qualquer texto longo e aleatório; o Vercel o envia no cron).
 - `api/pagamentos-atletas.js` registra o pagamento nas mesmas tabelas do app (`fee_pagamentos`, `comissao_pagamentos`, `comprovantes`) e guarda o arquivo na pasta privada `comprovantes`, para o atleta ver no Meu Perfil. Arquivo até 3 MB.
+
+## RNC de recebimento (Qualidade)
+Formulário de avaria na chegada da mercadoria (`rnc.html`, lógica em `rnc.js`, API em `api/rnc.js`). Fotos sobem direto do celular para a pasta privada `rnc-fotos` (URL assinada).
+- SQL: `supabase/006_rnc.sql` no Supabase do hub (tabelas `rnc_registros` e `rnc_codigos_avaria`, pasta das fotos e o cargo "Recebimento").
+- Acessos: `rnc` (formulário e registros) e `rnc-codigos` (gerenciar códigos de avaria). Diretoria vê os dois.
+- Nekt: ainda por ligar (tabela `rnc_registros`; fotos em `fotos` como caminhos da pasta `rnc-fotos`).
+
+## Celular
+`mobile-menu.js` coloca a barra de topo com botão de menu em todas as telas; o CSS do menu que desliza está em `shared.css`.

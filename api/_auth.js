@@ -4,12 +4,12 @@ const GESTAO = ['gestao-home', 'gestao-briefing', 'gestao-ciclo', 'gestao-sugest
   'gestao-atletas', 'gestao-crm', 'gestao-vendas', 'gestao-avisos', 'gestao-produtos', 'gestao-programa-creators'];
 const MARKETING = ['loja', 'vendas', 'campanhas', 'canais', 'app-atletas', ...GESTAO];
 export const ACESSO = {
-  diretoria: ['receber', 'pagar', 'producao', ...MARKETING],
+  diretoria: ['receber', 'pagar', 'producao', 'rnc', 'rnc-codigos', ...MARKETING],
   comercial: ['receber'],
   marketing: MARKETING,
 };
 
-export const TODAS = ['receber', 'pagar', 'producao', 'loja', 'vendas', 'campanhas', 'canais', 'app-atletas', ...GESTAO, 'usuarios'];
+export const TODAS = ['receber', 'pagar', 'producao', 'loja', 'vendas', 'campanhas', 'canais', 'app-atletas', ...GESTAO, 'rnc', 'rnc-codigos', 'usuarios'];
 
 // cargo (tabela cargos, editável na tela Usuários) + acessos extras da pessoa. Sem a chave service ou sem a tabela, cai no ACESSO fixo acima.
 async function paginasDe(perfil) {
