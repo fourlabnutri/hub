@@ -11,14 +11,12 @@
   const LABELS_FONTE = ['Padrão','Grande','Maior','Muito grande','Máxima'];
 
   let nivelFonte = parseInt(localStorage.getItem('a11y_fonte') || '0', 10);
-  let contraste = localStorage.getItem('a11y_contraste') === '1';
   let temaEscuro = localStorage.getItem('a11y_escuro') === '1';
   let espacado = localStorage.getItem('a11y_espacado') === '1';
   let leituraFacil = localStorage.getItem('a11y_leitura') === '1';
 
   function salvar(){
     localStorage.setItem('a11y_fonte', nivelFonte);
-    localStorage.setItem('a11y_contraste', contraste ? '1' : '0');
     localStorage.setItem('a11y_escuro', temaEscuro ? '1' : '0');
     localStorage.setItem('a11y_espacado', espacado ? '1' : '0');
     localStorage.setItem('a11y_leitura', leituraFacil ? '1' : '0');
@@ -26,8 +24,7 @@
 
   function aplicar(){
     document.documentElement.style.zoom = NIVEIS_FONTE[nivelFonte];
-    document.documentElement.classList.toggle('a11y-contraste', contraste);
-    document.documentElement.classList.toggle('a11y-escuro', temaEscuro && !contraste);
+    document.documentElement.classList.toggle('a11y-escuro', temaEscuro);
     document.documentElement.classList.toggle('a11y-espacado', espacado);
     document.documentElement.classList.toggle('a11y-leitura', leituraFacil);
     atualizarPainel();
@@ -36,8 +33,6 @@
   function atualizarPainel(){
     const fonteLabel = document.getElementById('a11yFonteLabel');
     if(fonteLabel) fonteLabel.textContent = LABELS_FONTE[nivelFonte];
-    const tContraste = document.getElementById('a11yToggleContraste');
-    if(tContraste) tContraste.classList.toggle('on', contraste);
     const tEscuro = document.getElementById('a11yToggleEscuro');
     if(tEscuro) tEscuro.classList.toggle('on', temaEscuro);
     const tEspacado = document.getElementById('a11yToggleEspacado');
@@ -83,26 +78,6 @@
 
       html.a11y-leitura body{font-family:Arial, Helvetica, sans-serif !important;}
 
-      html.a11y-contraste{
-        --burgundy:#FFD600 !important; --burgundy-tint:transparent !important;
-        --ink:#FFFFFF !important; --paper:#000000 !important; --line:#777777 !important; --gray:#DDDDDD !important;
-        --good:#00E676 !important; --good-tint:transparent !important;
-        --bad:#FF5252 !important; --bad-tint:transparent !important;
-        --warn:#FFD600 !important; --warn-tint:transparent !important;
-        --info:#40C4FF !important; --info-tint:transparent !important;
-      }
-      html.a11y-contraste body{background:#000 !important;color:#fff !important;}
-      html.a11y-contraste *:not(.a11y-fab):not(.a11y-panel):not(.a11y-panel *){
-        background:transparent !important;
-        color:#fff !important;
-        border-color:#777 !important;
-        box-shadow:none !important;
-      }
-      html.a11y-contraste input:not(.a11y-fab), html.a11y-contraste select, html.a11y-contraste textarea{
-        background:#000 !important; color:#fff !important; border:1px solid #999 !important;
-      }
-      html.a11y-contraste a{color:#FFD600 !important; text-decoration:underline;}
-
       /* Tema escuro por inversão de cor — mesma técnica que extensões
          de "modo escuro forçado" usam. Não depende de nenhuma classe,
          variável ou estrutura da página: funciona igual em qualquer
@@ -126,7 +101,7 @@
     fab.className = 'a11y-fab';
     fab.title = 'Acessibilidade';
     fab.setAttribute('aria-label', 'Abrir opções de acessibilidade');
-    fab.innerHTML = `♿<span class="a11y-fab-fechar" id="a11yFecharBtn" title="Esconder" aria-label="Esconder botão de acessibilidade">×</span>`;
+    fab.innerHTML = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="1.8" fill="currentColor" stroke="none"/><path d="M5 8.5c4.5 1.2 9.5 1.2 14 0"/><path d="M12 9.8v4.4"/><path d="M12 14.2 9 20.5"/><path d="M12 14.2l3 6.3"/></svg><span class="a11y-fab-fechar" id="a11yFecharBtn" title="Esconder" aria-label="Esconder botão de acessibilidade">×</span>`;
 
     const painel = document.createElement('div');
     painel.className = 'a11y-panel';
@@ -141,12 +116,8 @@
         </div>
       </div>
       <div class="a11y-block a11y-row">
-        <span class="a11y-label" style="margin:0">🌙 Tema escuro</span>
+        <span class="a11y-label" style="margin:0">Tema escuro</span>
         <button class="a11y-toggle" id="a11yToggleEscuro" aria-label="Ativar tema escuro"></button>
-      </div>
-      <div class="a11y-block a11y-row" style="margin-top:12px">
-        <span class="a11y-label" style="margin:0">Alto contraste</span>
-        <button class="a11y-toggle" id="a11yToggleContraste" aria-label="Ativar alto contraste"></button>
       </div>
       <div class="a11y-block a11y-row" style="margin-top:12px">
         <span class="a11y-label" style="margin:0">Espaçamento de leitura</span>
@@ -213,7 +184,7 @@
     reabrirBtn.className = 'a11y-reabrir';
     reabrirBtn.title = 'Mostrar acessibilidade';
     reabrirBtn.setAttribute('aria-label', 'Mostrar botão de acessibilidade');
-    reabrirBtn.textContent = '♿';
+    reabrirBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="1.8" fill="currentColor" stroke="none"/><path d="M5 8.5c4.5 1.2 9.5 1.2 14 0"/><path d="M12 9.8v4.4"/><path d="M12 14.2 9 20.5"/><path d="M12 14.2l3 6.3"/></svg>';
     document.body.appendChild(reabrirBtn);
 
     function aplicarVisibilidade(){
@@ -248,12 +219,6 @@
     });
     document.getElementById('a11yToggleEscuro').addEventListener('click', () => {
       temaEscuro = !temaEscuro;
-      if(temaEscuro) contraste = false;
-      aplicar(); salvar();
-    });
-    document.getElementById('a11yToggleContraste').addEventListener('click', () => {
-      contraste = !contraste;
-      if(contraste) temaEscuro = false;
       aplicar(); salvar();
     });
     document.getElementById('a11yToggleEspacado').addEventListener('click', () => {
@@ -263,7 +228,7 @@
       leituraFacil = !leituraFacil; aplicar(); salvar();
     });
     document.getElementById('a11yReset').addEventListener('click', () => {
-      nivelFonte = 0; contraste = false; temaEscuro = false; espacado = false; leituraFacil = false;
+      nivelFonte = 0; temaEscuro = false; espacado = false; leituraFacil = false;
       aplicar(); salvar();
     });
   }
