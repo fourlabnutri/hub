@@ -16,6 +16,7 @@ const SECOES = {
   comercial: {
     clientes: `select c.cnpj, c.nome, c.telefone, c.telefone_valido, c.cidade_uf, c.status_carteira, c.dias_sem_comprar, c.pedidos, c.faturamento, c.ticket_medio, c.vencido, c.a_vencer, c.classe_credito, c.atraso_max_dias, cast(c.ultima_compra as string) as ultima_compra, c.valor_ultimo_pedido, c.produtos_ultimo_pedido, cast(c.atualizado_em as string) as atualizado_em, m.mix_12m, m.deixou_de_comprar, m.oportunidades_uf, cast(m.proxima_compra_prevista as string) as proxima_compra_prevista, m.dias_atraso_recompra, o.agendor_url from ${T('sdr_cliente_360')} c left join ${T('sdr_lojista_mix')} m on m.cnpj = c.cnpj left join (select cnpj, any_value(_webUrl) as agendor_url from fourlabnutri_agendor.agendor_organizations where cnpj is not null group by 1) o on o.cnpj = c.cnpj`,
     historico: `select o.cnpj, t.user.name as usuario, cast(t.createdAt as string) as criado, t.text as texto from fourlabnutri_agendor.agendor_tasks t join fourlabnutri_agendor.agendor_organizations o on o.id = t.organization.id where o.cnpj is not null qualify row_number() over (partition by o.cnpj order by t.createdAt desc) <= 10`,
+    produtos: `select title as titulo, json_value(to_json_string(p), '$.images[0].originalSrc') as imagem from fourlabnutri_shopify.shopify_products p where json_value(to_json_string(p), '$.images[0].originalSrc') is not null`,
   },
   pagar: {
     titulos: `select titulo_id, fornecedor_chave, fornecedor_nome, fornecedor_documento, email, telefone, categoria, eh_comissao, descricao, numero_documento, cast(emissao as string) as emissao, cast(vencimento_original as string) as vencimento_original, cast(vencimento as string) as vencimento, valor, saldo, situacao_titulo, dias_atraso, situacao_prazo, faixa_atraso from ${T('report_pagar_titulos')}`,
@@ -45,7 +46,15 @@ const SECOES = {
   },
 };
 
-const NUM = new Set(['dias_sem_comprar','faturamento','ticket_medio','valor_ultimo_pedido','dias_atraso_recompra','cliques','compras_plataforma','receita','valor_total','parcelas','pedidos','unidades','receita_produtos','receita_frete','receita_total','clientes','pedidos_com_cupom','pedidos_aguardando_pagamento','pedidos_cancelados','investimento','impressoes','alcance','cliques_link','visualizacoes_lp','inicios_checkout','compras_meta','valor_compras_meta','pedidos_produto','unidades_produto','receita_produto','saldo','valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
+// números do Início, um bloco por página liberada ao usuário
+const RESUMOS = {
+  receber: `select round(sum(if(situacao = 'vencido', valor, 0)), 2) as vencido, round(sum(if(situacao = 'a_vencer', valor, 0)), 2) as a_vencer, countif(situacao = 'vencido') as qtd_vencido from ${T('report_receber_titulos')}`,
+  pagar: `select round(sum(if(situacao_prazo = 'vencido', saldo, 0)), 2) as vencido, round(sum(if(situacao_prazo = 'a_vencer', saldo, 0)), 2) as a_vencer, countif(situacao_prazo = 'vencido') as qtd_vencido from ${T('report_pagar_titulos')}`,
+  comercial: `select countif(c.vencido > 0) as boleto, countif(c.vencido <= 0 and m.dias_atraso_recompra between 0 and 90) as recompra, countif(c.vencido <= 0 and m.dias_atraso_recompra between -7 and -1) as chegando, countif(c.vencido <= 0 and m.dias_atraso_recompra > 90) as reativar from ${T('sdr_cliente_360')} c left join ${T('sdr_lojista_mix')} m on m.cnpj = c.cnpj`,
+  loja: `select countif(status_grupo = 'pago') as pedidos, round(sum(if(status_grupo = 'pago', valor_total, 0)), 2) as receita from ${T('report_loja_pedidos')} where dia >= date_sub(current_date('America/Sao_Paulo'), interval 30 day)`,
+  producao: `select countif(status_op = 'produzindo') as produzindo, countif(status_op = 'em_producao') as na_fila from ${T('report_producao_ops')}`,
+};
+const NUM = new Set(['qtd_vencido','boleto','recompra','chegando','reativar','produzindo','na_fila','dias_sem_comprar','faturamento','ticket_medio','valor_ultimo_pedido','dias_atraso_recompra','cliques','compras_plataforma','receita','valor_total','parcelas','pedidos','unidades','receita_produtos','receita_frete','receita_total','clientes','pedidos_com_cupom','pedidos_aguardando_pagamento','pedidos_cancelados','investimento','impressoes','alcance','cliques_link','visualizacoes_lp','inicios_checkout','compras_meta','valor_compras_meta','pedidos_produto','unidades_produto','receita_produto','saldo','valor','dias_atraso','titulos_historico','pagos_em_dia','titulos_atrasados','atraso_medio_dias','atraso_max_dias','compras_total','pago_total','vencido','a_vencer','em_aberto','maior_atraso_dias','score','quantidade','etapa_ordem']);
 const BOOL = new Set(['telefone_valido', 'eh_comissao', 'dia_com_dados_meta', 'cliente_recorrente', 'recuperado']);
 
 function parseCsv(txt) {
@@ -110,6 +119,11 @@ export default async function handler(req, res) {
     const perfil = await quem(req);
     if (!perfil) return res.status(401).json({ erro: 'não autenticado' });
     const paginas = perfil.paginas;
+    if (req.query.resumo) {
+      const hit = cache.get('resumo'), base = hit && Date.now() - hit.t < TTL ? hit.v : Object.fromEntries(await Promise.all(Object.entries(RESUMOS).map(async ([k, sql]) => [k, await runQuery(sql).then(r => r[0] || null).catch(() => null)])));
+      if (base !== (hit && hit.v)) cache.set('resumo', { t: Date.now(), v: base });
+      return res.status(200).json({ resumo: Object.fromEntries(Object.entries(base).filter(([k]) => paginas.includes(k))) });
+    }
     const s = req.query.s;
     if (!s) return res.status(200).json({ perfil });
     if (!paginas.includes(s)) return res.status(403).json({ erro: 'sem acesso a esta área' });

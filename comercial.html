@@ -19,12 +19,45 @@
   .mot{ display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap; background:var(--orange-soft); color:#b5680a; }
   .mot.m2{ background:#fde8e8; color:#b42318; }
   .mot.m5{ background:#eee; color:#555; }
-  .ficha{ display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:6px 2px; }
-  @media (max-width:860px){ .ficha{ grid-template-columns:1fr; } }
-  .ficha h3{ font-size:12px; margin:0 0 4px; } .ficha p{ font-size:12.5px; line-height:1.5; margin:0 0 12px; white-space:pre-line; }
-  .hist{ border-left:3px solid var(--orange); padding:2px 0 2px 10px; margin-bottom:10px; font-size:12.5px; line-height:1.5; white-space:pre-line; }
-  .hist.auto{ border-color:#ccc; }
-  .hist details summary{ cursor:pointer; font-weight:700; }
+  .ficha{ --d0:#17131a; --d1:#211c25; --d2:#2b2530; --dl:#3a3340; --dt:#f4f0f5; --dm:#b0a6b5; background:var(--d0); color:var(--dt); border-radius:20px; padding:24px; margin:4px 0 10px; cursor:default; }
+  .f-eyebrow{ font-size:10.5px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+  .f-top{ display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+  .f-top h3{ font-family:var(--font-title); font-size:25px; line-height:1.15; font-weight:800; margin:0 0 4px; color:#fff; }
+  .f-top .sub3{ font-size:12.5px; color:var(--dm); }
+  .f-acts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .f-btn{ display:inline-flex; align-items:center; padding:9px 15px; border-radius:999px; font-size:12.5px; font-weight:800; text-decoration:none; color:#fff; border:1px solid var(--dl); background:var(--d2); }
+  .f-btn.pri{ border:0; background:linear-gradient(90deg,#e96709,#f28a0c); }
+  .f-hero{ padding:20px 22px; border-radius:16px; border:1px solid rgba(233,103,9,.45); background:linear-gradient(120deg,#3a2115,#34172a); margin-bottom:14px; }
+  .f-hero .tx{ font-family:var(--font-title); font-size:21px; line-height:1.3; font-weight:700; color:#fff; }
+  .f-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; }
+  .f-stat{ background:var(--d1); border:1px solid var(--dl); border-radius:14px; padding:15px 16px; }
+  .f-stat b{ display:block; font-family:var(--font-title); font-size:25px; line-height:1.1; font-weight:800; background:linear-gradient(90deg,#f28a0c,#fdcc03); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .f-stat span{ display:block; font-size:12px; color:var(--dm); margin-top:6px; line-height:1.35; }
+  .f-two{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+  .f-card{ background:var(--d1); border:1px solid var(--dl); border-radius:14px; padding:15px 17px; font-size:14px; line-height:1.5; }
+  .f-card .f-eyebrow{ color:var(--dm); }
+  .f-alert{ display:flex; gap:12px; align-items:flex-start; background:#3a1c26; border-radius:14px; padding:13px 16px; margin-bottom:14px; font-size:14px; line-height:1.45; }
+  .f-alert i{ flex:none; width:24px; height:24px; border-radius:50%; background:#e0156e; color:#fff; font:800 14px/24px sans-serif; text-align:center; }
+  .f-alert b{ display:block; font-size:10.5px; letter-spacing:1.3px; color:#ff8a70; text-transform:uppercase; margin-bottom:2px; }
+  .f-blocos{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .f-bl{ text-align:left; font:inherit; color:inherit; cursor:pointer; background:var(--d1); border:1px solid var(--dl); border-radius:14px; padding:15px 17px; }
+  .f-bl:hover,.f-bl.on{ border-color:var(--orange); } .f-bl.on{ background:var(--d2); }
+  .f-bl .t{ display:flex; justify-content:space-between; gap:8px; font-size:13.5px; font-weight:800; margin-bottom:5px; }
+  .f-bl .t em{ font-style:normal; color:var(--orange); }
+  .f-bl .r{ font-size:12.5px; color:var(--dm); line-height:1.4; }
+  .f-aberto{ grid-column:1/-1; background:var(--d1); border:1px solid var(--orange); border-radius:14px; padding:18px; }
+  .f-prods{ display:grid; grid-template-columns:repeat(auto-fill,minmax(235px,1fr)); gap:10px; }
+  .f-prod{ display:flex; gap:11px; align-items:center; background:var(--d2); border-radius:12px; padding:9px; min-width:0; }
+  .f-img{ flex:none; width:56px; height:56px; border-radius:10px; background:#fff; object-fit:contain; }
+  .f-img.vz{ display:flex; align-items:center; justify-content:center; background:var(--dl); color:var(--dm); font-weight:800; font-size:14px; }
+  .f-prod b{ display:block; font-size:12.5px; line-height:1.3; } .f-prod span{ display:block; font-size:11.5px; color:var(--dm); margin-top:3px; line-height:1.3; }
+  .f-kv{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+  .f-kv div{ background:var(--d2); border-radius:12px; padding:12px; } .f-kv b{ display:block; font-size:17px; font-weight:800; } .f-kv span{ font-size:11.5px; color:var(--dm); }
+  .f-hist{ border-left:3px solid var(--orange); padding:2px 0 2px 12px; margin-bottom:12px; font-size:13px; line-height:1.55; white-space:pre-line; }
+  .f-hist.auto{ border-color:var(--dl); } .f-hist summary{ cursor:pointer; font-weight:700; color:var(--orange); } .f-hist small{ color:var(--dm); font-size:11.5px; }
+  .f-vazio{ color:var(--dm); font-size:13px; }
+  @media (max-width:1000px){ .f-stats{ grid-template-columns:1fr 1fr; } .f-blocos{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:620px){ .ficha{ padding:16px; } .f-stats,.f-two,.f-blocos{ grid-template-columns:1fr; } .f-top h3{ font-size:21px; } }
   @media print{ .sidebar,.filters,.no-print{ display:none !important; } .shell{ display:block; } }
 </style>
 <style>
@@ -87,7 +120,7 @@ Object.values(HIST).forEach(a=>a.sort((x,y)=>x.criado<y.criado?1:-1));
 const CLI = DATA.clientes.map(c=>{ const hs=HIST[c.cnpj]||[], ult=hs.find(h=>!ehAuto(h));
   return {...c, m:motivo(c), hs, ult, diasContato:ult?diasDesde(ult.criado):null}; });
 
-const S = {mot:'todos', q:'', recentes:false, aberto:null, pag:30};
+const S = {mot:'todos', q:'', recentes:false, aberto:null, bloco:null, pag:30};
 function fila(){
   const q=S.q.trim().toLowerCase(), dq=q.replace(/\D/g,'');
   return CLI.filter(c=>{
@@ -109,18 +142,64 @@ function recompra(c){
   if(d==null) return '—';
   return `${dBR(c.proxima_compra_prevista)}<div class="sub2">${d>0?`${d} dias de atraso`:d===0?'hoje':`em ${-d} dias`}</div>`;
 }
+// ---------- fotos: catálogo da Shopify, pelo nome da família ----------
+const norm = t => String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const VAZIAS = new Set(['com','de','e','em','pote','display','sabor','fourlab','saches','sache','capsulas','un','gramas','lata']);
+const CAT = (DATA.produtos||[]).map(p=>({i:p.imagem, t:norm(p.titulo)}));
+const fotos = {};
+function foto(nome){
+  if(nome in fotos) return fotos[nome];
+  const ts=norm(nome).split(/[^a-z0-9+]+/).filter(x=>x && !VAZIAS.has(x));
+  let m=null, top=0;
+  if(ts.length) CAT.forEach(p=>{ if(!p.t.includes(ts[0])) return; const n=ts.filter(x=>p.t.includes(x)).length/ts.length; if(n>top){top=n;m=p.i;} });
+  return fotos[nome] = top>=.6 ? m : null;
+}
+const imgHtml = n => { const u=foto(n); return u?`<img class="f-img" loading="lazy" src="${esc(u)}" alt="" onerror="this.style.visibility='hidden'">`:`<div class="f-img vz">${esc(String(n||'?').slice(0,2).toUpperCase())}</div>`; };
+const prodCard = p => `<div class="f-prod">${imgHtml(p.n)}<div style="min-width:0"><b>${esc(p.n)}</b>${p.d?`<span>${esc(p.d)}</span>`:''}</div></div>`;
+// "Nome (31 un em 2 pedidos, última 28/04/26)" e "Nome: comprado por 54% das 97 lojas de MG (...)"
+const lista = t => String(t||'').split(';').map(x=>x.trim()).filter(Boolean).map(x=>{ let r=x.match(/^(.+?):\s*(.+)$/)||x.match(/^(.+?)\s*\((.+)\)$/); return r?{n:r[1],d:r[2]}:{n:x,d:''}; });
+const itensPedido = t => String(t||'').split('|').map(x=>({n:x.trim(),d:''})).filter(x=>x.n);
+const grade = a => a.length?`<div class="f-prods">${a.map(prodCard).join('')}</div>`:'<div class="f-vazio">Sem dados.</div>';
+
+function resumoLigacao(c){
+  const d=c.dias_atraso_recompra, p=[];
+  if(c.vencido>0) p.push(`${BRL(c.vencido)} em boleto vencido`);
+  if(d!=null) p.push(d>0?`recompra atrasada há ${d} dias`:d===0?'recompra prevista para hoje':`recompra prevista em ${-d} dias`);
+  if(!p.length) p.push(`${c.dias_sem_comprar!=null?c.dias_sem_comprar+' dias sem comprar':'sem compra recente'}`);
+  return p.join(' e ').replace(/^./,x=>x.toUpperCase())+'.';
+}
 function ficha(c){
-  const hs=c.hs.map(h=>`<div class="hist ${ehAuto(h)?'auto':''}"><b>${dBR(h.criado)}</b> · ${esc(h.usuario||'—')}${ehAuto(h)?` <span class="muted">(relatório automático)</span><details><summary>Ver relatório</summary>${esc(h.texto)}</details>`:`<br>${esc(h.texto)}`}</div>`).join('') || '<p class="muted">Nenhum registro no Agendor.</p>';
-  return `<div class="ficha"><div>
-    <h3>Crédito</h3><p>Classe ${esc(c.classe_credito||'—')} · vencido ${BRL(c.vencido)} · a vencer ${BRL(c.a_vencer)}${c.atraso_max_dias?` · maior atraso ${c.atraso_max_dias} dias`:''}</p>
-    <h3>Último pedido</h3><p>${dBR(c.ultima_compra)} · ${BRL(c.valor_ultimo_pedido)}\n${esc(c.produtos_ultimo_pedido||'—')}</p>
-    <h3>Compra nos últimos 12 meses</h3><p>${esc(c.mix_12m||'—')}</p>
-    ${c.deixou_de_comprar?`<h3>Deixou de comprar</h3><p>${esc(c.deixou_de_comprar)}</p>`:''}
-    ${c.oportunidades_uf?`<h3>Oportunidades no estado</h3><p>${esc(c.oportunidades_uf)}</p>`:''}
-  </div><div>
-    <div class="card-head"><h3>O que foi falado</h3>${c.agendor_url?`<a class="btn btn-ghost btn-sm no-print" target="_blank" rel="noopener" href="${esc(c.agendor_url)}">Registrar no Agendor ↗</a>`:'<span class="sub2">Cliente ainda não está no Agendor</span>'}</div>
-    ${hs}
-  </div></div>`;
+  const mix=lista(c.mix_12m), par=lista(c.deixou_de_comprar), op=lista(c.oportunidades_uf), ped=itensPedido(c.produtos_ultimo_pedido);
+  const conv=c.hs.filter(h=>!ehAuto(h)), rel=c.hs.filter(ehAuto);
+  const BL=[
+    {id:'credito',t:'Crédito',q:`Classe ${c.classe_credito||'—'}`,r:`Vencido ${BRL(c.vencido)}`,h:`<div class="f-kv"><div><b>${esc(c.classe_credito||'—')}</b><span>classe de crédito</span></div><div><b>${BRL(c.vencido)}</b><span>vencido</span></div><div><b>${BRL(c.a_vencer)}</b><span>a vencer</span></div><div><b>${c.atraso_max_dias||0} dias</b><span>maior atraso</span></div></div>`},
+    {id:'pedido',t:'Último pedido',q:BRL(c.valor_ultimo_pedido),r:`${dBR(c.ultima_compra)} · ${ped.length} itens`,h:grade(ped)},
+    {id:'mix',t:'O que compra',q:mix.length,r:mix[0]?`Mais comprado: ${mix[0].n}`:'Sem compras em 12 meses',h:grade(mix)},
+    {id:'parou',t:'Parou de comprar',q:par.length,r:par[0]?par[0].n:'Nenhum produto',h:grade(par)},
+    {id:'oport',t:'Oportunidades',q:op.length,r:op[0]?op[0].n:'Sem dados no estado',h:grade(op)},
+    {id:'hist',t:'Conversas',q:conv.length,r:conv[0]?`Último contato em ${dBR(conv[0].criado)}`:'Nenhum contato registrado',h:(conv.map(h=>`<div class="f-hist"><b>${dBR(h.criado)}</b> <small>${esc(h.usuario||'')}</small>\n${esc(h.texto)}</div>`).join('')||'<div class="f-vazio">Nenhuma conversa registrada no Agendor.</div>')+rel.map(h=>`<div class="f-hist auto"><details><summary>Relatório automático de ${dBR(h.criado)}</summary>${esc(h.texto)}</details></div>`).join('')},
+  ];
+  let blocos='';
+  BL.forEach((b,i)=>{ blocos+=`<button class="f-bl ${S.bloco===b.id?'on':''}" onclick="S.bloco=S.bloco==='${b.id}'?null:'${b.id}';render()"><div class="t"><span>${b.t}</span><em>${esc(b.q)}</em></div><div class="r">${esc(b.r)}</div></button>`;
+    if((i+1)%3===0){ const a=BL.slice(i-2,i+1).find(x=>x.id===S.bloco); if(a) blocos+=`<div class="f-aberto">${a.h}</div>`; } });
+  const tel=c.telefone&&c.telefone_valido?digitos(c.telefone):'';
+  return `<div class="ficha">
+    <div class="f-top"><div><h3>${esc(c.nome)}</h3><div class="sub3">${esc(c.cidade_uf&&c.cidade_uf!=='/'?c.cidade_uf+' · ':'')}CNPJ ${esc(c.cnpj)}</div></div>
+      <div class="f-acts">${tel?`<a class="f-btn pri" href="tel:+55${tel}">Ligar ${esc(c.telefone)}</a><a class="f-btn" target="_blank" rel="noopener" href="https://wa.me/55${tel}">WhatsApp ↗</a>`:''}${c.agendor_url?`<a class="f-btn" target="_blank" rel="noopener" href="${esc(c.agendor_url)}">Registrar no Agendor ↗</a>`:''}</div></div>
+    <div class="f-hero"><div class="f-eyebrow">Por que ligar</div><div class="tx">${esc(resumoLigacao(c))}</div></div>
+    ${c.vencido>0||!tel?`<div class="f-alert"><i>!</i><div><b>Atenção</b>${c.vencido>0?`Há ${BRL(c.vencido)} vencidos. Trate isso na conversa antes de fechar novo pedido a prazo.`:''}${!tel?' Sem telefone válido no cadastro.':''}</div></div>`:''}
+    <div class="f-stats">
+      <div class="f-stat"><b>${c.dias_sem_comprar!=null?c.dias_sem_comprar+' dias':'—'}</b><span>sem comprar (última em ${dBR(c.ultima_compra)})</span></div>
+      <div class="f-stat"><b>${BRL(c.ticket_medio)}</b><span>ticket médio em ${c.pedidos||0} pedidos</span></div>
+      <div class="f-stat"><b>${dBR(c.proxima_compra_prevista)}</b><span>recompra prevista</span></div>
+      <div class="f-stat"><b>Classe ${esc(c.classe_credito||'—')}</b><span>crédito · a vencer ${BRL(c.a_vencer)}</span></div>
+    </div>
+    <div class="f-two">
+      <div class="f-card"><div class="f-eyebrow">Para oferecer</div>${op.length?esc(op.slice(0,2).map(x=>x.n).join(' e ')):par.length?esc(par[0].n):'Sem sugestão nos dados'}${op[0]?`<div class="sub2" style="color:var(--dm);margin-top:4px">${esc(op[0].d)}</div>`:''}</div>
+      <div class="f-card"><div class="f-eyebrow">Última conversa</div>${conv[0]?`<b>${dBR(conv[0].criado)}</b> · ${esc(conv[0].texto.slice(0,160))}`:'Nenhum contato registrado no Agendor'}</div>
+    </div>
+    <div class="f-blocos">${blocos}</div>
+  </div>`;
 }
 function render(){
   const f=fila(), base=CLI.filter(c=>c.m), contatos=CLI.flatMap(c=>c.hs).filter(h=>!ehAuto(h));
@@ -145,7 +224,7 @@ function render(){
   </div>
   <div class="panel">
     <div class="tbl-wrap"><table><thead><tr><th>Lojista</th><th>Motivo</th><th>Telefone</th><th>Última compra</th><th>Recompra prevista</th><th class="num">Ticket médio</th><th>Último contato</th></tr></thead><tbody>
-    ${f.slice(0,S.pag).map(c=>`<tr class="cli ${S.aberto===c.cnpj?'sel':''}" onclick="S.aberto=S.aberto==='${c.cnpj}'?null:'${c.cnpj}';render()"><td><b>${esc(c.nome)}</b><div class="sub2">${esc(c.cidade_uf&&c.cidade_uf!=='/'?c.cidade_uf:'')}</div></td><td>${motHtml(c)}</td><td>${contato(c)}</td><td>${dBR(c.ultima_compra)}<div class="sub2">${c.dias_sem_comprar!=null?c.dias_sem_comprar+' dias':''}</div></td><td>${recompra(c)}</td><td class="num">${BRL(c.ticket_medio)}</td><td>${c.ult?`${dBR(c.ult.criado)}<div class="sub2">${esc((c.ult.texto||'').slice(0,60))}</div>`:'<span class="muted">sem registro</span>'}</td></tr>${S.aberto===c.cnpj?`<tr><td colspan="7">${ficha(c)}</td></tr>`:''}`).join('') || '<tr><td colspan="7"><div class="empty-state">Nenhum lojista neste filtro.</div></td></tr>'}
+    ${f.slice(0,S.pag).map(c=>`<tr class="cli ${S.aberto===c.cnpj?'sel':''}" onclick="S.aberto=S.aberto==='${c.cnpj}'?null:'${c.cnpj}';S.bloco=null;render()"><td><b>${esc(c.nome)}</b><div class="sub2">${esc(c.cidade_uf&&c.cidade_uf!=='/'?c.cidade_uf:'')}</div></td><td>${motHtml(c)}</td><td>${contato(c)}</td><td>${dBR(c.ultima_compra)}<div class="sub2">${c.dias_sem_comprar!=null?c.dias_sem_comprar+' dias':''}</div></td><td>${recompra(c)}</td><td class="num">${BRL(c.ticket_medio)}</td><td>${c.ult?`${dBR(c.ult.criado)}<div class="sub2">${esc((c.ult.texto||'').slice(0,60))}</div>`:'<span class="muted">sem registro</span>'}</td></tr>${S.aberto===c.cnpj?`<tr><td colspan="7">${ficha(c)}</td></tr>`:''}`).join('') || '<tr><td colspan="7"><div class="empty-state">Nenhum lojista neste filtro.</div></td></tr>'}
     </tbody></table></div>
     ${f.length>S.pag?`<div style="text-align:center;margin-top:10px" class="no-print"><button class="btn btn-ghost btn-sm" onclick="S.pag+=30;render()">Ver mais (${f.length-S.pag})</button></div>`:''}
   </div>

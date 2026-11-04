@@ -36,7 +36,7 @@ function adaptarVendas(d) { return { gerado: hojeBR(), dia: d.dia, resultado: d.
 function adaptarCampanhas(d) { return { gerado: hojeBR(), anuncios: d.anuncios, resultado: d.resultado, catalogo: d.catalogo }; }
 function adaptarLoja(d) { return { gerado: hojeBR(), pedidos: d.pedidos, carrinhos: d.carrinhos, produtos: d.produtos }; }
 function adaptarCanais(d) { return { gerado: hojeBR(), canais: d.canais, anuncios: d.anuncios, catalogo: d.catalogo }; }
-function adaptarComercial(d) { return { gerado: hojeBR(), clientes: d.clientes, historico: d.historico }; }
+function adaptarComercial(d) { return { gerado: hojeBR(), clientes: d.clientes, historico: d.historico, produtos: d.produtos }; }
 const ADAPTADORES = { comercial: adaptarComercial, canais: adaptarCanais, loja: adaptarLoja, receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao, vendas: adaptarVendas, campanhas: adaptarCampanhas };
 
 async function hubBoot(secao) {
