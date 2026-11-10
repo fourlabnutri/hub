@@ -1,4 +1,4 @@
-// Tudo que a tela de RNC precisa do "back" passa por aqui. Para ligar outro armazenamento/banco, crie um adapter novo com as mesmas 6 funções
+// Tudo que a tela de RNC precisa do "back" passa por aqui. window.RNC_ADAPTER(tipo) devolve o adapter do tipo ('recebimento' ou 'pedidos'). Para ligar outro armazenamento/banco, crie um adapter novo com as mesmas 6 funções
 // e escolha-o em config.js (RNC_BACKEND). A tela (rnc.js) não muda.
 //
 // Contrato de um adapter:
@@ -13,10 +13,13 @@
   const cfg = (window.HUB_CONFIG && HUB_CONFIG.RNC_BACKEND) || 'demo';
 
   // ---------- DEMO: guarda só neste navegador (para mostrar a tela antes de existir o back) ----------
-  const demo = (() => {
+  const demoDe = tipo => {
+    const K = tipo === 'pedidos' ? 'rnc_pedidos_demo_' : 'rnc_demo_';   // recebimento mantém as chaves antigas
     const ler = (k, v) => { try { return JSON.parse(localStorage.getItem(k)) || v; } catch (e) { return v; } };
     const gravar = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-    const COD = [['01', 'Saco rasgado'], ['02', 'Saco/caixa molhado'], ['03', 'Caixa amassada'], ['04', 'Falta de volume'], ['05', 'Palete quebrado']].map(c => ({ codigo: c[0], descricao: c[1], ativo: true }));
+    const COD = (tipo === 'pedidos'
+      ? [['01', 'Embalagem estourada ou vazando (ex.: gel)'], ['02', 'Produto amassado ou quebrado'], ['03', 'Caixa de transporte danificada'], ['04', 'Produto molhado'], ['05', 'Item faltando'], ['06', 'Lacre violado']]
+      : [['01', 'Saco rasgado'], ['02', 'Saco/caixa molhado'], ['03', 'Caixa amassada'], ['04', 'Falta de volume'], ['05', 'Palete quebrado']]).map(c => ({ codigo: c[0], descricao: c[1], ativo: true }));
     const miniatura = blob => new Promise(res => {
       const img = new Image(), url = URL.createObjectURL(blob);
       img.onload = () => { const k = Math.min(1, 480 / Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.6)); };
@@ -24,38 +27,39 @@
       img.src = url;
       setTimeout(() => res(''), 3000);   // se o navegador não conseguir ler a imagem, segue sem miniatura
     });
-    return {
+    const demo = {
       aviso: 'Modo demonstração: os registros ficam só neste navegador e não são enviados a lugar nenhum.',
       async opcoes() { return { codigos: demo.cods().filter(c => c.ativo), podeGerenciar: true }; },
-      cods() { return ler('rnc_demo_codigos', COD); },
+      cods() { return ler(K + 'codigos', COD); },
       async criar(d, fotos, onFoto) {
-        const lista = ler('rnc_demo_registros', []), urls = [];
+        const lista = ler(K + 'registros', []), urls = [];
         for (let i = 0; i < fotos.length; i++) { onFoto && onFoto(i + 1, fotos.length); const u = await miniatura(fotos[i].blob); if (u) urls.push(u); }
         const cod = demo.cods().find(c => c.codigo === d.codigo_avaria) || { descricao: '' };
         const numero = (lista.reduce((m, r) => Math.max(m, r.numero), 0)) + 1;
         lista.unshift({ id: 'demo-' + numero, numero, ...d, avaria_descricao: cod.descricao, fotos: urls, registrado_por: 'Demonstração', created_at: new Date().toISOString() });
-        try { gravar('rnc_demo_registros', lista.slice(0, 30)); } catch (e) { throw new Error('O navegador não tem espaço para guardar a demonstração.'); }
+        try { gravar(K + 'registros', lista.slice(0, 30)); } catch (e) { throw new Error('O navegador não tem espaço para guardar a demonstração.'); }
         return { numero };
       },
-      async listar() { return ler('rnc_demo_registros', []).map(r => ({ ...r, fotos: r.fotos.length })); },
-      async detalhe(id) { const r = ler('rnc_demo_registros', []).find(x => x.id === id); if (!r) throw new Error('RNC não encontrada'); return r; },
+      async listar() { return ler(K + 'registros', []).map(r => ({ ...r, fotos: r.fotos.length })); },
+      async detalhe(id) { const r = ler(K + 'registros', []).find(x => x.id === id); if (!r) throw new Error('RNC não encontrada'); return r; },
       async codigos() { return demo.cods(); },
       async salvarCodigo(c) {
         const l = demo.cods(), i = l.findIndex(x => x.codigo === c.codigo);
         if (!/^[A-Za-z0-9]{1,10}$/.test(c.codigo) || !String(c.descricao).trim()) throw new Error('Informe o código (letras e números) e a descrição.');
         const novo = { codigo: c.codigo, descricao: String(c.descricao).trim(), ativo: c.ativo !== false };
         if (i >= 0) l[i] = novo; else l.push(novo);
-        gravar('rnc_demo_codigos', l); return l;
+        gravar(K + 'codigos', l); return l;
       },
     };
-  })();
+    return demo;
+  };
 
   // ---------- SUPABASE DO HUB (opcional; precisa do SQL 006 e de /api/rnc) ----------
-  const supa = (() => {
+  const supaDe = tipo => {
     const sb = window.supabase.createClient(HUB_CONFIG.SUPABASE_URL, HUB_CONFIG.SUPABASE_ANON_KEY);
     async function api(acao, corpo) {
       const { data } = await sb.auth.getSession();
-      const r = await fetch('/api/rnc', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.session.access_token }, body: JSON.stringify({ acao, ...corpo }) });
+      const r = await fetch('/api/rnc', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.session.access_token }, body: JSON.stringify({ acao, tipo, ...corpo }) });
       const j = await r.json().catch(() => ({ erro: 'Resposta inválida do servidor.' }));
       if (!r.ok) throw new Error(j.erro || 'Erro ' + r.status);
       return j;
@@ -81,7 +85,7 @@
       async codigos() { return (await api('codigos', {})).codigos; },
       async salvarCodigo(c) { return (await api('salvarCodigo', c)).codigos; },
     };
-  })();
+  };
 
-  window.RNC_ADAPTER = { demo, supabase: supa }[cfg] || demo;
+  window.RNC_ADAPTER = tipo => (cfg === 'supabase' ? supaDe : demoDe)(tipo || 'recebimento');
 })();

@@ -1,6 +1,17 @@
-// RNC de recebimento: formulário (celular primeiro), registros e códigos de avaria. Fala com /api/rnc.
+// RNC (recebimento ou pedidos avariados): formulário (celular primeiro), registros e códigos de avaria. Fala com /api/rnc.
+// O que muda entre os tipos (campos, colunas, CSV) vem de window.RNC_CFG, definido na página; sem ele, é o de recebimento.
 (async () => {
-  const u = await GESTAO.entrar('@rnc');
+  const C = window.RNC_CFG || {
+    tipo: 'recebimento', pagina: 'rnc', maxFotos: 8, arquivo: 'rnc_recebimento',
+    obrig: [['nf', 'o número da NF'], ['transportadora', 'a transportadora'], ['fornecedor', 'o nome do fornecedor'], ['item_nome', 'o nome do item'], ['item_codigo', 'o código do item'], ['codigo_avaria', 'o código da avaria'], ['descricao', 'a descrição da avaria']],
+    campos: ['nf', 'transportadora', 'fornecedor', 'item_nome', 'item_codigo', 'codigo_avaria', 'descricao'],
+    manter: ['nf', 'transportadora', 'fornecedor'], limpar: ['item_nome', 'item_codigo', 'descricao'],
+    busca: ['nf', 'fornecedor', 'item_nome', 'item_codigo', 'transportadora', 'codigo_avaria', 'avaria_descricao'],
+    colunas: [['Recebimento', r => dBR(r.data_recebimento)], ['NF', r => esc(r.nf)], ['Fornecedor', r => esc(r.fornecedor)], ['Item', r => `${esc(r.item_nome)} <span style="opacity:.55">(${esc(r.item_codigo)})</span>`]],
+    detalhe: [['Data de recebimento', r => dBR(r.data_recebimento)], ['Número da NF', r => esc(r.nf)], ['Transportadora', r => esc(r.transportadora)], ['Fornecedor', r => esc(r.fornecedor)], ['Item', r => `${esc(r.item_nome)} (código ${esc(r.item_codigo)})`]],
+    csv: [['Recebimento', r => dBR(r.data_recebimento)], ['NF', r => r.nf], ['Transportadora', r => r.transportadora], ['Fornecedor', r => r.fornecedor], ['Item', r => r.item_nome], ['Código do item', r => r.item_codigo]],
+  };
+  const u = await GESTAO.entrar('@' + C.pagina);
   if (!u) return;
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -8,14 +19,14 @@
   const hoje = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
   const nRNC = n => 'RNC-' + String(n).padStart(4, '0');
 
-  const B = window.RNC_ADAPTER;
+  const B = window.RNC_ADAPTER(C.tipo);
   if (B.aviso) { const a = document.createElement('div'); a.className = 'aviso'; a.style.cssText = 'background:#fff4c9;border:1px solid #f5e39a;color:#6b5200;border-radius:14px;padding:10px 14px;font-size:12.5px;margin-bottom:14px;max-width:880px'; a.textContent = B.aviso; $('.r-tabs').before(a); }
 
   // ---- abas ----
   let aba = 'nova';
   function mostrar(v) {
     aba = v;
-    ['nova', 'lista', 'detalhe', 'codigos'].forEach(x => { $('#v-' + x).hidden = x !== v; });
+    ['nova', 'lista', 'detalhe', 'codigos', ...(C.extras || [])].forEach(x => { $('#v-' + x).hidden = x !== v; });
     document.querySelectorAll('.r-tab').forEach(t => t.classList.toggle('on', t.dataset.v === (v === 'detalhe' ? 'lista' : v)));
     if (v === 'lista') carregarLista();
     if (v === 'codigos') carregarCodigos();
@@ -54,7 +65,7 @@
   }
   async function addFotos(lista) {
     for (const file of lista) {
-      if (fotos.length >= 8) { mostrarErro('O limite é de 8 fotos por RNC.'); break; }
+      if (fotos.length >= C.maxFotos) { mostrarErro(`O limite é de ${C.maxFotos} fotos por RNC.`); break; }
       const r = await reduzir(file); fotos.push({ ...r, url: URL.createObjectURL(r.blob) });
     }
     desenharFotos();
@@ -67,13 +78,13 @@
   $('#form').onsubmit = async ev => {
     ev.preventDefault(); mostrarErro('');
     const v = id => $('#' + id).value.trim();
-    const obrig = [['nf', 'o número da NF'], ['transportadora', 'a transportadora'], ['fornecedor', 'o nome do fornecedor'], ['item_nome', 'o nome do item'], ['item_codigo', 'o código do item'], ['codigo_avaria', 'o código da avaria'], ['descricao', 'a descrição da avaria']];
-    for (const [id, nome] of obrig) if (!v(id)) { mostrarErro('Preencha ' + nome + '.'); $('#' + id).focus(); return; }
+    for (const [id, nome] of C.obrig) if (!v(id)) { mostrarErro('Preencha ' + nome + '.'); $('#' + id).focus(); return; }
     if (!v('data')) { mostrarErro('Informe a data de recebimento.'); return; }
     const btn = $('#enviar'); btn.disabled = true; const rotulo = btn.textContent;
     try {
       btn.textContent = fotos.length ? 'Enviando fotos…' : 'Salvando…';
-      const r = await B.criar({ nf: v('nf'), transportadora: v('transportadora'), data_recebimento: v('data'), fornecedor: v('fornecedor'), item_nome: v('item_nome'), item_codigo: v('item_codigo'), codigo_avaria: v('codigo_avaria'), descricao: v('descricao') }, fotos.map(f => ({ blob: f.blob, ext: f.ext })), (i, n) => { btn.textContent = `Enviando foto ${i} de ${n}…`; });
+      const dados = { data_recebimento: v('data') }; C.campos.forEach(k => { dados[k] = v(k); });
+      const r = await B.criar(dados, fotos.map(f => ({ blob: f.blob, ext: f.ext })), (i, n) => { btn.textContent = `Enviando foto ${i} de ${n}…`; });
       sucesso(r.numero);
     } catch (e) { mostrarErro(e.message); }
     btn.disabled = false; btn.textContent = rotulo;
@@ -85,8 +96,8 @@
     ok.innerHTML = `<h2>✔ ${nRNC(numero)} registrada</h2><div>O registro foi salvo com ${fotos.length} foto(s).</div>
       <div class="r-btns"><button class="r-btn main" id="outra">Registrar outra avaria da mesma NF</button><button class="r-btn sec" id="nova">Nova RNC</button></div>`;
     const limpar = manter => {
-      ['nf', 'transportadora', 'fornecedor'].forEach(id => { if (!manter) $('#' + id).value = ''; });
-      ['item_nome', 'item_codigo', 'descricao'].forEach(id => $('#' + id).value = '');
+      C.manter.forEach(id => { if (!manter) $('#' + id).value = ''; });
+      C.limpar.forEach(id => $('#' + id).value = '');
       $('#codigo_avaria').value = ''; if (!manter) $('#data').value = hoje();
       fotos.splice(0).forEach(f => URL.revokeObjectURL(f.url)); desenharFotos();
       ok.hidden = true; $('#form').hidden = false; mostrarErro(''); window.scrollTo(0, 0);
@@ -98,23 +109,23 @@
   // ---- registros ----
   let registros = [];
   async function carregarLista() {
-    $('#lista').innerHTML = '<tr><td colspan="7" style="padding:18px">Carregando…</td></tr>';
+    $('#lista').innerHTML = `<tr><td colspan="${C.colunas.length + 3}" style="padding:18px">Carregando…</td></tr>`;
     try { registros = await B.listar(); desenharLista(); }
-    catch (e) { $('#lista').innerHTML = `<tr><td colspan="7" style="padding:18px">${esc(e.message)}</td></tr>`; }
+    catch (e) { $('#lista').innerHTML = `<tr><td colspan="${C.colunas.length + 3}" style="padding:18px">${esc(e.message)}</td></tr>`; }
   }
   function desenharLista() {
     const q = $('#busca').value.trim().toLowerCase();
-    const L = registros.filter(r => !q || [nRNC(r.numero), r.nf, r.fornecedor, r.item_nome, r.item_codigo, r.transportadora, r.codigo_avaria, r.avaria_descricao].join(' ').toLowerCase().includes(q));
-    $('#lista').innerHTML = L.length ? L.map(r => `<tr class="lk" data-id="${r.id}"><td data-l="Nº"><b>${nRNC(r.numero)}</b></td><td data-l="Recebimento">${dBR(r.data_recebimento)}</td><td data-l="NF">${esc(r.nf)}</td><td data-l="Fornecedor">${esc(r.fornecedor)}</td><td data-l="Item">${esc(r.item_nome)} <span style="opacity:.55">(${esc(r.item_codigo)})</span></td><td data-l="Avaria"><span class="r-pill">${esc(r.codigo_avaria)} · ${esc(r.avaria_descricao)}</span></td><td data-l="Fotos">${r.fotos}</td></tr>`).join('')
-      : '<tr><td colspan="7" style="padding:18px">Nenhuma RNC encontrada.</td></tr>';
+    const L = registros.filter(r => !q || [nRNC(r.numero), ...C.busca.map(k => r[k])].join(' ').toLowerCase().includes(q));
+    $('#lista').innerHTML = L.length ? L.map(r => `<tr class="lk" data-id="${r.id}"><td data-l="Nº"><b>${nRNC(r.numero)}</b></td>${C.colunas.map(([l, fn]) => `<td data-l="${l}">${fn(r)}</td>`).join('')}<td data-l="Avaria"><span class="r-pill">${esc(r.codigo_avaria)} · ${esc(r.avaria_descricao)}</span></td><td data-l="Fotos">${r.fotos}</td></tr>`).join('')
+      : `<tr><td colspan="${C.colunas.length + 3}" style="padding:18px">Nenhuma RNC encontrada.</td></tr>`;
     $('#lista').querySelectorAll('tr.lk').forEach(tr => tr.onclick = () => abrirDetalhe(tr.dataset.id));
   }
   $('#busca').oninput = desenharLista;
   $('#btCsv').onclick = () => {
-    const cab = ['RNC', 'Recebimento', 'NF', 'Transportadora', 'Fornecedor', 'Item', 'Código do item', 'Código da avaria', 'Avaria', 'Fotos', 'Registrado por', 'Registrado em'];
-    const linhas = registros.map(r => [nRNC(r.numero), dBR(r.data_recebimento), r.nf, r.transportadora, r.fornecedor, r.item_nome, r.item_codigo, r.codigo_avaria, r.avaria_descricao, r.fotos, r.registrado_por, new Date(r.created_at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })]);
+    const cab = ['RNC', ...C.csv.map(c => c[0]), 'Código da avaria', 'Avaria', 'Fotos', 'Registrado por', 'Registrado em'];
+    const linhas = registros.map(r => [nRNC(r.numero), ...C.csv.map(c => c[1](r)), r.codigo_avaria, r.avaria_descricao, r.fotos, r.registrado_por, new Date(r.created_at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })]);
     const csv = '﻿' + [cab, ...linhas].map(l => l.map(c => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(';')).join('\r\n');
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'rnc_recebimento_' + hoje() + '.csv'; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = C.arquivo + '_' + hoje() + '.csv'; a.click();
   };
   async function abrirDetalhe(id) {
     mostrar('detalhe'); $('#detalhe').innerHTML = 'Carregando…';
@@ -122,8 +133,7 @@
       const r = await B.detalhe(id);
       $('#detalhe').innerHTML = `<div class="r-btns no-print" style="margin-bottom:16px"><button class="r-btn sec" id="volta">← Voltar</button><button class="r-btn sec" onclick="window.print()">Imprimir / PDF</button></div>
         <h2 style="margin-bottom:12px">${nRNC(r.numero)}</h2>
-        <dl><dt>Data de recebimento</dt><dd>${dBR(r.data_recebimento)}</dd><dt>Número da NF</dt><dd>${esc(r.nf)}</dd><dt>Transportadora</dt><dd>${esc(r.transportadora)}</dd><dt>Fornecedor</dt><dd>${esc(r.fornecedor)}</dd>
-        <dt>Item</dt><dd>${esc(r.item_nome)} (código ${esc(r.item_codigo)})</dd><dt>Código da avaria</dt><dd>${esc(r.codigo_avaria)} - ${esc(r.avaria_descricao)}</dd><dt>Descrição</dt><dd>${esc(r.descricao)}</dd>
+        <dl>${C.detalhe.map(([l, fn]) => `<dt>${l}</dt><dd>${fn(r)}</dd>`).join('')}<dt>Código da avaria</dt><dd>${esc(r.codigo_avaria)} - ${esc(r.avaria_descricao)}</dd><dt>Descrição</dt><dd>${esc(r.descricao)}</dd>${r.observacao ? `<dt>Observação</dt><dd>${esc(r.observacao)}</dd>` : ''}
         <dt>Registrado por</dt><dd>${esc(r.registrado_por)} em ${new Date(r.created_at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</dd></dl>
         <h3 style="margin:18px 0 6px">Fotos (${r.fotos.length})</h3>${r.fotos.length ? '<div class="r-galeria">' + r.fotos.map(f => `<a href="${esc(f)}" target="_blank" rel="noopener"><img src="${esc(f)}" alt="Foto da avaria" loading="lazy"></a>`).join('') + '</div>' : '<div style="opacity:.6">Sem fotos.</div>'}`;
       $('#volta').onclick = () => mostrar('lista');
