@@ -663,3 +663,6 @@
   .sidebar-nav::-webkit-scrollbar{ display:none; }
   .sidebar-nav > *{ flex-shrink:0; }
   .sidebar-footer{ flex-shrink:0; }
+
+  /* texto de exemplo dos campos: cinza claro, para não parecer valor preenchido */
+  ::placeholder{ color:#b8afa6; opacity:1; }
