@@ -23,7 +23,10 @@ export default async function handler(req, res) {
   try {
     const eu = await quem(req);
     const b = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-    const tipo = b.tipo || 'recebimento', T = TIPOS[tipo];
+    // consulta: só leitura (listar e detalhe) das duas RNCs juntas, para quem tem a página rnc-consulta
+    const consulta = b.tipo === 'todos';
+    if (consulta && !['listar', 'detalhe'].includes(b.acao)) return erro(res, 400, 'a consulta só lista e abre RNCs');
+    const tipo = consulta ? null : (b.tipo || 'recebimento'), T = consulta ? { pagina: 'rnc-consulta' } : TIPOS[tipo];
     if (!T) return erro(res, 400, 'tipo desconhecido');
     if (!eu || !eu.paginas.includes(T.pagina)) return erro(res, eu ? 403 : 401, eu ? 'sem acesso' : 'não autenticado');
     if (!process.env.SUPABASE_SERVICE_KEY) return erro(res, 500, 'Falta SUPABASE_SERVICE_KEY no Vercel.');
@@ -71,13 +74,17 @@ export default async function handler(req, res) {
     }
 
     if (b.acao === 'listar') {
-      const r = await db.from('rnc_lista').select('*').eq('tipo', tipo).order('numero', { ascending: false }).limit(500);
+      let q = db.from('rnc_lista').select('*');
+      if (tipo) q = q.eq('tipo', tipo);
+      const r = await q.order('created_at', { ascending: false }).limit(1000);
       if (r.error) return erro(res, 500, falta(r.error));
       return res.status(200).json({ registros: r.data.map(x => ({ ...x, fotos: Number(x.fotos) || 0 })) });
     }
 
     if (b.acao === 'detalhe') {
-      const r = await db.from('rnc_lista').select('*').eq('tipo', tipo).eq('id', b.id).maybeSingle();
+      let q = db.from('rnc_lista').select('*').eq('id', b.id);
+      if (tipo) q = q.eq('tipo', tipo);
+      const r = await q.maybeSingle();
       if (r.error || !r.data) return erro(res, 404, 'RNC não encontrada');
       const f = await db.from('rnc_fotos').select('path').eq('rnc_id', b.id).order('ordem');
       const urls = [];
