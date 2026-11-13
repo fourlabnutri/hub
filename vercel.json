@@ -5,6 +5,9 @@
     },
     "api/fechamento.js": {
       "maxDuration": 60
+    },
+    "api/frete/[acao].mjs": {
+      "maxDuration": 30
     }
   },
   "crons": [

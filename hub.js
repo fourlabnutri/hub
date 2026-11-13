@@ -37,7 +37,7 @@ function adaptarCampanhas(d) { return { gerado: hojeBR(), anuncios: d.anuncios, 
 function adaptarLoja(d) { return { gerado: hojeBR(), pedidos: d.pedidos, carrinhos: d.carrinhos, produtos: d.produtos }; }
 function adaptarCanais(d) { return { gerado: hojeBR(), canais: d.canais, anuncios: d.anuncios, catalogo: d.catalogo }; }
 function adaptarComercial(d) { return { gerado: hojeBR(), clientes: d.clientes, historico: d.historico, produtos: d.produtos, argumentos: d.argumentos }; }
-const ADAPTADORES = { comercial: adaptarComercial, canais: adaptarCanais, loja: adaptarLoja, receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao, vendas: adaptarVendas, campanhas: adaptarCampanhas };
+const ADAPTADORES = { frete: () => ({ gerado: hojeBR() }), comercial: adaptarComercial, canais: adaptarCanais, loja: adaptarLoja, receber: adaptarReceber, pagar: adaptarPagar, producao: adaptarProducao, vendas: adaptarVendas, campanhas: adaptarCampanhas };
 
 async function hubBoot(secao) {
   document.getElementById('main').innerHTML = '<div class="empty-state"><span class="loader" style="border-top-color:var(--orange);border-color:rgba(0,0,0,0.1);"></span><div class="desc" style="margin-top:12px">Carregando dados…</div></div>';

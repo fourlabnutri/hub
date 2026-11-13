@@ -41,6 +41,7 @@ const SECOES = {
     catalogo: `select ad_id, anuncio, situacao_efetiva, campanha_id, campanha, conjunto_id, conjunto, conta_id from ${T('report_marketing_anuncios')} where situacao_efetiva = 'ACTIVE'`,
     resultado: RESULTADO,
   },
+  frete: {},   // a página de frete só usa /api/report para o login e o menu; os dados vêm de /api/frete
   producao: {
     ops: `select op_id, op_numero, produto, sku, tipo, unidade, quantidade, status_op, cast(emissao as string) as emissao, cast(inicio_planejado as string) as inicio_planejado, cast(previsao_entrega as string) as previsao_entrega, cast(conclusao as string) as conclusao from ${T('report_producao_ops')}`,
     etapas: `select op_id, etapa, etapa_ordem, status_etapa from ${T('report_producao_etapas')}`,
