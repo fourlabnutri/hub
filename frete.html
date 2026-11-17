@@ -6,8 +6,8 @@
 <title>Cotação de frete · FourLab Hub</title>
 <link rel="stylesheet" href="shared.css">
 <style>
-[hidden] { display: none !important }   /* o .campo do hub tem display próprio e vencia o hidden (Valor da NF no modo Pedido) */
 /* Componentes da tela de cotação (no Hub, entram junto com o shared.css) */
+[hidden] { display: none !important }   /* o shared.css do Hub não tem esta regra; sem ela o campo da NF aparece no modo Pedido */
 :root { --line-2: #f3eee8; --wait: #b5680a; --wait-soft: #fdf3e1; --white: #ffffff;
   --bar1: #e96709; --bar2: #fdcc03; --bar3: #731b58; --bar4: #e3055f; --bar5: #8a7c72; --font-title: "Montserrat", "Maven Pro", sans-serif }
 .modo { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line) }
@@ -165,7 +165,7 @@ window.FRETE_API = {
   headers: async () => { const { data } = await sb.auth.getSession(); return { Authorization: "Bearer " + (data && data.session ? data.session.access_token : "") }; },
   aoExpirar: async () => { await sb.auth.signOut(); location.href = "login.html"; },
 };
-document.getElementById("main").innerHTML = "<header class=\"page-head\">\n    <div><h1>Cotação de frete</h1><div class=\"sub\">Saída de Itajubá/MG · compare preço e prazo de todas as transportadoras e registre a escolha</div></div>\n    <span class=\"modo\" id=\"modo\">Conectando…</span>\n  </header>\n\n  <form class=\"entrada\" id=\"form\" autocomplete=\"off\">\n    <div class=\"tipos\" role=\"group\" aria-label=\"Tipo de entrada\">\n      <button type=\"button\" data-tipo=\"pedido\" aria-pressed=\"true\">Pedido Bling</button>\n      <button type=\"button\" data-tipo=\"pedido_mercos\" aria-pressed=\"false\">Nº Mercos</button>\n      <button type=\"button\" data-tipo=\"cep\" aria-pressed=\"false\">CEP manual</button>\n    </div>\n    <div class=\"linha\">\n      <label class=\"campo\"><span class=\"lbl\" id=\"q-lbl\">Número do pedido no Bling</span><input id=\"q\" inputmode=\"numeric\" placeholder=\"11322\"></label>\n      <label class=\"campo\" id=\"nf-c\" hidden><span class=\"lbl\">Valor da NF (R$)</span><input id=\"nf\" inputmode=\"decimal\" placeholder=\"1000,00\" style=\"width:130px\"></label>\n      <button class=\"btn\" id=\"cotar\" type=\"submit\">Cotar</button>\n    </div>\n    <div id=\"caixas-m\" hidden>\n      <div class=\"lbl\" style=\"margin-bottom:8px\">Volumes</div>\n      <div id=\"cx-lista\" style=\"display:grid;gap:8px\"></div>\n      <button type=\"button\" class=\"lnk\" id=\"cx-add\" style=\"margin-top:8px\">+ adicionar caixa</button>\n    </div>\n    <div class=\"exemplos\" id=\"exemplos\"></div>\n    <div class=\"erro\" id=\"erro\" hidden></div>\n  </form>\n\n  <section id=\"resultado\" hidden style=\"display:grid;gap:18px\"></section>\n  <section id=\"historico\" hidden><h2 style=\"margin-bottom:10px\">Últimas cotações</h2><div class=\"hist\" id=\"hist\"></div></section>\n</main>\n\n<div class=\"barra\" id=\"barra\" hidden><div class=\"barra-in\">\n  <div class=\"quem\"><div class=\"lbl\">Escolha</div><div id=\"b-quem\"></div></div>\n  <textarea id=\"motivo\" placeholder=\"Motivo (obrigatório quando não é a recomendada): ex. cliente pediu, prazo do evento, restrição de entrega\" aria-label=\"Motivo da escolha\"></textarea>\n  <button class=\"btn ghost\" id=\"b-cancel\" type=\"button\">Cancelar</button>\n  <button class=\"btn\" id=\"b-ok\" type=\"button\">Confirmar escolha</button>\n</div></div>\n<div class=\"toast\" id=\"toast\" hidden></div>";
+document.getElementById("main").innerHTML = "<header class=\"page-head\">\n    <div><h1>Cotação de frete</h1><div class=\"sub\">Saída de Itajubá/MG · compare preço e prazo de todas as transportadoras e registre a escolha</div></div>\n    <span class=\"modo\" id=\"modo\">Conectando…</span>\n  </header>\n\n  <form class=\"entrada\" id=\"form\" autocomplete=\"off\">\n    <div class=\"tipos\" role=\"group\" aria-label=\"Tipo de entrada\">\n      <button type=\"button\" data-tipo=\"pedido\" aria-pressed=\"true\">Pedido Bling</button>\n      <button type=\"button\" data-tipo=\"pedido_mercos\" aria-pressed=\"false\">Nº Mercos</button>\n      <button type=\"button\" data-tipo=\"cep\" aria-pressed=\"false\">CEP manual</button>\n    </div>\n    <div class=\"linha\">\n      <label class=\"campo\"><span class=\"lbl\" id=\"q-lbl\">Número do pedido no Bling</span><input id=\"q\" inputmode=\"numeric\" placeholder=\"11322\"></label>\n      <label class=\"campo\" id=\"nf-c\" hidden><span class=\"lbl\">Valor da NF (R$)</span><input id=\"nf\" inputmode=\"decimal\" placeholder=\"1000,00\" style=\"width:130px\"></label>\n      <button class=\"btn\" id=\"cotar\" type=\"submit\">Cotar</button>\n    </div>\n    <div id=\"caixas-m\" hidden>\n      <div class=\"lbl\" style=\"margin-bottom:8px\">Volumes</div>\n      <div id=\"cx-lista\" style=\"display:grid;gap:8px\"></div>\n      <button type=\"button\" class=\"lnk\" id=\"cx-add\" style=\"margin-top:8px\">+ adicionar caixa</button>\n    </div>\n    <div class=\"exemplos\" id=\"exemplos\"></div>\n    <div class=\"erro\" id=\"erro\" hidden></div>\n  </form>\n\n  <section id=\"pendentes\" hidden><div class=\"tab-head\" style=\"margin-bottom:10px\"><h2>Aguardando escolha <span class=\"desc\" id=\"pend-n\"></span></h2><span class=\"desc\">Pedidos do Bling cotados automaticamente</span></div><div class=\"hist\" id=\"pend-l\"></div></section>\n  <section id=\"resultado\" hidden style=\"display:grid;gap:18px\"></section>\n  <section id=\"historico\" hidden><h2 style=\"margin-bottom:10px\">Últimas cotações</h2><div class=\"hist\" id=\"hist\"></div></section>\n</main>\n\n<div class=\"barra\" id=\"barra\" hidden><div class=\"barra-in\">\n  <div class=\"quem\"><div class=\"lbl\">Escolha</div><div id=\"b-quem\"></div></div>\n  <textarea id=\"motivo\" placeholder=\"Motivo (obrigatório quando não é a recomendada): ex. cliente pediu, prazo do evento, restrição de entrega\" aria-label=\"Motivo da escolha\"></textarea>\n  <button class=\"btn ghost\" id=\"b-cancel\" type=\"button\">Cancelar</button>\n  <button class=\"btn\" id=\"b-ok\" type=\"button\">Confirmar escolha</button>\n</div></div>\n<div class=\"toast\" id=\"toast\" hidden></div>";
 const $ = (s, el = document) => el.querySelector(s);
 const brl = (n) => n == null ? "–" : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const kg = (n) => n == null ? "–" : n.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " kg";
@@ -275,7 +275,12 @@ function mostrar(c) {
     $("#resultado").querySelectorAll("th button").forEach((x) => x.setAttribute("aria-sort", x.dataset.ord === ordem ? "ascending" : "none")); });
   mostrarTabela();
 }
-const titulo = (s) => !s ? "" : s === s.toUpperCase() ? s.toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase()) : s;
+const titulo = (s) => {
+  if (!s) return "";
+  const [cidade, ...resto] = String(s).split("/");   // "GOIANIA/GO" → "Goiania/GO"
+  const c = cidade === cidade.toUpperCase() ? cidade.toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase()) : cidade;
+  return [c, ...resto].join("/");
+};
 
 function mostrarTabela() {
   const ok = atual.grupos.filter((g) => g.status === "ok").slice();
@@ -344,7 +349,7 @@ $("#b-ok").onclick = async () => {
   if (online) {
     let j;
     try { j = await api("escolha", corpo); } catch (x) { return toast(x.message); }
-    atual.escolha = j; carregarHist();
+    atual.escolha = j; carregarHist(); carregarPendentes();
     toast(`Escolha registrada: ${j.transportadora} · ${j.servico}`);
   } else {
     atual.escolha = { ...corpo };
@@ -355,11 +360,25 @@ $("#b-ok").onclick = async () => {
 let tt; function toast(m) { $("#toast").textContent = m; $("#toast").hidden = false; clearTimeout(tt); tt = setTimeout(() => $("#toast").hidden = true, 3500); }
 
 // ---------- histórico e modo ----------
+async function carregarPendentes() {
+  try {
+    const l = await api("cotacoes?pendentes=1&n=50");
+    $("#pendentes").hidden = !l.length;
+    $("#pend-n").textContent = l.length ? `· ${l.length} ${l.length > 1 ? "pedidos" : "pedido"}` : "";
+    $("#pend-l").innerHTML = l.map((h) => `<button type="button" data-id="${esc(h.id)}"><span><strong>Pedido ${h.pedido}</strong>${h.loja ? ` <span class="chip">${esc(({ 205860994: "Mercos", 205392589: "Site" })[h.loja] || "Loja " + h.loja)}</span>` : ""} · ${esc(titulo(h.destino))}${h.cliente ? ` · ${esc(h.cliente)}` : ""}</span>
+      <span class="obs">${h.melhor ? `melhor ${esc(h.melhor.transportadora)} ${esc(h.melhor.servico)} ${brl(h.melhor.preco)}` : "sem cotação válida"} · ${new Date(h.criada_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}</span></button>`).join("");
+    $("#pend-l").querySelectorAll("button").forEach((b) => b.onclick = async () => {
+      const c = await api(`cotacao?id=${encodeURIComponent(b.dataset.id)}`);
+      setTipo("pedido"); $("#q").value = c.pedido?.numero ?? ""; mostrar(c);
+      $("#resultado").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  } catch { /* sem servidor */ }
+}
 async function carregarHist() {
   try {
     const l = await api("cotacoes");
     $("#historico").hidden = !l.length;
-    $("#hist").innerHTML = l.map((h) => `<button type="button" data-id="${esc(h.id)}"><span>${h.pedido ? `Pedido ${h.pedido}` : "Manual"} · ${esc(/^\d/.test(h.destino) ? h.destino : titulo(h.destino))}</span>
+    $("#hist").innerHTML = l.map((h) => `<button type="button" data-id="${esc(h.id)}"><span>${h.pedido ? `Pedido ${h.pedido}` : "Manual"}${h.automatica ? ' <span class="chip">automática</span>' : ""} · ${esc(/^\d/.test(h.destino) ? h.destino : titulo(h.destino))}</span>
       <span class="obs">${new Date(h.criada_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })} · ${h.escolha ? `escolhida ${esc(h.escolha.transportadora)} ${brl(h.escolha.preco)}` : h.melhor ? `melhor ${esc(h.melhor.transportadora)} ${brl(h.melhor.preco)}` : ""}</span></button>`).join("");
     $("#hist").querySelectorAll("button").forEach((b) => b.onclick = async () => mostrar(await api(`cotacao?id=${encodeURIComponent(b.dataset.id)}`)));
   } catch { /* sem servidor */ }
@@ -378,7 +397,7 @@ function exemplos() {
     const s = await api("status");
     online = true;
     $("#modo").textContent = `Conectado · ${s.adaptadores.length} fontes${s.bling ? " · Bling" : ""}`; $("#modo").classList.add("on");
-    carregarHist();
+    carregarHist(); carregarPendentes();
   } catch { online = false; }
   exemplos();
   if (!online && DEMO[0]) { $("#q").value = DEMO[0].pedido?.numero ?? ""; mostrar(DEMO[0]); }

@@ -6,9 +6,11 @@ import { quem } from "../_auth.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
+  const env = { ...process.env, SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY, HUB_ORIGEM: "" };
+  // cotação automática (cron/N8N): não tem login do hub; o gateway exige o Bearer CRON_SECRET
+  if (req.query?.acao === "auto") return handlerVercel(req, res, env);
   const eu = await quem(req).catch(() => null);
   if (!eu) return res.status(401).json({ erro: "faça login no Hub" });
   if (!eu.paginas.includes("frete")) return res.status(403).json({ erro: "Seu perfil não tem acesso a esta área." });
-  const env = { ...process.env, SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY, HUB_ORIGEM: "" };
   return handlerVercel(req, res, env);
 }
