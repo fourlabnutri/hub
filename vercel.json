@@ -8,6 +8,9 @@
     },
     "api/frete/[acao].mjs": {
       "maxDuration": 60
+    },
+    "api/cte/piloto.mjs": {
+      "maxDuration": 60
     }
   },
   "crons": [
