@@ -61,9 +61,9 @@ async function hubBootInterno(secao) {
     if (id !== 'home' && !j.perfil.paginas.includes(id)) a.style.display = 'none';
   });
   // some o título da área (e o separador) quando nenhum módulo dela está liberado
-  document.querySelectorAll('.nav-area').forEach(cap => {
+  document.querySelectorAll('[data-area-cap]').forEach(cap => {
     const area = cap.dataset.areaCap, vis = [...document.querySelectorAll(`.nav-btn[data-area="${area}"]`)].some(x => x.style.display !== 'none');
-    if (!vis) { cap.style.display = 'none'; if (cap.previousElementSibling) cap.previousElementSibling.style.display = 'none'; }
+    if (!vis) { cap.style.display = 'none'; if (cap.classList.contains('nav-area') && cap.previousElementSibling) cap.previousElementSibling.style.display = 'none'; }
   });
   const nav = document.querySelector('.sidebar');
   if (nav) nav.insertAdjacentHTML('beforeend', `<div class="sidebar-footer">${j.perfil.nome} · ${j.perfil.cargo || ROLES[j.perfil.role] || j.perfil.role}<br><button onclick="hubSair()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;margin-top:6px">Sair</button></div>`);

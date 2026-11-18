@@ -60,9 +60,9 @@ const GESTAO = (() => {
     const { perfil } = await r.json();
     if (!perfil.paginas.includes(id[0] === '@' ? id.slice(1) : 'gestao-' + id)) { document.getElementById('main').innerHTML = '<div class="empty-state"><div class="big">🔒</div>Seu perfil não tem acesso a esta área.</div>'; return null; }
     document.querySelectorAll('.nav-btn[href]').forEach(a => { const p = a.getAttribute('href').replace('.html', ''); if (p !== 'home' && !perfil.paginas.includes(p)) a.style.display = 'none'; });
-    document.querySelectorAll('.nav-area').forEach(cap => {
+    document.querySelectorAll('[data-area-cap]').forEach(cap => {
       const vis = [...document.querySelectorAll('.nav-btn[data-area="' + cap.dataset.areaCap + '"]')].some(x => x.style.display !== 'none');
-      if (!vis) { cap.style.display = 'none'; if (cap.previousElementSibling) cap.previousElementSibling.style.display = 'none'; }
+      if (!vis) { cap.style.display = 'none'; if (cap.classList.contains('nav-area') && cap.previousElementSibling) cap.previousElementSibling.style.display = 'none'; }
     });
     const nav = document.querySelector('.sidebar');
     if (nav && !nav.querySelector('.sidebar-footer')) nav.insertAdjacentHTML('beforeend', '<div class="sidebar-footer">' + perfil.nome + ' · ' + perfil.role + '<br><button onclick="GESTAO.sair()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;margin-top:6px">Sair</button></div>');
