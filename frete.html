@@ -186,6 +186,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const cepFmt = (c) => (c || "").replace(/^(\d{5})(\d{3})$/, "$1-$2");
 const prazo = (o) => !o.prazo_max_du ? "sem prazo na tabela" : o.prazo_min_du && o.prazo_min_du !== o.prazo_max_du ? `${o.prazo_min_du}–${o.prazo_max_du} d.u.` : `${o.prazo_max_du} d.u.`;
 const FONTE = { "agregador:melhorenvio": "Melhor Envio", "agregador:frenet": "Frenet", tabela: "Tabela", ssw: "SSW", api: "API direta", manual: "Manual" };
+const fonteDe = (o) => o.adaptador && o.adaptador.startsWith("api:correios") ? "Contrato Correios" : o.adaptador === "regra:entrega-local" ? "Regra Fourlab" : FONTE[o.fonte];
 const SELO = { mais_barato: "mais barato", mais_rapido: "mais rápido", recomendado: "recomendado" };
 const COMP = [["frete_peso", "Frete peso", "--bar1"], ["ad_valorem", "Ad valorem / seguro", "--bar2"], ["seguro", "Seguro", "--bar2"], ["gris", "GRIS", "--bar3"], ["pedagio", "Pedágio", "--bar5"], ["taxas", "Taxas (TAS, TRT, CT-e…)", "--bar4"], ["icms", "ICMS", "--bar3"], ["outras", "Outras", "--bar5"]];
 
@@ -252,7 +253,7 @@ function mostrar(c) {
   const pega = (s) => ok.find((g) => g.principal.selos?.includes(s));
   const card = (s, g) => !g ? "" : `<button class="dest${s === "recomendado" ? " rec" : ""}" type="button" data-chave="${esc(g.chave)}">
       <span class="lbl">${SELO[s]}</span><span class="preco">${brl(g.principal.preco_total)}</span>
-      <span class="quem">${esc(g.transportadora)} · ${esc(g.servico)}</span><span class="meta">${prazo(g.principal)} · ${esc(FONTE[g.principal.fonte])}</span></button>`;
+      <span class="quem">${esc(g.transportadora)} · ${esc(g.servico)}</span><span class="meta">${prazo(g.principal)} · ${esc(fonteDe(g.principal))}</span></button>`;
   const pedidoLinha = c.pedido ? `Pedido Bling ${c.pedido.numero}${c.pedido.numeroLoja ? ` · Mercos ${esc(c.pedido.numeroLoja)}` : ""}${c.pedido.cliente ? ` · ${esc(c.pedido.cliente)}` : ""}` : "Cotação manual";
   const caixas = (c.caixas || []).map((x) => `<span class="cx" title="ocupação ${Math.round(x.ocupacao * 100)}%">${esc(x.caixa.replace("Caixa Fourlab ", ""))} <span class="num">${kg(x.peso_kg)}</span><i><b style="width:${Math.round(x.ocupacao * 100)}%"></b></i></span>`).join("");
   const naoAt = c.grupos.filter((g) => g.status !== "ok");
@@ -306,8 +307,8 @@ function mostrarTabela() {
     const alt = g.alternativas.filter((a) => a.status === "ok");
     return `<tr class="g${aberto === g.chave ? " aberto" : ""}${escolhida === g.chave ? " esc" : ""}" data-chave="${esc(g.chave)}" tabindex="0" aria-expanded="${aberto === g.chave}">
       <td><div class="serv">${esc(g.transportadora)}<small>${esc(g.servico)}</small></div><div class="chips" style="margin-top:4px">${selos}${escolhida === g.chave ? '<span class="chip selo">escolhida</span>' : ""}</div></td>
-      <td><div class="chips"><span class="chip">${esc(FONTE[o.fonte])}</span>${alt.length ? `<span class="chip alt">+${alt.length} ${alt.length > 1 ? "fontes" : "fonte"}</span>` : ""}</div></td>
-      <td class="r"><span class="preco-c">${brl(o.preco_total)}</span>${g.diferenca_alternativa ? `<span class="dif">${brl(g.diferenca_alternativa)} mais caro via ${esc(FONTE[alt[0].fonte])}</span>` : ""}</td>
+      <td><div class="chips"><span class="chip">${esc(fonteDe(o))}</span>${alt.length ? `<span class="chip alt">+${alt.length} ${alt.length > 1 ? "fontes" : "fonte"}</span>` : ""}</div></td>
+      <td class="r"><span class="preco-c">${brl(o.preco_total)}</span>${g.diferenca_alternativa ? `<span class="dif">${brl(g.diferenca_alternativa)} mais caro via ${esc(fonteDe(alt[0]))}</span>` : ""}</td>
       <td class="num">${prazo(o)}</td>
       <td class="r num">${kg(o.peso_taxado_kg)}</td>
       <td class="obs">${esc(o.mensagem || "")}</td>
@@ -331,7 +332,7 @@ function detalhe(g) {
   const bar = partes.map((p) => `<span style="width:${(p.v / Math.max(soma, total)) * 100}%;background:var(${p.cor})" title="${esc(p.n)}"></span>`).join("");
   const lista = partes.map((p) => `<i style="background:var(${p.cor})"></i><span>${esc(p.n)}</span><span class="num">${brl(p.v)}</span>`).join("");
   const semDet = partes.length <= 1 ? `<p class="obs" style="max-width:none">${o.fonte.startsWith("agregador") ? "O agregador devolve só o preço final, sem composição." : o.fonte === "api" ? "A transportadora devolve só o total." : ""}</p>` : "";
-  const alts = [o, ...g.alternativas].map((a, i) => `<div class="alt-row"><span><strong>${esc(FONTE[a.fonte])}</strong> <span class="obs">${a.status === "ok" ? prazo(a) : esc(a.mensagem || a.status)}</span></span>
+  const alts = [o, ...g.alternativas].map((a, i) => `<div class="alt-row"><span><strong>${esc(fonteDe(a))}</strong> <span class="obs">${a.status === "ok" ? prazo(a) : esc(a.mensagem || a.status)}</span></span>
       <span style="display:flex;gap:10px;align-items:center"><span class="preco-c">${brl(a.preco_total)}</span>${a.status === "ok" ? `<button class="btn ghost" type="button" data-escolher="${esc(g.chave)}" data-adaptador="${esc(a.adaptador)}" style="padding:7px 13px;font-size:11.5px">${i === 0 ? "Escolher" : "Escolher esta fonte"}</button>` : ""}</span></div>`).join("");
   return `<div class="det-grid">
     <div><div class="lbl">Composição do preço</div><div class="comp-bar">${bar}</div><div class="comp-list">${lista}<span></span><strong>Total</strong><strong class="num">${brl(o.preco_total)}</strong></div>${semDet}</div>
@@ -349,7 +350,7 @@ function pedirEscolha(chave, adaptador) {
   const o = [g.principal, ...g.alternativas].find((a) => !adaptador || a.adaptador === adaptador);
   const rec = !!g.principal.selos?.includes("recomendado") && o.adaptador === g.principal.adaptador;
   pendente = { chave, adaptador: o.adaptador, rec };
-  $("#b-quem").innerHTML = `<strong>${esc(g.transportadora)} · ${esc(g.servico)}</strong> via ${esc(FONTE[o.fonte])} · <span class="num">${brl(o.preco_total)}</span> · ${prazo(o)}${rec ? ' <span class="chip selo">recomendada</span>' : ""}`;
+  $("#b-quem").innerHTML = `<strong>${esc(g.transportadora)} · ${esc(g.servico)}</strong> via ${esc(fonteDe(o))} · <span class="num">${brl(o.preco_total)}</span> · ${prazo(o)}${rec ? ' <span class="chip selo">recomendada</span>' : ""}`;
   $("#motivo").placeholder = rec ? "Observação (opcional)" : "Motivo (obrigatório, não é a recomendada): ex. cliente pediu, prazo do evento, restrição de entrega";
   $("#motivo").value = ""; $("#barra").hidden = false; $("#motivo").focus();
 }
