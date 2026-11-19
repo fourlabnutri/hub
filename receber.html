@@ -11,41 +11,131 @@
 <meta name="theme-color" content="#140e10">
 <link rel="stylesheet" href="shared.css">
 <style>
+  /* ===== Contas a receber · v2 (vidro) ===== */
+  body{ background:#efe9e3; }
+  body::before{ content:""; position:fixed; inset:-20%; z-index:-1; pointer-events:none;
+    background:radial-gradient(38% 34% at 78% 8%, rgba(233,103,9,.22), transparent 70%),
+               radial-gradient(30% 30% at 12% 70%, rgba(115,27,88,.16), transparent 70%),
+               radial-gradient(26% 26% at 60% 92%, rgba(253,204,3,.18), transparent 70%); filter:blur(10px); }
   main{ padding-top:28px !important; }
   
-  .filters{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:18px; }
-  .filters .dates{ display:flex; gap:8px; align-items:center; }
-  .filters .dates input{ width:auto; background:#fff; }
-  .filters .search{ flex:1; min-width:200px; max-width:320px; }
-  .check{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--ink-2); cursor:pointer; margin:0; }
-  .check input{ width:auto; }
-  .aging{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:18px; }
-  @media (max-width:720px){ .aging{ grid-template-columns:1fr; } }
-  .aging .tile .t-value{ font-size:24px; }
-  .num{ text-align:right; white-space:nowrap; }
-  th.num{ text-align:right; }
-  .tbl-wrap{ overflow-x:auto; }
-  .score{ display:inline-flex; align-items:center; justify-content:center; min-width:38px; padding:4px 10px; border-radius:999px; font-weight:800; font-size:12px; }
-  .score.A{ background:var(--green-soft); color:var(--green); }
-  .score.B{ background:#fff4c9; color:#8a6a00; }
-  .score.C{ background:var(--orange-soft); color:#b5680a; }
-  .score.D{ background:var(--red-soft); color:var(--red); }
-  .score.N{ background:var(--surface-2); color:var(--muted); }
-  .red{ color:var(--red); font-weight:700; }
-  .muted{ color:var(--muted); }
+  .glass{ background:rgba(255,255,255,.58); -webkit-backdrop-filter:blur(22px) saturate(170%); backdrop-filter:blur(22px) saturate(170%);
+    border:1px solid rgba(255,255,255,.75); border-radius:26px; box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 40px rgba(60,30,20,.07); }
+  .r-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .r-head h1{ font-size:34px; letter-spacing:-.8px; }
+  .r-head .sub{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .muted{ color:var(--muted); } .red{ color:var(--red); font-weight:700; }
   .sub2{ font-size:11px; color:var(--muted); }
-  a.lnk{ color:var(--orange); font-weight:700; text-decoration:none; }
-  a.lnk:hover{ text-decoration:underline; }
-  .tabs{ margin-bottom:14px; }
-  .bar-row{ margin-bottom:9px; }
-  .bar-row .top{ display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px; }
-  .bar-row .track{ background:var(--surface-2); border-radius:999px; height:10px; overflow:hidden; }
-  .bar-row .fill{ height:100%; border-radius:999px; }
-  .note{ font-size:11.5px; color:var(--muted); line-height:1.5; }
-  details.how summary{ cursor:pointer; font-size:12px; font-weight:700; color:var(--orange); margin-top:10px; }
+  a.lnk{ color:var(--orange); font-weight:700; text-decoration:none; } a.lnk:hover{ text-decoration:underline; }
+
+  /* barra de filtros */
+  .toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:8px; margin-bottom:12px; border-radius:999px; }
+  .segm{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:999px; padding:3px; }
+  .segm button{ border:0; background:none; padding:7px 14px; border-radius:999px; font-size:12px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .segm button.on{ background:var(--ink); color:#fff; box-shadow:0 4px 12px rgba(26,19,21,.2); }
+  .sel{ position:relative; }
+  .sel select{ appearance:none; -webkit-appearance:none; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:9px 34px 9px 14px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; width:auto; }
+  .sel::after{ content:""; position:absolute; right:14px; top:50%; width:6px; height:6px; border-right:2px solid var(--ink-2); border-bottom:2px solid var(--ink-2); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .dates{ display:flex; gap:6px; align-items:center; font-size:12px; }
+  .dates input{ width:auto; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:7px 12px; font-size:12px; }
+  .busca{ flex:1; min-width:200px; position:relative; }
+  .busca input{ width:100%; border:0; background:rgba(255,255,255,.8); border-radius:999px; padding:9px 14px 9px 36px; font-size:12.5px; }
+  .busca svg{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); }
+  .sw{ display:inline-flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; color:var(--ink-2); cursor:pointer; margin:0 8px 0 0; white-space:nowrap; }
+  .sw input{ display:none; }
+  .sw i{ width:30px; height:18px; border-radius:99px; background:rgba(26,19,21,.15); position:relative; transition:.2s; }
+  .sw i::after{ content:""; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .sw input:checked + i{ background:var(--orange); } .sw input:checked + i::after{ left:14px; }
+
+  /* pastas por tipo de comércio */
+  .pastas{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 6px; margin-bottom:20px; scrollbar-width:none; }
+  .pasta{ flex:0 0 auto; display:flex; align-items:center; gap:10px; border:1px solid rgba(255,255,255,.75); background:rgba(255,255,255,.45); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border-radius:16px; padding:9px 14px 9px 10px; cursor:pointer; text-align:left; transition:.15s; }
+  .pasta:hover{ background:rgba(255,255,255,.8); }
+  .pasta .ico{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; font-size:15px; background:rgba(26,19,21,.06); }
+  .pasta b{ display:block; font-size:12.5px; } .pasta small{ font-size:11px; color:var(--muted); }
+  .pasta.on{ background:var(--ink); color:#fff; border-color:var(--ink); } .pasta.on small{ color:rgba(255,255,255,.65); } .pasta.on .ico{ background:rgba(255,255,255,.14); }
+
+  /* topo: KPIs */
+  .hero{ display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+  .k{ padding:22px 24px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .k .lbl{ font-size:12px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .k .val{ font-family:var(--font-title); font-size:34px; font-weight:600; letter-spacing:-1px; line-height:1.05; font-variant-numeric:tabular-nums; }
+  .k .val small{ font-size:.5em; font-weight:500; opacity:.55; margin-right:4px; letter-spacing:0; }
+  .k .foot{ font-size:11.5px; color:var(--muted); }
+  .k.dark{ background:linear-gradient(150deg,#241a1d 0%,#140e10 100%); color:#fff; border:0; }
+  .k.dark .lbl, .k.dark .foot{ color:rgba(255,255,255,.6); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border:0; box-shadow:0 14px 40px rgba(233,103,9,.28); }
+  .k.hot .lbl,.k.hot .foot{ color:rgba(255,255,255,.82); }
+  .badge{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px; background:rgba(255,255,255,.18); }
+  .badge.r{ background:var(--red-soft); color:var(--red); } .badge.g{ background:var(--green-soft); color:var(--green); }
+  .stack{ display:flex; height:12px; border-radius:99px; overflow:hidden; gap:3px; margin-top:12px; }
+  .stack span{ display:block; height:100%; border-radius:99px; min-width:4px; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; margin-top:8px; }
+  .legend i{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+  .k.dark .legend{ color:rgba(255,255,255,.75); }
+
+  /* gráficos */
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .box{ padding:22px 24px; }
+  .box h2{ font-size:15px; font-weight:700; } .box .desc{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .faixas{ display:grid; gap:14px; margin-top:18px; }
+  .fx{ display:grid; grid-template-columns:110px 1fr auto; gap:14px; align-items:center; }
+  .fx .n{ font-size:12px; font-weight:700; } .fx .n small{ display:block; font-weight:500; color:var(--muted); font-size:11px; }
+  .fx .t{ height:30px; border-radius:10px; background:rgba(26,19,21,.05); overflow:hidden; }
+  .fx .t div{ height:100%; border-radius:10px; }
+  .fx .v{ font-family:var(--font-title); font-weight:600; font-size:16px; text-align:right; font-variant-numeric:tabular-nums; min-width:120px; }
+  .fx .v small{ display:block; font-family:var(--font-body); font-size:11px; color:var(--muted); font-weight:500; }
+  .cols{ display:flex; align-items:flex-end; gap:12px; height:190px; margin-top:18px; padding-top:28px; }
+  .col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:8px; min-width:0; }
+  .col .bar{ width:100%; max-width:64px; border-radius:14px 14px 8px 8px; background:repeating-linear-gradient(135deg, rgba(233,103,9,.22) 0 6px, rgba(233,103,9,.1) 6px 12px); position:relative; }
+  .col.top .bar{ background:var(--grad-accent); box-shadow:0 8px 20px rgba(233,103,9,.25); }
+  .col .bar em{ position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-style:normal; font-size:11px; font-weight:800; white-space:nowrap; }
+  .col .m{ font-size:11px; color:var(--muted); font-weight:600; }
+
+  /* clientes: abas + lista */
+  .clientes{ padding:20px 22px; margin-bottom:16px; }
+  .c-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+  .tabs2{ display:flex; gap:4px; background:rgba(26,19,21,.06); border-radius:999px; padding:4px; overflow-x:auto; }
+  .tabs2 button{ border:0; background:none; border-radius:999px; padding:8px 14px; font-size:12.5px; font-weight:700; color:var(--ink-2); cursor:pointer; white-space:nowrap; display:inline-flex; gap:6px; align-items:center; }
+  .tabs2 button .cnt{ font-size:10.5px; font-weight:800; padding:1px 7px; border-radius:99px; background:rgba(26,19,21,.08); }
+  .tabs2 button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.08); }
+  .tabs2 button.on .cnt{ background:var(--orange); color:#fff; }
+  .sub-tabs{ display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 4px; }
+  .sub-tabs button{ border:1px solid var(--line); background:rgba(255,255,255,.6); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .sub-tabs button.on{ border-color:var(--ink); background:var(--ink); color:#fff; }
+  .c-desc{ font-size:12px; color:var(--muted); margin:10px 0 6px; }
+  .lista{ display:grid; }
+  .li{ display:grid; grid-template-columns:minmax(0,2.2fr) minmax(0,1.3fr) 130px 120px 92px 56px; gap:14px; align-items:center; padding:12px 10px; border-radius:16px; cursor:pointer; }
+  .li + .li{ border-top:1px solid rgba(26,19,21,.06); }
+  .li:hover{ background:rgba(255,255,255,.7); border-color:transparent; }
+  .li.cab{ cursor:default; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding-top:4px; padding-bottom:8px; }
+  .li.cab:hover{ background:none; }
+  .who{ display:flex; gap:12px; align-items:center; min-width:0; }
+  .av{ flex:0 0 38px; height:38px; border-radius:12px; display:grid; place-items:center; font-weight:800; font-size:13px; }
+  .who b{ display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .who small{ display:block; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ct{ font-size:12px; min-width:0; overflow:hidden; } .ct a.lnk{ color:var(--ink-2); font-weight:600; } .ct .sub2 a.lnk{ color:var(--muted); font-weight:500; } .ct .sub2{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vv{ text-align:right; font-variant-numeric:tabular-nums; } .vv b{ font-size:14px; } .vv small{ display:block; font-size:11px; color:var(--muted); }
+  .dias{ display:inline-block; font-size:11px; font-weight:800; padding:4px 9px; border-radius:99px; }
+  .d1{ background:#fff4c9; color:#8a6a00; } .d2{ background:var(--orange-soft); color:#b5680a; } .d3{ background:var(--red-soft); color:var(--red); } .d0{ background:var(--surface-2); color:var(--muted); }
+  .score{ display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; font-weight:800; font-size:12.5px; }
+  .score.A{ background:var(--green-soft); color:var(--green); } .score.B{ background:#fff4c9; color:#8a6a00; } .score.C{ background:var(--orange-soft); color:#b5680a; } .score.D{ background:var(--red-soft); color:var(--red); } .score.N{ background:var(--surface-2); color:var(--muted); }
+  .wa{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#0f7a3d; background:var(--green-soft); padding:6px 11px; border-radius:99px; text-decoration:none; }
+  .rodape{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .btn-glass{ border:1px solid rgba(26,19,21,.12); background:rgba(255,255,255,.7); border-radius:999px; padding:8px 16px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .btn-glass:hover{ background:#fff; } .btn-ink{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .empty{ padding:30px; text-align:center; color:var(--muted); font-size:13px; }
+  details.how summary{ cursor:pointer; font-size:12px; font-weight:700; color:var(--orange); margin-top:12px; }
   details.how p{ font-size:12px; color:var(--ink-2); margin-top:6px; line-height:1.55; }
-  .more{ text-align:center; margin-top:10px; }
-  @media print{ .sidebar,.filters,.no-print{ display:none !important; } .shell{ display:block; } }
+  .note{ font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .tbl-wrap{ overflow-x:auto; }
+
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } .hero .k.dark{ grid-column:1/-1; } .li{ grid-template-columns:minmax(0,2fr) 120px 110px 56px; } .li > :nth-child(2), .li > :nth-child(5){ display:none; } }
+  @media (max-width:720px){ .hero,.duo{ grid-template-columns:1fr; } .toolbar{ border-radius:22px; } .k .val{ font-size:28px; } .fx{ grid-template-columns:90px 1fr; } .fx .v{ grid-column:1/-1; text-align:left; }
+    .li{ grid-template-columns:minmax(0,1fr) auto; } .li > :nth-child(n+3){ display:none; } .li.cab{ display:none; } }
+  @media print{ .sidebar,.toolbar,.pastas,.no-print{ display:none !important; } .shell{ display:block; } body::before{ display:none; } .glass{ background:#fff; backdrop-filter:none; } }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -115,7 +205,7 @@ const faixa = d => d<=0 ? 'avencer' : d<=30 ? 'f1' : d<=90 ? 'f2' : 'f3';
 const FAIXA_LBL = {f1:'1 a 30 dias', f2:'31 a 90 dias', f3:'Acima de 90 dias', avencer:'A vencer'};
 
 // ---------- filtros ----------
-const S = {preset:'tudo', ini:'', fim:'', loja:false, q:'', seg:'ambos'};
+const S = {preset:'tudo', ini:'', fim:'', loja:false, q:'', seg:'ambos', tipo:'todos'};
 const mes = (iso,off=0)=>{ const [y,m]=iso.split('-').map(Number); const d=new Date(Date.UTC(y,m-1+off,1)); return d.toISOString().slice(0,10); };
 function intervalo(){
   const h=HOJE;
@@ -132,7 +222,7 @@ function intervalo(){
   }
 }
 const noSegmento = t => S.seg==='ambos' || (S.seg==='b2b') === (t.k.length===14);   // CNPJ = B2B; CPF = B2C
-const noEscopo = t => t.forma!=='L' && (S.loja || !LOJA.has(t.forma)) && noSegmento(t);
+const noEscopo = t => t.forma!=='L' && (S.loja || !LOJA.has(t.forma)) && noSegmento(t) && (S.tipo==='todos' || tipoDe(t.k)===S.tipo);
 function titulos({periodo=true}={}){
   const [a,b]=intervalo(); const q=S.q.trim().toLowerCase();
   return TIT.filter(t=>{
@@ -187,127 +277,165 @@ function contatoHtml(m){
 function bars(rows){ const max=Math.max(1,...rows.map(r=>r.v));
   return rows.map(r=>`<div class="bar-row"><div class="top"><b>${r.l}</b><span class="muted">${BRL(r.v)}${r.n!=null?` · ${r.n} tít.`:''}</span></div><div class="track"><div class="fill" style="width:${r.v/max*100}%;background:${r.c||'var(--orange)'}"></div></div></div>`).join('') || '<div class="desc">Sem dados no filtro.</div>'; }
 
+// ---------- tipo de comércio (pastas) ----------
+// Classificação pelo nome/razão social. CPF = pessoa física. Sem palavra-chave conhecida = "Outros".
+const TIPOS = [
+  {id:'bike', nome:'Bike shops', ico:'🚲', re:/BIK|BICICL|CICL|PEDAL|SPEED|MTB|EUROBIKE/},
+  {id:'supl', nome:'Suplementos e naturais', ico:'💊', re:/SUPLEM|NUTRI|NATURA|SAUDAV|SAUDE|POWER|FIT|WHEY|EMPORIO|GRANEL|VIDA/},
+  {id:'farm', nome:'Farmácias e saúde', ico:'⚕️', re:/FARMA|DROGA|CLINIC|MEDIC|ODONT|FISIO|LABORAT/},
+  {id:'esp',  nome:'Esportes e academias', ico:'🏋️', re:/SPORT|ESPORT|TRAIN|ACADEM|CROSS|ATLET|CORRID|RUN|ARENA|GYM|SHOES/},
+  {id:'alim', nome:'Alimentos e mercados', ico:'🛒', re:/ALIMENT|MERCAD|SUPERM|PADAR|DOCE|SWEET|CAFE|BEBID/},
+  {id:'pf',   nome:'Pessoa física', ico:'👤'},
+  {id:'out',  nome:'Outros comércios', ico:'🏬'},
+];
+const tipoCache = {};
+function tipoDe(k){
+  if(k in tipoCache) return tipoCache[k];
+  if(k.length!==14) return tipoCache[k]='pf';
+  const n=((CLI[k]&&CLI[k].nome)||'').toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  return tipoCache[k]=(TIPOS.find(t=>t.re && t.re.test(n))||{id:'out'}).id;
+}
+
 // ---------- views ----------
-let pagScore = 25, abaRegua = 'f0', abaScore='abertos';
+let pagScore = 12, abaRegua = 'f0', abaScore='abertos', aba='devedores', pagLista=12;
+const CORES = [['#fdebdc','#b5680a'],['#f3e6ef','#731b58'],['#dbf3e4','#0f7a3d'],['#fff4c9','#8a6a00'],['#e6eefc','#2b5bb5'],['#fde4ee','#b5004a']];
+function avatar(c){ const n=(c.nome||'?').replace(/\b(LTDA|ME|EIRELI|EPP|S\/?A)\b/gi,'').trim(); const p=n.split(/\s+/).filter(Boolean);
+  const ini=((p[0]||'?')[0]+(p[1]?p[1][0]:'')).toUpperCase(); let h=0; for(const ch of c.k) h=(h*31+ch.charCodeAt(0))%997; const [bg,fg]=CORES[h%CORES.length];
+  return `<span class="av" style="background:${bg};color:${fg}">${esc(ini)}</span>`; }
+const nomeCurto = s => String(s||'').replace(/\s+(LTDA|ME|EIRELI|EPP)\.?$/i,'').trim();
+function quem(m){ const t=TIPOS.find(x=>x.id===tipoDe(m.c.k)); return `<div class="who">${avatar(m.c)}<div style="min-width:0"><b title="${esc(m.c.nome)}">${esc(nomeCurto(m.c.nome))}</b><small>${t.ico} ${t.nome}${m.c.loc?' · '+esc(m.c.loc):''}</small></div></div>`; }
+const diasHtml = d => `<span class="dias ${d<=0?'d0':d<=30?'d1':d<=90?'d2':'d3'}">${d<=0?'em dia':d+' d'}</span>`;
+const kv = v => { const [i,c]=(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}).split(','); return `<small>R$</small>${i}<span style="opacity:.45">,${c}</span>`; };
+const kCurto = v => v>=1e6? 'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi' : v>=1e3? 'R$ '+Math.round(v/1e3)+' mil' : BRL(v);
 
 function render(){
   const ts = titulos(), vencidos = ts.filter(t=>t.dias>0), avencer = ts.filter(t=>t.dias<=0);
-  const totTodos = titulos({periodo:false}), vTodos = soma(totTodos.filter(t=>t.dias>0)), cTodos = soma(totTodos);
-  const V=soma(vencidos), A=soma(avencer), tot=V+A, pct = tot? V/tot*100:0, pctTodos = cTodos? vTodos/cTodos*100:0;
+  const V=soma(vencidos), A=soma(avencer), tot=V+A, pct = tot? V/tot*100:0;
   const fx = {f1:vencidos.filter(t=>t.dias<=30), f2:vencidos.filter(t=>t.dias>30&&t.dias<=90), f3:vencidos.filter(t=>t.dias>90)};
   const nCli = arr => new Set(arr.map(t=>t.k)).size;
   const M = porCliente(), clientes = Object.values(M);
   const devedores = clientes.filter(m=>m.vencPer>0).sort((a,b)=>b.vencPer-a.vencPer);
   const possiveis = clientes.filter(m=>m.venc===0 && m.avencer>0 && m.c.atrasos>0).sort((a,b)=>b.avencer-a.avencer);
+  const g = reguaGrupos(M), nRegua = Object.values(g).reduce((s,a)=>s+a.length,0);
   const [ia,ib]=intervalo();
-  const corPct = pct>=25?'var(--red)':pct>=10?'#b5680a':'var(--green)';
+  const corPct = pct>=25?'r':pct>=10?'':'g';
 
-  // a vencer por mês
   const porMes={}; avencer.forEach(t=>{ const k=t.venc.slice(0,7); porMes[k]=(porMes[k]||0)+t.v; });
-  const mesRows = Object.keys(porMes).sort().map(k=>({l:k.split('-').reverse().join('/'), v:porMes[k]}));
+  const meses = Object.keys(porMes).sort().slice(0,8), maxMes=Math.max(1,...meses.map(k=>porMes[k]));
+  const NM=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
-  const pill = (id,l)=>`<button class="fpill ${S.preset===id?'active':''}" onclick="setPreset('${id}')">${l}</button>`;
+  // pastas: contagem ignora o próprio filtro de pasta
+  const tipoAtual=S.tipo; S.tipo='todos'; const base=titulos(); S.tipo=tipoAtual;
+  const porTipo={}; base.forEach(t=>{ const id=tipoDe(t.k); (porTipo[id]=porTipo[id]||{k:new Set(),v:0}).k.add(t.k); porTipo[id].v+=t.v; });
+  const pasta=(id,nome,ico,n,v)=>`<button class="pasta ${S.tipo===id?'on':''}" onclick="S.tipo='${id}';pagLista=12;render()"><span class="ico">${ico}</span><span><b>${nome}</b><small>${n} clientes · ${kCurto(v)}</small></span></button>`;
+  const PER=[['tudo','Todo o período'],['hoje','Vence hoje'],['u7','Últimos 7 dias'],['u30','Últimos 30 dias'],['p7','Próximos 7 dias'],['p30','Próximos 30 dias'],['mes','Este mês'],['mesant','Mês passado'],['custom','Personalizado…']];
+
+  const ABAS=[['devedores','Devedores',devedores.length],['regua','Régua do dia',nRegua],['prev','Preventivo',possiveis.length],['score','Score',null]];
+
   document.getElementById('main').innerHTML = `
-  <div class="page-head">
-    <div><h1>Contas a receber</h1><div class="sub">Posição de ${dBR(HOJE)} · fontes: Asaas + Bling via Nekt · ${ts.length} títulos em aberto no filtro</div></div>
-    <div class="row no-print"><button class="btn btn-ghost btn-sm" onclick="window.print()">Imprimir / PDF</button></div>
+  <div class="r-head">
+    <div><h1>Contas a receber</h1><div class="sub">Posição de ${dBR(HOJE)} · Asaas + Bling via Nekt${S.preset!=='tudo'?` · vencimento de ${dBR(ia)} a ${dBR(ib)}`:''}</div></div>
+    <div class="no-print" style="display:flex;gap:8px"><button class="btn-glass" onclick="window.print()">Imprimir / PDF</button></div>
   </div>
 
-  <div class="filters">
-    <div class="filter-pills">${pill('tudo','Tudo')}${pill('hoje','Vence hoje')}${pill('u7','Últimos 7 dias')}${pill('u30','Últimos 30 dias')}${pill('p7','Próximos 7 dias')}${pill('p30','Próximos 30 dias')}${pill('mes','Este mês')}${pill('mesant','Mês passado')}${pill('custom','Personalizado')}</div>
+  <div class="toolbar glass no-print">
+    <div class="segm">${[['ambos','Todos'],['b2b','B2B'],['b2c','B2C']].map(([id,l])=>`<button class="${S.seg===id?'on':''}" onclick="S.seg='${id}';render()">${l}</button>`).join('')}</div>
+    <div class="sel"><select onchange="setPreset(this.value)">${PER.map(([id,l])=>`<option value="${id}" ${S.preset===id?'selected':''}>${l}</option>`).join('')}</select></div>
     ${S.preset==='custom'?`<div class="dates"><input type="date" value="${S.ini}" onchange="S.ini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.fim}" onchange="S.fim=this.value;render()"></div>`:''}
-    <div class="search"><input id="q" type="search" placeholder="Buscar cliente ou CNPJ/CPF…" value="${esc(S.q)}" oninput="S.q=this.value;clearTimeout(window._t);window._t=setTimeout(()=>{render();const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)"></div>
-    <label class="check" title="Parcelas de cartão da loja online: quem paga é a operadora, não há cobrança."><input type="checkbox" ${S.loja?'checked':''} onchange="S.loja=this.checked;render()"> Incluir cartão da loja</label>
-  </div>
-  <div class="filters"><div class="filter-pills">${[['ambos','Ambos'],['b2b','B2B'],['b2c','B2C']].map(([id,l])=>`<button class="fpill ${S.seg===id?'active':''}" onclick="S.seg='${id}';render()">${l}</button>`).join('')}</div>
-    ${S.seg!=='b2b'?'<span class="note">Recebíveis de cartão do site ainda não entram: aguardando a conexão da Rede no Nekt.</span>':''}</div>
-  ${S.preset!=='tudo'?`<div class="note" style="margin:-8px 0 14px;">Filtro por vencimento: ${dBR(ia)} a ${dBR(ib)}.</div>`:''}
-
-  <div class="grid-4" style="margin-bottom:18px;">
-    <div class="card kpi"><div class="kpi-label">Carteira em aberto</div><div class="kpi-value">${BRL(tot)}</div><div class="kpi-foot">${ts.length} títulos · ${nCli(ts)} clientes</div></div>
-    <div class="card kpi"><div class="kpi-label">Vencido</div><div class="kpi-value" style="color:var(--red)">${BRL(V)}</div><div class="kpi-foot">${vencidos.length} títulos · ${nCli(vencidos)} clientes</div></div>
-    <div class="card kpi"><div class="kpi-label">A vencer</div><div class="kpi-value">${BRL(A)}</div><div class="kpi-foot">${avencer.length} títulos · ${nCli(avencer)} clientes</div></div>
-    <div class="card kpi"><div class="kpi-label">% vencido sobre a carteira</div><div class="kpi-value" style="color:${corPct}">${pct.toFixed(1).replace('.',',')}%</div>
-      <div class="progress" style="margin-top:10px;height:8px;"><div style="width:${Math.min(100,pct)}%;background:${corPct}"></div></div>
-      <div class="kpi-foot">${S.preset==='tudo'?'carteira total':`carteira total sem filtro: ${pctTodos.toFixed(1).replace('.',',')}%`}</div></div>
+    <div class="busca"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Buscar cliente, CNPJ ou CPF" value="${esc(S.q)}" oninput="S.q=this.value;clearTimeout(window._t);window._t=setTimeout(()=>{render();const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)"></div>
+    <label class="sw" title="Parcelas de cartão da loja online: quem paga é a operadora, não há cobrança."><input type="checkbox" ${S.loja?'checked':''} onchange="S.loja=this.checked;render()"><i></i>Cartão da loja</label>
   </div>
 
-  <div class="aging">
-    ${['f1','f2','f3'].map((f,i)=>`<div class="tile ${['t-yellow','t-orange','t-pink'][i]}"><div class="t-label" style="font-weight:700">Vencido · ${FAIXA_LBL[f]}</div>
-      <div class="t-foot"><div><div class="t-value">${BRL(soma(fx[f]))}</div><div class="t-label">${fx[f].length} títulos · ${nCli(fx[f])} clientes${V?` · ${(soma(fx[f])/V*100).toFixed(0)}% do vencido`:''}</div></div></div></div>`).join('')}
+  <div class="pastas no-print">
+    ${pasta('todos','Todas as pastas','🗂️',new Set(base.map(t=>t.k)).size,soma(base))}
+    ${TIPOS.filter(t=>porTipo[t.id]).map(t=>pasta(t.id,t.nome,t.ico,porTipo[t.id].k.size,porTipo[t.id].v)).join('')}
   </div>
 
-  <div class="grid-2" style="margin-bottom:18px;">
-    <div class="panel" style="margin-bottom:0"><h2>Vencido por faixa de atraso</h2><div class="desc">Valor em aberto por dias de atraso</div>
-      ${bars([{l:'1 a 30 dias',v:soma(fx.f1),n:fx.f1.length,c:'var(--yellow)'},{l:'31 a 90 dias',v:soma(fx.f2),n:fx.f2.length,c:'var(--orange)'},{l:'Acima de 90 dias',v:soma(fx.f3),n:fx.f3.length,c:'var(--pink)'}])}</div>
-    <div class="panel" style="margin-bottom:0"><h2>A vencer por mês</h2><div class="desc">Entradas previstas</div>${bars(mesRows)}</div>
+  <div class="hero">
+    <div class="k glass dark">
+      <div class="lbl">Carteira em aberto</div>
+      <div class="val">${kv(tot)}</div>
+      <div class="foot">${ts.length} títulos · ${nCli(ts)} clientes</div>
+      <div class="stack">${tot?`<span style="flex:${A};background:rgba(255,255,255,.85)"></span>`+['f1','f2','f3'].map((f,i)=>soma(fx[f])?`<span style="flex:${soma(fx[f])};background:${['var(--yellow)','var(--orange)','var(--pink)'][i]}"></span>`:'').join(''):''}</div>
+      <div class="legend"><span><i style="background:rgba(255,255,255,.85)"></i>A vencer</span><span><i style="background:var(--yellow)"></i>1–30 d</span><span><i style="background:var(--orange)"></i>31–90 d</span><span><i style="background:var(--pink)"></i>+90 d</span></div>
+    </div>
+    <div class="k glass hot">
+      <div class="lbl">Vencido <span class="badge">${pct.toFixed(1).replace('.',',')}% da carteira</span></div>
+      <div class="val">${kv(V)}</div>
+      <div class="foot">${vencidos.length} títulos · ${nCli(vencidos)} clientes</div>
+    </div>
+    <div class="k glass">
+      <div class="lbl">A vencer</div>
+      <div class="val">${kv(A)}</div>
+      <div class="foot">${avencer.length} títulos · ${nCli(avencer)} clientes${meses[0]?` · ${kCurto(porMes[meses[0]])} em ${NM[+meses[0].slice(5)-1]}`:''}</div>
+    </div>
   </div>
 
-  <div class="panel">
-    <div class="card-head"><div><h2>Devedores — vencido x a vencer</h2><div class="desc">${devedores.length} clientes com título vencido no filtro. “A vencer” mostra o que ainda vai vencer do mesmo cliente (todo o período), para medir o tamanho do problema. Clique na linha para ver os títulos.</div></div>
-      <button class="btn btn-ghost btn-sm no-print" onclick="csv('devedores')">Baixar CSV</button></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Cliente</th><th>Contato</th><th class="num">Vencido</th><th class="num">A vencer</th><th class="num">Total em aberto</th><th class="num">Maior atraso</th><th>Score</th></tr></thead><tbody>
-    ${devedores.map(m=>`<tr style="cursor:pointer" onclick="detalhe('${m.c.k}')"><td><b>${esc(m.c.nome)}</b><div class="sub2">${esc(m.c.k)}${m.c.loc?' · '+esc(m.c.loc):''}</div></td><td onclick="event.stopPropagation()">${contatoHtml(m)}</td>
-      <td class="num red">${BRL(m.vencPer)}</td><td class="num">${m.avencer?BRL(m.avencer):'—'}</td><td class="num"><b>${BRL(m.venc+m.avencer)}</b></td><td class="num">${m.maxDias} d<div class="sub2">${FAIXA_LBL[faixa(m.maxDias)]}</div></td><td>${scoreHtml(m.score)}</td></tr>`).join('') || '<tr><td colspan="7"><div class="empty-state">Nenhum devedor no filtro.</div></td></tr>'}
-    </tbody></table></div>
+  <div class="duo">
+    <div class="box glass"><h2>Vencido por faixa de atraso</h2><div class="desc">Quanto mais antigo, mais difícil de receber</div>
+      <div class="faixas">${['f1','f2','f3'].map((f,i)=>{ const v=soma(fx[f]); return `<div class="fx"><div class="n">${FAIXA_LBL[f]}<small>${fx[f].length} títulos · ${nCli(fx[f])} clientes</small></div>
+        <div class="t"><div style="width:${V?v/V*100:0}%;background:${['var(--yellow)','var(--orange)','var(--pink)'][i]}"></div></div>
+        <div class="v">${BRL(v)}<small>${V?(v/V*100).toFixed(0):0}% do vencido</small></div></div>`; }).join('')}</div></div>
+    <div class="box glass"><h2>A vencer por mês</h2><div class="desc">Entradas previstas</div>
+      ${meses.length?`<div class="cols">${meses.map(k=>`<div class="col ${porMes[k]===maxMes?'top':''}"><div class="bar" style="height:${Math.max(4,porMes[k]/maxMes*100)}%"><em>${kCurto(porMes[k])}</em></div><div class="m">${NM[+k.slice(5)-1]}/${k.slice(2,4)}</div></div>`).join('')}</div>`:'<div class="empty">Nada a vencer no filtro.</div>'}</div>
   </div>
 
-  <div class="panel" id="regua">
-    <div class="card-head"><div><h2>Relatório diário — régua de cobrança</h2><div class="desc">Clientes com título vencido em ${dBR(HOJE)}, agrupados pelo tempo de atraso, com contato. Ignora o filtro de período.</div></div>
-      <div class="row no-print"><button class="btn btn-ghost btn-sm" onclick="csv('regua')">Baixar CSV da faixa</button><button class="btn btn-dark btn-sm" onclick="csv('reguaTudo')">Baixar relatório do dia</button></div></div>
-    ${reguaHtml(M)}
-  </div>
+  <div class="clientes glass">
+    <div class="c-head">
+      <div class="tabs2">${ABAS.map(([id,l,n])=>`<button class="${aba===id?'on':''}" onclick="aba='${id}';pagLista=12;render()">${l}${n!=null?` <span class="cnt">${n}</span>`:''}</button>`).join('')}</div>
+      <div class="no-print" style="display:flex;gap:8px">${aba==='devedores'?`<button class="btn-glass" onclick="csv('devedores')">Baixar CSV</button>`:aba==='prev'?`<button class="btn-glass" onclick="csv('possiveis')">Baixar CSV</button>`:aba==='regua'?`<button class="btn-glass" onclick="csv('regua')">CSV da faixa</button><button class="btn-glass btn-ink" onclick="csv('reguaTudo')">Relatório do dia</button>`:''}</div>
+    </div>
+    ${aba==='devedores'?listaDevedores(devedores):aba==='regua'?reguaHtml(g):aba==='prev'?listaPrev(possiveis):scorePanel(M)}
+  </div>`;
+}
 
-  <div class="panel">
-    <div class="card-head"><div><h2>Possíveis inadimplentes</h2><div class="desc">Sem título vencido hoje, com parcelas a vencer e histórico de atraso no último ano. Bom alvo para lembrete preventivo.</div></div>
-      <button class="btn btn-ghost btn-sm no-print" onclick="csv('possiveis')">Baixar CSV</button></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Cliente</th><th>Contato</th><th class="num">Atrasos no histórico</th><th class="num">Atraso médio</th><th class="num">A vencer</th><th>Próx. vencimento</th><th>Score</th></tr></thead><tbody>
-    ${possiveis.map(m=>`<tr style="cursor:pointer" onclick="detalhe('${m.c.k}')"><td><b>${esc(m.c.nome)}</b><div class="sub2">${esc(m.c.k)}${m.c.loc?' · '+esc(m.c.loc):''}</div></td><td onclick="event.stopPropagation()">${contatoHtml(m)}</td>
-      <td class="num">${m.c.atrasos} de ${m.c.n}</td><td class="num">${m.c.atrasoMedio!=null?m.c.atrasoMedio.toFixed(0)+' d':'—'}</td><td class="num">${BRL(m.avencer)}</td><td>${dBR(m.prox)}</td><td>${scoreHtml(m.score)}</td></tr>`).join('') || '<tr><td colspan="7"><div class="empty-state">Nenhum cliente nesse perfil.</div></td></tr>'}
-    </tbody></table></div>
-  </div>
-
-  ${scorePanel(M)}`;
+function mais(n){ return n>pagLista?`<div class="rodape"><span class="note">Mostrando ${pagLista} de ${n}</span><button class="btn-glass no-print" onclick="pagLista+=24;render()">Ver mais ${Math.min(24,n-pagLista)}</button></div>`:''; }
+function listaDevedores(l){
+  return `<div class="c-desc">Clientes com título vencido no filtro, do maior para o menor valor. Clique para ver os títulos.</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span>Contato</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
+  ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct" onclick="event.stopPropagation()">${contatoHtml(m)}</div>
+    <div class="vv red"><b>${BRL(m.vencPer)}</b><small>${m.tits.filter(t=>t.dias>0).length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Nenhum devedor no filtro.</div>'}</div>${mais(l.length)}`;
+}
+function listaPrev(l){
+  return `<div class="c-desc">Sem título vencido hoje, com parcelas a vencer e histórico de atraso. Bom alvo para lembrete preventivo.</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span>Contato</span><span class="num">A vencer</span><span class="num">Próx. venc.</span><span class="num">Atrasos</span><span>Score</span></div>
+  ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct" onclick="event.stopPropagation()">${contatoHtml(m)}</div>
+    <div class="vv"><b>${BRL(m.avencer)}</b></div><div class="vv">${dBR(m.prox)}</div><div class="vv"><b>${m.c.atrasos}</b><small>de ${m.c.n}${m.c.atrasoMedio!=null?' · '+m.c.atrasoMedio.toFixed(0)+' d':''}</small></div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Nenhum cliente nesse perfil.</div>'}</div>${mais(l.length)}`;
 }
 
 function reguaGrupos(M){
   const g={f0:[],f1:[],f2:[],f3:[]};
   Object.values(M).forEach(m=>{ const vs=m.tits.filter(t=>t.dias>0); if(!vs.length) return; const d=Math.max(...vs.map(t=>t.dias));
-    // faixa = atraso do título mais antigo do cliente
     (d===1?g.f0: d<=30?g.f1: d<=90?g.f2: g.f3).push(m); });
   Object.values(g).forEach(a=>a.sort((x,y)=>y.venc-x.venc));
   return g;
 }
 const REG_LBL = {f0:'Do dia (1 dia)', f1:'2 a 30 dias', f2:'31 a 90 dias', f3:'Acima de 90 dias'};
-function reguaHtml(M){
-  const g=reguaGrupos(M); const lista=g[abaRegua];
-  return `<div class="seg tabs no-print">${Object.keys(REG_LBL).map(k=>`<button class="${abaRegua===k?'active':''}" onclick="abaRegua='${k}';render();document.getElementById('regua').scrollIntoView({block:'nearest'})">${REG_LBL[k]} <span class="count">${g[k].length}</span></button>`).join('')}</div>
-  <div class="note" style="margin-bottom:10px">${lista.length} clientes · ${BRL(lista.reduce((s,m)=>s+m.venc,0))} vencido</div>
-  <div class="tbl-wrap"><table><thead><tr><th>Cliente</th><th>Contato</th><th class="num">Vencido</th><th class="num">A vencer</th><th class="num">Títulos vencidos</th><th class="num">Atraso</th><th class="no-print">Ação</th></tr></thead><tbody>
-  ${lista.map(m=>{ const vs=m.tits.filter(t=>t.dias>0); const w=wa(m.c,msgCobranca(m));
-    return `<tr><td><b>${esc(m.c.nome)}</b><div class="sub2">${esc(m.c.k)}${m.c.loc?' · '+esc(m.c.loc):''}</div></td><td>${contatoHtml(m)}</td><td class="num red">${BRL(m.venc)}</td><td class="num">${m.avencer?BRL(m.avencer):'—'}</td><td class="num">${vs.length}</td><td class="num">${m.maxDias} d</td>
-    <td class="no-print">${w?`<a class="btn btn-primary btn-sm" target="_blank" rel="noopener" href="${w}">WhatsApp</a>`:'<span class="sub2">sem telefone</span>'}</td></tr>`; }).join('') || '<tr><td colspan="7"><div class="empty-state">Ninguém nessa faixa hoje.</div></td></tr>'}
-  </tbody></table></div>`;
+function reguaHtml(g){
+  const lista=g[abaRegua];
+  return `<div class="sub-tabs no-print">${Object.keys(REG_LBL).map(k=>`<button class="${abaRegua===k?'on':''}" onclick="abaRegua='${k}';pagLista=12;render()">${REG_LBL[k]} · ${g[k].length}</button>`).join('')}</div>
+  <div class="c-desc">Clientes com título vencido em ${dBR(HOJE)}, pelo atraso do título mais antigo. ${lista.length} clientes · <b class="red">${BRL(lista.reduce((s,m)=>s+m.venc,0))}</b> vencido. Ignora o filtro de período.</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span>Contato</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span></span></div>
+  ${lista.slice(0,pagLista).map(m=>{ const w=wa(m.c,msgCobranca(m)); const vs=m.tits.filter(t=>t.dias>0);
+    return `<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct" onclick="event.stopPropagation()">${contatoHtml(m)}</div><div class="vv red"><b>${BRL(m.venc)}</b><small>${vs.length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div>
+    <div class="no-print" onclick="event.stopPropagation()">${w?`<a class="wa" target="_blank" rel="noopener" href="${w}" title="Cobrar no WhatsApp">WA</a>`:''}</div></div>`; }).join('') || '<div class="empty">Ninguém nessa faixa hoje.</div>'}</div>${mais(lista.length)}`;
 }
 
 function scorePanel(M){
   const abertos = Object.values(M).filter(m=>m.score!=null);
-  const hist = Object.values(CLI).filter(c=>c.n>0 && !M[c.k]).map(c=>({c, venc:0, avencer:0, maxDias:0, tits:[], score:score(c,0)}));
+  const hist = Object.values(CLI).filter(c=>c.n>0 && !M[c.k] && (S.tipo==='todos'||tipoDe(c.k)===S.tipo)).map(c=>({c, venc:0, avencer:0, maxDias:0, tits:[], score:score(c,0)}));
   const lista = (abaScore==='abertos'? abertos : [...abertos,...hist]).sort((a,b)=>a.score-b.score);
   const q=S.q.trim().toLowerCase(), l2 = q? lista.filter(m=>m.c.nome.toLowerCase().includes(q)||m.c.k.includes(q.replace(/\D/g,'')||'§')) : lista;
-  return `<div class="panel">
-    <div class="card-head"><div><h2>Score de clientes</h2><div class="desc">Compras (títulos emitidos) x pagamento em dia. Do menor para o maior score.</div></div>
-      <div class="seg no-print"><button class="${abaScore==='abertos'?'active':''}" onclick="abaScore='abertos';pagScore=25;render()">Com título em aberto</button><button class="${abaScore==='todos'?'active':''}" onclick="abaScore='todos';pagScore=25;render()">Todos com histórico</button></div></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Cliente</th><th class="num">Compras (R$)</th><th class="num">Em dia</th><th class="num">Atraso médio</th><th class="num">Em aberto</th><th>Score</th></tr></thead><tbody>
-    ${l2.slice(0,pagScore).map(m=>`<tr style="cursor:pointer" onclick="detalhe('${m.c.k}')"><td><b>${esc(m.c.nome)}</b><div class="sub2">${esc(m.c.k)}</div></td><td class="num">${BRL(m.c.emitidoV)}</td><td class="num">${m.c.emDia} de ${m.c.n}</td><td class="num">${m.c.atrasoMedio!=null?m.c.atrasoMedio.toFixed(0)+' d':'—'}</td><td class="num">${BRL(m.venc+m.avencer)}</td><td>${scoreHtml(m.score)}</td></tr>`).join('') || '<tr><td colspan="6"><div class="empty-state">Sem clientes.</div></td></tr>'}
-    </tbody></table></div>
-    ${l2.length>pagScore?`<div class="more no-print"><button class="btn btn-ghost btn-sm" onclick="pagScore+=50;render()">Ver mais (${l2.length-pagScore})</button></div>`:''}
-    <details class="how"><summary>Como o score é calculado</summary><p>0 a 100. 75 pontos vêm da pontualidade (metade pelo nº de títulos pagos em dia, metade pelo valor) e 25 pontos da gravidade do atraso médio (30 dias ou mais zera esses 25). Atraso atual acima de 30 dias limita o score a 45; acima de 90 dias, a 25. Classes: A ≥ 80, B 60–79, C 40–59, D &lt; 40. Cliente sem histórico de pagamento fica sem score (—). O histórico vem do Asaas desde jan/2026; o Bling ainda não traz títulos já pagos.</p></details>
-  </div>`;
+  return `<div class="sub-tabs no-print"><button class="${abaScore==='abertos'?'on':''}" onclick="abaScore='abertos';pagLista=12;render()">Com título em aberto</button><button class="${abaScore==='todos'?'on':''}" onclick="abaScore='todos';pagLista=12;render()">Todos com histórico</button></div>
+  <div class="c-desc">Compras x pagamento em dia, do menor para o maior score.</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span>Pagos em dia</span><span class="num">Compras</span><span class="num">Em aberto</span><span class="num">Atraso méd.</span><span>Score</span></div>
+  ${l2.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct"><b>${m.c.emDia}</b> <span class="muted">de ${m.c.n} títulos</span></div><div class="vv">${BRL(m.c.emitidoV)}</div><div class="vv"><b>${m.venc+m.avencer?BRL(m.venc+m.avencer):'—'}</b></div><div class="num muted">${m.c.atrasoMedio!=null?m.c.atrasoMedio.toFixed(0)+' d':'—'}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Sem clientes.</div>'}</div>${mais(l2.length)}
+  <details class="how"><summary>Como o score é calculado</summary><p>0 a 100. 75 pontos vêm da pontualidade (metade pelo nº de títulos pagos em dia, metade pelo valor) e 25 pontos da gravidade do atraso médio (30 dias ou mais zera esses 25). Atraso atual acima de 30 dias limita o score a 45; acima de 90 dias, a 25. Classes: A ≥ 80, B 60–79, C 40–59, D &lt; 40. Cliente sem histórico fica sem score (—). O histórico vem do Asaas desde jan/2026; o Bling ainda não traz títulos já pagos. A pasta de cada cliente é estimada pelo nome da empresa.</p></details>`;
 }
 
 // ---------- ações ----------
-function setPreset(p){ S.preset=p; if(p==='custom' && !S.ini){ S.ini=addDias(HOJE,-30); S.fim=HOJE; } render(); }
+function setPreset(p){ S.preset=p; pagLista=12; if(p==='custom' && !S.ini){ S.ini=addDias(HOJE,-30); S.fim=HOJE; } render(); }
 function detalhe(k){
   const c=CLI[k], ts=TIT.filter(t=>t.k===k && noEscopo(t)).sort((a,b)=>a.venc<b.venc?-1:1);
   const V=soma(ts.filter(t=>t.dias>0)), A=soma(ts.filter(t=>t.dias<=0)), m={c,venc:V,tits:ts};
