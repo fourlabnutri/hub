@@ -151,6 +151,71 @@
   .cols{ height:150px; padding-top:22px; }
   @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } }
   @media (max-width:720px){ .hero{ grid-template-columns:1fr; } }
+  /* v3: painel × analítico */
+  .tt{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .vw{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:99px; padding:4px; }
+  .vw button{ border:0; background:none; padding:8px 18px; border-radius:99px; font-size:13px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .vw button.on{ background:var(--orange); color:#fff; box-shadow:0 6px 16px rgba(233,103,9,.3); }
+  .mini{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .m1{ padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px; border-radius:18px; }
+  .m1 span{ font-size:12.5px; color:var(--ink-2); } .m1 b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .m1 b small{ font-size:.55em; opacity:.6; font-weight:500; }
+  .g-main{ display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:12px; }
+  .g-tri{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .bh{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .chips-f{ display:inline-flex; gap:2px; background:rgba(26,19,21,.05); border-radius:99px; padding:3px; }
+  .chips-f button{ border:0; background:none; padding:5px 11px; border-radius:99px; font-size:11.5px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .chips-f button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 8px rgba(26,19,21,.08); }
+  .g-main .cols{ height:230px; }
+  .cols-st .col{ gap:8px; }
+  .stk{ width:100%; max-width:38px; display:flex; flex-direction:column; border-radius:10px; overflow:visible; position:relative; gap:2px; }
+  .stk i{ display:block; border-radius:8px; min-height:3px; }
+  .stk i.a{ background:linear-gradient(180deg,#e3055f,#c0392b); } .stk i.b{ background:repeating-linear-gradient(135deg, rgba(233,103,9,.5) 0 5px, rgba(233,103,9,.25) 5px 10px); }
+  .stk em{ position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10.5px; font-weight:800; white-space:nowrap; }
+  .leg2{ display:flex; gap:14px; font-size:11.5px; color:var(--ink-2); margin-top:8px; }
+  .leg2 i{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .leg2 i.a{ background:#d6114d; } .leg2 i.b{ background:rgba(233,103,9,.45); }
+  .ana .top5{ display:grid; gap:4px; margin-top:12px; }
+  .top5 button{ display:grid; grid-template-columns:38px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:7px 6px; border-radius:14px; cursor:pointer; text-align:left; color:inherit; }
+  .top5 button:hover{ background:rgba(255,255,255,.75); }
+  .top5 .nm b{ display:block; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .top5 .nm small{ font-size:11px; color:var(--muted); }
+  .top5 .vl{ font-size:13px; font-weight:800; color:var(--red); }
+  .rank{ display:grid; gap:10px; margin-top:14px; }
+  .rk{ display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:0; text-align:left; cursor:pointer; color:inherit; }
+  .ic2{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--orange-soft); color:var(--orange); }
+  .rk .nmr{ min-width:0; } .rk .nmr b{ font-size:12px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tr2{ height:6px; border-radius:99px; background:rgba(26,19,21,.06); margin-top:5px; overflow:hidden; } .tr2 i{ display:block; height:100%; border-radius:99px; background:var(--grad-accent-bar); }
+  .rk .vr{ font-size:12.5px; font-weight:800; white-space:nowrap; }
+  .donut{ display:flex; align-items:center; gap:16px; margin-top:12px; } .donut svg{ width:120px; flex:0 0 120px; }
+  .dl{ display:grid; gap:10px; flex:1; } .dl div{ display:grid; grid-template-columns:10px 1fr auto; gap:4px 8px; align-items:center; font-size:12.5px; }
+  .dl i{ width:10px; height:10px; border-radius:50%; } .dl b{ font-weight:800; } .dl small{ grid-column:2/-1; color:var(--muted); font-size:11px; margin-top:-4px; }
+  .sub-kv{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+  .sub-kv div{ background:rgba(255,255,255,.6); border-radius:12px; padding:8px 12px; } .sub-kv span{ display:block; font-size:11px; color:var(--muted); } .sub-kv b{ font-size:14px; }
+  @media (max-width:1100px){ .g-main{ grid-template-columns:1fr; } .g-tri{ grid-template-columns:1fr 1fr; } .mini{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .g-tri,.mini{ grid-template-columns:1fr; } }
+  /* pop-up do cliente */
+  #modalBox.modal-box{ padding:0; border-radius:26px; overflow:hidden; max-width:760px; width:calc(100% - 32px); background:rgba(255,255,255,.92); -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px); }
+  .pop{ padding:24px; }
+  .pop-h{ display:flex; gap:14px; align-items:center; }
+  .pop-h .av{ flex-basis:52px; height:52px; border-radius:16px; font-size:17px; }
+  .pop-t{ flex:1; min-width:0; } .pop-t h2{ font-size:20px; letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pop-t > div{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px; font-size:12px; color:var(--muted); }
+  .pop-t > div span + span::before{ content:"·"; margin-right:8px; }
+  .chip-t{ display:inline-flex; gap:5px; align-items:center; padding:3px 9px; border-radius:99px; background:var(--orange-soft); color:#b5680a; font-weight:700; } .chip-t svg{ width:12px; height:12px; }
+  .pop-t > div .chip-t + span::before{ content:""; margin:0; }
+  .pop-x{ width:38px; height:38px; border-radius:50%; border:1px solid rgba(26,19,21,.1); background:#fff; display:grid; place-items:center; cursor:pointer; color:var(--ink); }
+  .pop-k{ display:grid; grid-template-columns:1.2fr 1.2fr .8fr; gap:10px; margin-top:18px; }
+  .pk{ border-radius:18px; padding:14px 16px; background:rgba(26,19,21,.04); display:flex; flex-direction:column; gap:4px; }
+  .pk span{ font-size:12px; color:var(--ink-2); } .pk b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .pk b small{ font-size:.55em; opacity:.6; margin-right:3px; }
+  .pk.hot{ background:linear-gradient(140deg,#e96709,#f7a21b); color:#fff; } .pk.hot span{ color:rgba(255,255,255,.9); }
+  .pk .score{ width:36px; height:36px; }
+  .pop-hist{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+  .pop-hist > div{ border:1px solid rgba(26,19,21,.07); border-radius:14px; padding:10px 14px; } .pop-hist span{ display:block; font-size:11px; color:var(--muted); } .pop-hist b{ font-size:15px; }
+  .pop-l{ margin-top:16px; max-height:320px; overflow-y:auto; }
+  .pl{ display:grid; grid-template-columns:100px minmax(0,1fr) 90px 110px 80px; gap:10px; align-items:center; padding:10px 8px; font-size:12.5px; border-top:1px solid rgba(26,19,21,.06); }
+  .pl.cab{ border-top:0; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; position:sticky; top:0; background:rgba(255,255,255,.95); }
+  .pl small{ display:block; font-size:11px; color:var(--muted); }
+  .pl.venc{ background:linear-gradient(90deg, rgba(227,5,95,.05), transparent); }
+  @media (max-width:720px){ .pop-k,.pop-hist{ grid-template-columns:1fr 1fr; } .pl{ grid-template-columns:90px 1fr 90px; } .pl > :nth-child(3), .pl > :nth-child(5){ display:none; } }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -320,6 +385,70 @@ function gauge(pct){ const N=22, on=Math.round(Math.min(100,pct)/100*N), cx=110,
 function colunas(rows){ const max=Math.max(1,...rows.map(r=>r.v));
   return `<div class="cols">${rows.map(r=>`<div class="col ${r.v===max&&r.v>0?'top':''}"><div class="bar" style="height:${Math.max(4,r.v/max*100)}%"><em>${kCurto(r.v)}</em></div><div class="m">${esc(r.l)}</div></div>`).join('')}</div>`; }
 
+// ---------- painel × analítico ----------
+let VIEW = 'painel';
+const CH = {mes:'12', fx:'v', pasta:'venc'};
+const chips = (chave, ops) => `<div class="chips-f no-print">${ops.map(([id,l])=>`<button class="${CH[chave]===id?'on':''}" onclick="CH.${chave}='${id}';render()">${l}</button>`).join('')}</div>`;
+function colsStack(rows){ const max=Math.max(1,...rows.map(r=>r.a+r.b));
+  return `<div class="cols cols-st">${rows.map(r=>{ const t=r.a+r.b; return `<div class="col" title="${esc(r.l)}: vencido ${BRL(r.a)} · a vencer ${BRL(r.b)}"><div class="stk" style="height:${Math.max(3,t/max*100)}%"><em>${t?kCurto(t):''}</em>${r.b?`<i class="b" style="flex:${r.b}"></i>`:''}${r.a?`<i class="a" style="flex:${r.a}"></i>`:''}</div><div class="m">${esc(r.l)}</div></div>`; }).join('')}</div>`; }
+function donut(parts){ const tot=parts.reduce((s,p)=>s+p.v,0)||1, C=2*Math.PI*42; let off=0;
+  const arcs=parts.map(p=>{ const len=p.v/tot*C, d=`<circle cx="60" cy="60" r="42" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${Math.max(0,len-3)} ${C}" stroke-dashoffset="${-off}" stroke-linecap="round" transform="rotate(-90 60 60)"/>`; off+=len; return d; }).join('');
+  return `<div class="donut"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="42" fill="none" stroke="rgba(26,19,21,.06)" stroke-width="16"/>${arcs}</svg>
+    <div class="dl">${parts.map(p=>`<div><i style="background:${p.c}"></i><span>${p.l}</span><b>${kCurto(p.v)}</b><small>${Math.round(p.v/tot*100)}%</small></div>`).join('')}</div></div>`; }
+
+function painelHtml(ctx){
+  const {ts,vencidos,avencer,V,A,tot,pct,fx,nCli,devedores,M} = ctx;
+  // indicadores extras
+  const atrasoPond = V? vencidos.reduce((s,t)=>s+t.dias*t.v,0)/V : 0;
+  const top5 = devedores.slice(0,5).reduce((s,m)=>s+m.vencPer,0), conc = V? top5/V*100 : 0;
+  const comScore = Object.values(M).filter(m=>m.score!=null), sv=comScore.reduce((s,m)=>s+m.venc+m.avencer,0);
+  const scoreMed = sv? comScore.reduce((s,m)=>s+m.score*(m.venc+m.avencer),0)/sv : null;
+  // linha do tempo por mês de vencimento (passado = vencido, futuro = a vencer)
+  const pm={}; ts.forEach(t=>{ const k=t.venc.slice(0,7); const x=pm[k]=pm[k]||{a:0,b:0}; if(t.dias>0) x.a+=t.v; else x.b+=t.v; });
+  let ks=Object.keys(pm).sort(); const hojeM=HOJE.slice(0,7);
+  if(CH.mes!=='tudo'){ const n=+CH.mes; const ini=mes(HOJE,-(n-1)).slice(0,7), fim=mes(HOJE,6).slice(0,7); ks=ks.filter(k=>k>=ini&&k<=fim); }
+  const NM=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const linhaTempo = ks.map(k=>({l:NM[+k.slice(5)-1]+'/'+k.slice(2,4)+(k===hojeM?' •':''), a:pm[k].a, b:pm[k].b}));
+  // aging com métrica alternável
+  const met = arr => CH.fx==='t'? arr.length : CH.fx==='c'? nCli(arr) : soma(arr);
+  const fmtFx = v => CH.fx==='v'? kCurto(v) : String(v);
+  const aging = ['f1','f2','f3'].map(f=>({l:FAIXA_LBL[f].replace('Acima de ','+').replace(' dias',' d'), v:met(fx[f]), fmt:fmtFx(met(fx[f]))}));
+  // por pasta
+  const pp={}; (CH.pasta==='venc'?vencidos:ts).forEach(t=>{ const id=tipoDe(t.k); pp[id]=(pp[id]||0)+t.v; });
+  const pastas=TIPOS.filter(t=>pp[t.id]).map(t=>({t, v:pp[t.id]})).sort((a,b)=>b.v-a.v), maxP=Math.max(1,...pastas.map(x=>x.v));
+  // B2B × B2C (só quando "Todos")
+  const segV = k => ts.filter(t=>(t.k.length===14)===k);
+  const b2b=segV(true), b2c=segV(false);
+
+  return `
+  <div class="hero">
+    <div class="k glass"><div class="lbl">Carteira em aberto</div><div class="val">${kv(tot)}</div></div>
+    <div class="k hot"><div class="lbl">Vencido</div><div class="val">${kv(V)}</div></div>
+    <div class="k glass"><div class="lbl">A vencer</div><div class="val">${kv(A)}</div></div>
+    <div class="k glass gcard"><div class="lbl">% vencido</div>${gauge(pct)}</div>
+  </div>
+  <div class="mini">
+    <div class="glass m1"><span>Clientes inadimplentes</span><b>${nCli(vencidos)}</b></div>
+    <div class="glass m1"><span>Atraso médio</span><b>${Math.round(atrasoPond)}<small> dias</small></b></div>
+    <div class="glass m1"><span>Concentração top 5</span><b>${Math.round(conc)}<small>%</small></b></div>
+    <div class="glass m1"><span>Score médio</span><b>${scoreMed==null?'—':Math.round(scoreMed)}</b></div>
+  </div>
+  <div class="g-main">
+    <div class="box glass"><div class="bh"><h2>Carteira por mês de vencimento</h2>${chips('mes',[['6','6m'],['12','12m'],['tudo','Tudo']])}</div>
+      <div class="leg2"><span><i class="a"></i>Vencido</span><span><i class="b"></i>A vencer</span></div>
+      ${linhaTempo.length?colsStack(linhaTempo):'<div class="empty">Sem títulos no filtro.</div>'}</div>
+    <div class="box glass ana"><div class="bh"><h2>Maiores devedores</h2><button class="btn-glass" onclick="VIEW='analitico';render();scrollTo(0,0)">Analítico →</button></div>
+      <div class="top5">${devedores.slice(0,6).map((m,i)=>`<button onclick="detalhe('${m.c.k}')">${avatar(m.c)}<span class="nm"><b>${esc(nomeCurto(m.c.nome))}</b><small>${m.maxDias} d de atraso</small></span><span class="vl">${kCurto(m.vencPer)}</span></button>`).join('')||'<div class="empty">Sem devedores.</div>'}</div></div>
+  </div>
+  <div class="g-tri">
+    <div class="box glass"><div class="bh"><h2>Vencido por atraso</h2>${chips('fx',[['v','R$'],['t','Títulos'],['c','Clientes']])}</div>${colunas(aging)}</div>
+    <div class="box glass"><div class="bh"><h2>Por tipo de comércio</h2>${chips('pasta',[['venc','Vencido'],['cart','Carteira']])}</div>
+      <div class="rank">${pastas.map(x=>`<button class="rk" onclick="S.tipo='${x.t.id}';render()"><span class="ic2">${x.t.ico}</span><div class="nmr"><b>${x.t.nome}</b><div class="tr2"><i style="width:${x.v/maxP*100}%"></i></div></div><div class="vr">${kCurto(x.v)}</div></button>`).join('')||'<div class="empty">Sem dados.</div>'}</div></div>
+    <div class="box glass"><div class="bh"><h2>B2B × B2C</h2></div>
+      ${S.seg==='ambos'?donut([{l:'B2B',v:soma(b2b),c:'var(--orange)'},{l:'B2C',v:soma(b2c),c:'var(--purple)'}])+`<div class="sub-kv"><div><span>Vencido B2B</span><b>${kCurto(soma(b2b.filter(t=>t.dias>0)))}</b></div><div><span>Vencido B2C</span><b>${kCurto(soma(b2c.filter(t=>t.dias>0)))}</b></div></div>`:'<div class="empty">Selecione "Todos" no filtro.</div>'}</div>
+  </div>`;
+}
+
 function render(){
   const ts = titulos(), vencidos = ts.filter(t=>t.dias>0), avencer = ts.filter(t=>t.dias<=0);
   const V=soma(vencidos), A=soma(avencer), tot=V+A, pct = tot? V/tot*100:0;
@@ -346,7 +475,7 @@ function render(){
 
   document.getElementById('main').innerHTML = `
   <div class="r-head">
-    <div><h1>Contas a receber</h1></div>
+    <div class="tt"><h1>Contas a receber</h1><div class="vw no-print"><button class="${VIEW==='painel'?'on':''}" onclick="VIEW='painel';render()">Painel</button><button class="${VIEW==='analitico'?'on':''}" onclick="VIEW='analitico';render()">Analítico</button></div></div>
     <div class="no-print" style="display:flex;gap:8px;align-items:center"><span class="pill-dt">${dBR(HOJE)}</span><button class="btn-glass" onclick="window.print()">Imprimir / PDF</button></div>
   </div>
 
@@ -364,27 +493,15 @@ function render(){
     ${TIPOS.filter(t=>porTipo[t.id]).map(t=>pasta(t.id,t.nome,t.ico,porTipo[t.id].k.size,porTipo[t.id].v)).join('')}
   </div>
 
-  <div class="hero">
-    <div class="k glass"><div class="lbl">Carteira em aberto</div><div class="val">${kv(tot)}</div></div>
-    <div class="k hot"><div class="lbl">Vencido</div><div class="val">${kv(V)}</div></div>
-    <div class="k glass"><div class="lbl">A vencer</div><div class="val">${kv(A)}</div></div>
-    <div class="k glass gcard"><div class="lbl">% vencido</div>${gauge(pct)}</div>
-  </div>
+  ${VIEW==='painel'?painelHtml({ts,vencidos,avencer,V,A,tot,pct,fx,nCli,devedores,M}):''}
 
-  <div class="duo">
-    <div class="box glass"><h2>Vencido por atraso</h2>
-      ${colunas(['f1','f2','f3'].map(f=>({l:FAIXA_LBL[f].replace('Acima de ','+').replace(' dias',' d'), v:soma(fx[f])})))}</div>
-    <div class="box glass"><h2>A vencer por mês</h2>
-      ${meses.length?colunas(meses.map(k=>({l:NM[+k.slice(5)-1]+'/'+k.slice(2,4), v:porMes[k]}))):'<div class="empty">Nada a vencer no filtro.</div>'}</div>
-  </div>
-
-  <div class="clientes glass">
+  ${VIEW==='analitico'?`  <div class="clientes glass">
     <div class="c-head">
       <div class="tabs2">${ABAS.map(([id,l,n])=>`<button class="${aba===id?'on':''}" onclick="aba='${id}';pagLista=12;render()">${l}${n!=null?` <span class="cnt">${n}</span>`:''}</button>`).join('')}</div>
       <div class="no-print" style="display:flex;gap:8px">${aba==='devedores'?`<button class="btn-glass" onclick="csv('devedores')">Baixar CSV</button>`:aba==='prev'?`<button class="btn-glass" onclick="csv('possiveis')">Baixar CSV</button>`:aba==='regua'?`<button class="btn-glass" onclick="csv('regua')">CSV da faixa</button><button class="btn-glass" onclick="csv('reguaTudo')">CSV completo</button>`:''}</div>
     </div>
     ${aba==='devedores'?listaDevedores(devedores):aba==='regua'?reguaHtml(g):aba==='prev'?listaPrev(possiveis):scorePanel(M)}
-  </div>`;
+  </div>`:''}`;
 }
 
 function mais(n){ return n>pagLista?`<div class="rodape"><span class="note">Mostrando ${pagLista} de ${n}</span><button class="btn-glass no-print" onclick="pagLista+=24;render()">Ver mais ${Math.min(24,n-pagLista)}</button></div>`:''; }
@@ -431,14 +548,29 @@ function scorePanel(M){
 function setPreset(p){ S.preset=p; pagLista=12; if(p==='custom' && !S.ini){ S.ini=addDias(HOJE,-30); S.fim=HOJE; } render(); }
 function detalhe(k){
   const c=CLI[k], ts=TIT.filter(t=>t.k===k && noEscopo(t)).sort((a,b)=>a.venc<b.venc?-1:1);
-  const V=soma(ts.filter(t=>t.dias>0)), A=soma(ts.filter(t=>t.dias<=0)), m={c,venc:V,tits:ts};
+  const V=soma(ts.filter(t=>t.dias>0)), A=soma(ts.filter(t=>t.dias<=0)), sc=score(c,Math.max(0,...ts.map(t=>t.dias)));
+  const tp=TIPOS.find(x=>x.id===tipoDe(k)), pctDia=c.n? c.emDia/c.n*100 : null;
+  const doc = k.length===14? k.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5') : k.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/,'$1.$2.$3-$4');
+  const st = t => t.dias>0? `<span class="dias ${t.dias<=30?'d1':t.dias<=90?'d2':'d3'}">${t.dias} d</span>` : t.dias===0? '<span class="dias d1">hoje</span>' : `<span class="dias d0">em ${-t.dias} d</span>`;
   document.getElementById('modalBox').innerHTML = `
-    <div class="card-head"><div><h2 style="font-size:20px">${esc(c.nome)}</h2><div class="desc">${esc(k)}${c.loc?' · '+esc(c.loc):''}</div></div><button class="icon-btn" onclick="fechar()">✕</button></div>
-    <div class="grid-3" style="margin-bottom:14px"><div><div class="kpi-label">Vencido</div><div class="red" style="font-size:18px">${BRL(V)}</div></div><div><div class="kpi-label">A vencer</div><div style="font-size:18px;font-weight:700">${BRL(A)}</div></div><div><div class="kpi-label">Score</div>${scoreHtml(score(c,Math.max(0,...ts.map(t=>t.dias))))}</div></div>
-    <div class="note" style="margin-bottom:10px">Histórico: ${c.n?`${c.emDia} de ${c.n} títulos pagos em dia${c.atrasoMedio!=null?`, atraso médio de ${c.atrasoMedio.toFixed(0)} dias`:''}`:'sem histórico de pagamento'} · compras: ${BRL(c.emitidoV)}</div>
-    <div class="tbl-wrap"><table><thead><tr><th>Vencimento</th><th>Pedido</th><th>Parcela</th><th>Forma</th><th class="num">Valor</th><th class="num">Situação</th></tr></thead><tbody>
-    ${ts.map(t=>`<tr><td>${dBR(t.venc)}</td><td>${esc(t.ped)||'—'}</td><td>${esc(t.parc)||'—'}</td><td>${FORMA[t.forma]||t.forma}</td><td class="num">${BRL(t.v)}</td><td class="num ${t.dias>0?'red':''}">${t.dias>0?`vencido há ${t.dias} d`:t.dias===0?'vence hoje':`vence em ${-t.dias} d`}</td></tr>`).join('')}
-    </tbody></table></div>`;
+  <div class="pop">
+    <div class="pop-h">${avatar(c)}<div class="pop-t"><h2>${esc(nomeCurto(c.nome))}</h2><div><span class="chip-t">${tp.ico}${tp.nome}</span><span>${esc(doc)}</span>${c.loc?`<span>${esc(c.loc)}</span>`:''}</div></div>
+      <button class="pop-x" onclick="fechar()" aria-label="Fechar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="pop-k">
+      <div class="pk hot"><span>Vencido</span><b>${kv(V)}</b></div>
+      <div class="pk"><span>A vencer</span><b>${kv(A)}</b></div>
+      <div class="pk"><span>Score</span>${scoreHtml(sc)}</div>
+    </div>
+    <div class="pop-hist">
+      <div><span>Pagos em dia</span><b>${c.n?`${c.emDia}/${c.n}`:'—'}</b>${pctDia!=null?`<div class="tr2"><i style="width:${pctDia}%;background:${pctDia>=80?'var(--green)':pctDia>=50?'var(--yellow)':'var(--red)'}"></i></div>`:''}</div>
+      <div><span>Atraso médio</span><b>${c.atrasoMedio!=null?c.atrasoMedio.toFixed(0)+' d':'—'}</b></div>
+      <div><span>Compras</span><b>${kCurto(c.emitidoV||0)}</b></div>
+    </div>
+    <div class="pop-l">
+      <div class="pl cab"><span>Vencimento</span><span>Pedido · parcela</span><span>Forma</span><span class="num">Valor</span><span class="num">Atraso</span></div>
+      ${ts.map(t=>`<div class="pl ${t.dias>0?'venc':''}"><span>${dBR(t.venc)}</span><span>${esc(t.ped)||'—'}<small>${esc(t.parc)||''}</small></span><span>${FORMA[t.forma]||t.forma}</span><span class="num"><b>${BRL(t.v)}</b></span><span class="num">${st(t)}</span></div>`).join('')}
+    </div>
+  </div>`;
   document.getElementById('modalBg').classList.add('active');
 }
 function fechar(){ document.getElementById('modalBg').classList.remove('active'); }
