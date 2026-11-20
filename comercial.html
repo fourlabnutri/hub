@@ -272,6 +272,51 @@
   .rk{ grid-template-columns:auto minmax(0,1fr) auto; }
   @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } }
   @media (max-width:720px){ .hero{ grid-template-columns:1fr; } }
+  /* v3: painel × analítico */
+  .tt{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .vw{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:99px; padding:4px; }
+  .vw button{ border:0; background:none; padding:8px 18px; border-radius:99px; font-size:13px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .vw button.on{ background:var(--orange); color:#fff; box-shadow:0 6px 16px rgba(233,103,9,.3); }
+  .mini{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .m1{ padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px; border-radius:18px; }
+  .m1 span{ font-size:12.5px; color:var(--ink-2); } .m1 b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .m1 b small{ font-size:.55em; opacity:.6; font-weight:500; }
+  .g-main{ display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:12px; }
+  .g-tri{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .bh{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .chips-f{ display:inline-flex; gap:2px; background:rgba(26,19,21,.05); border-radius:99px; padding:3px; }
+  .chips-f button{ border:0; background:none; padding:5px 11px; border-radius:99px; font-size:11.5px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .chips-f button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 8px rgba(26,19,21,.08); }
+  .g-main .cols{ height:230px; }
+  .cols-st .col{ gap:8px; }
+  .stk{ width:100%; max-width:38px; display:flex; flex-direction:column; border-radius:10px; overflow:visible; position:relative; gap:2px; }
+  .stk i{ display:block; border-radius:8px; min-height:3px; }
+  .stk i.a{ background:linear-gradient(180deg,#e3055f,#c0392b); } .stk i.b{ background:repeating-linear-gradient(135deg, rgba(233,103,9,.5) 0 5px, rgba(233,103,9,.25) 5px 10px); }
+  .stk em{ position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10.5px; font-weight:800; white-space:nowrap; }
+  .leg2{ display:flex; gap:14px; font-size:11.5px; color:var(--ink-2); margin-top:8px; }
+  .leg2 i{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .leg2 i.a{ background:#d6114d; } .leg2 i.b{ background:rgba(233,103,9,.45); }
+  .ana .top5{ display:grid; gap:4px; margin-top:12px; }
+  .top5 button{ display:grid; grid-template-columns:38px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:7px 6px; border-radius:14px; cursor:pointer; text-align:left; color:inherit; }
+  .top5 button:hover{ background:rgba(255,255,255,.75); }
+  .top5 .nm b{ display:block; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .top5 .nm small{ font-size:11px; color:var(--muted); }
+  .top5 .vl{ font-size:13px; font-weight:800; color:var(--red); }
+  .rank{ display:grid; gap:10px; margin-top:14px; }
+  .rk{ display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:0; text-align:left; cursor:pointer; color:inherit; }
+  .ic2{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--orange-soft); color:var(--orange); }
+  .rk .nmr{ min-width:0; } .rk .nmr b{ font-size:12px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tr2{ height:6px; border-radius:99px; background:rgba(26,19,21,.06); margin-top:5px; overflow:hidden; } .tr2 i{ display:block; height:100%; border-radius:99px; background:var(--grad-accent-bar); }
+  .rk .vr{ font-size:12.5px; font-weight:800; white-space:nowrap; }
+  .donut{ display:flex; align-items:center; gap:16px; margin-top:12px; } .donut svg{ width:120px; flex:0 0 120px; }
+  .dl{ display:grid; gap:10px; flex:1; } .dl div{ display:grid; grid-template-columns:10px 1fr auto; gap:4px 8px; align-items:center; font-size:12.5px; }
+  .dl i{ width:10px; height:10px; border-radius:50%; } .dl b{ font-weight:800; } .dl small{ grid-column:2/-1; color:var(--muted); font-size:11px; margin-top:-4px; }
+  .sub-kv{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+  .sub-kv div{ background:rgba(255,255,255,.6); border-radius:12px; padding:8px 12px; } .sub-kv span{ display:block; font-size:11px; color:var(--muted); } .sub-kv b{ font-size:14px; }
+  @media (max-width:1100px){ .g-main{ grid-template-columns:1fr; } .g-tri{ grid-template-columns:1fr 1fr; } .mini{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .g-tri,.mini{ grid-template-columns:1fr; } }
+  .g-duo2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .ic2{ font-size:11px; font-weight:800; }
+  .top5 .vl{ color:var(--ink); }
+  @media (max-width:860px){ .g-duo2{ grid-template-columns:1fr; } }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -518,6 +563,72 @@ function gauge(pct, alerta=true){ const N=22, on=Math.round(Math.min(100,pct)/10
 function colunas(rows){ const max=Math.max(1,...rows.map(r=>r.v));
   return `<div class="cols">${rows.map(r=>`<div class="col ${r.v===max&&r.v>0?'top':''}"><div class="bar" style="height:${Math.max(4,r.v/max*100)}%"><em>${r.fmt||BRLc(r.v)}</em></div><div class="m">${esc(r.l)}</div></div>`).join('')}</div>`; }
 
+// ---------- painel × analítico ----------
+let VIEW='painel';
+const CH={mes:'12', rec:'n', uf:'v'};
+const kC = v => v>=1e6? 'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi' : v>=1e3? 'R$ '+Math.round(v/1e3)+' mil' : 'R$ '+Math.round(v||0);
+const chips = (chave, ops) => `<div class="chips-f no-print">${ops.map(([id,l])=>`<button class="${CH[chave]===id?'on':''}" onclick="CH.${chave}='${id}';render()">${l}</button>`).join('')}</div>`;
+function donut(parts){ const tot=parts.reduce((s,p)=>s+p.v,0)||1, C=2*Math.PI*42; let off=0;
+  const arcs=parts.map(p=>{ const len=p.v/tot*C, d=`<circle cx="60" cy="60" r="42" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${Math.max(0,len-3)} ${C}" stroke-dashoffset="${-off}" stroke-linecap="round" transform="rotate(-90 60 60)"/>`; off+=len; return d; }).join('');
+  return `<div class="donut"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="42" fill="none" stroke="rgba(26,19,21,.06)" stroke-width="16"/>${arcs}</svg>
+    <div class="dl">${parts.map(p=>`<div><i style="background:${p.c}"></i><span>${p.l}</span><b>${p.fmt||p.v}</b><small>${Math.round(p.v/tot*100)}%</small></div>`).join('')}</div></div>`; }
+const mesIso=(iso,off)=>{ const [y,m]=iso.split('-').map(Number); return new Date(Date.UTC(y,m-1+off,1)).toISOString().slice(0,7); };
+
+function painelB2B(){
+  const compr=CLI.filter(c=>c.pedidos>=1), fat=CLI.reduce((s,c)=>s+(c.faturamento||0),0), ped=CLI.reduce((s,c)=>s+(c.pedidos||0),0);
+  const ticket=ped?fat/ped:0, ltv=compr.length?fat/compr.length:0;
+  const rec2=CLI.filter(c=>c.pedidos>=2).length;
+  const atras=CLI.filter(c=>c.m===3), riscoV=atras.reduce((s,c)=>s+(c.ticket_medio||0),0);
+  const vencB2B=CLI.reduce((s,c)=>s+(c.vencido||0),0);
+  const ativos=CLI.filter(c=>c.status_carteira==='ativo').length;
+  const dsc=CLI.filter(c=>c.dias_sem_comprar!=null), diasMed=dsc.length? dsc.reduce((s,c)=>s+c.dias_sem_comprar,0)/dsc.length : 0;
+  // última compra por mês
+  const pm={}; CLI.forEach(c=>{ if(!c.ultima_compra) return; const k=c.ultima_compra.slice(0,7); const x=pm[k]=pm[k]||{n:0,v:0}; x.n++; x.v+=c.valor_ultimo_pedido||0; });
+  let ks=Object.keys(pm).sort(); if(CH.mes!=='tudo'){ const ini=mesIso(HOJE,-(+CH.mes-1)); ks=ks.filter(k=>k>=ini); }
+  const NM=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  // recência
+  const FX=[['0–30 d',0,30],['31–60 d',31,60],['61–90 d',61,90],['91–180 d',91,180],['+180 d',181,1e9]];
+  const rec=FX.map(([l,a,b])=>{ const x=CLI.filter(c=>c.dias_sem_comprar!=null&&c.dias_sem_comprar>=a&&c.dias_sem_comprar<=b); return {l,n:x.length,v:x.reduce((s,c)=>s+(c.faturamento||0),0)}; });
+  // UF
+  const porUF={}; CLI.forEach(c=>{ const u=uf(c); (porUF[u]=porUF[u]||{u,n:0,v:0}); porUF[u].n++; porUF[u].v+=c.faturamento||0; });
+  const ufs=Object.values(porUF).sort((a,b)=>CH.uf==='v'?b.v-a.v:b.n-a.n).slice(0,7), maxU=Math.max(1,...ufs.map(x=>CH.uf==='v'?x.v:x.n));
+  const st=['ativo','pre_ativo','inativo'].map(k=>({k, n:CLI.filter(c=>c.status_carteira===k).length}));
+  const cr=['A','B','C','D'].map(k=>({k, n:CLI.filter(c=>c.classe_credito===k).length})), maxC=Math.max(1,...cr.map(x=>x.n));
+  const top=CLI.slice().sort((a,b)=>(b.faturamento||0)-(a.faturamento||0)).slice(0,6);
+
+  return `
+  <div class="hero">
+    <div class="k glass"><div class="lbl">Faturamento da carteira</div><div class="val">${kv(fat)}</div></div>
+    <div class="k hot"><div class="lbl">Recompra atrasada · ${atras.length}</div><div class="val">${kv(riscoV)}</div></div>
+    <div class="k glass"><div class="lbl">Ticket médio</div><div class="val">${kv(ticket)}</div></div>
+    <div class="k glass gcard"><div class="lbl">Taxa de recompra</div>${gauge(compr.length?rec2/compr.length*100:0)}</div>
+  </div>
+  <div class="mini">
+    <div class="glass m1"><span>Lojistas ativos</span><b>${ativos}<small> de ${CLI.length}</small></b></div>
+    <div class="glass m1"><span>LTV médio</span><b>${kC(ltv)}</b></div>
+    <div class="glass m1"><span>Dias sem comprar</span><b>${Math.round(diasMed)}<small> média</small></b></div>
+    <div class="glass m1"><span>Vencido B2B</span><b style="color:var(--red)">${kC(vencB2B)}</b></div>
+  </div>
+  <div class="g-main">
+    <div class="box glass"><div class="bh"><h2>Última compra por mês</h2>${chips('mes',[['6','6m'],['12','12m'],['tudo','Tudo']])}</div>
+      ${ks.length?colunas(ks.map(k=>({l:NM[+k.slice(5)-1]+'/'+k.slice(2,4), v:pm[k].n, fmt:pm[k].n+' · '+kC(pm[k].v)}))):'<div class="empty">Sem compras no período.</div>'}</div>
+    <div class="box glass ana"><div class="bh"><h2>Maiores lojistas</h2><button class="btn-glass" onclick="VIEW='analitico';render();scrollTo(0,0)">Analítico →</button></div>
+      <div class="top5">${top.map(c=>`<button onclick="VIEW='analitico';S.aba='fat';S.q='';S.aberto=null;render();abrirFicha('${c.cnpj}')">${avatar(c)}<span class="nm"><b>${esc(nomeCurto(c.nome))}</b><small>${esc(c.cidade_uf&&c.cidade_uf!=='/'?c.cidade_uf:'—')}</small></span><span class="vl">${kC(c.faturamento||0)}</span></button>`).join('')||'<div class="empty">Sem lojistas.</div>'}</div></div>
+  </div>
+  <div class="g-tri">
+    <div class="box glass"><div class="bh"><h2>Recência</h2>${chips('rec',[['n','Lojistas'],['v','R$']])}</div>${colunas(rec.map(r=>({l:r.l, v:CH.rec==='n'?r.n:r.v, fmt:CH.rec==='n'?String(r.n):kC(r.v)})))}</div>
+    <div class="box glass"><div class="bh"><h2>Por estado</h2>${chips('uf',[['v','R$'],['n','Lojistas']])}</div>
+      <div class="rank">${ufs.map((x,i)=>`<div class="rk"><span class="ic2">${esc(x.u)}</span><div class="nmr"><div class="tr2" style="margin:0"><i style="width:${(CH.uf==='v'?x.v:x.n)/maxU*100}%"></i></div></div><div class="vr">${CH.uf==='v'?kC(x.v):x.n}</div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div></div>
+    <div class="box glass"><div class="bh"><h2>Status da carteira</h2></div>${donut([{l:'Ativos',v:st[0].n,c:'var(--green)'},{l:'Pré-ativos',v:st[1].n,c:'var(--yellow)'},{l:'Inativos',v:st[2].n,c:'#b9b0a6'}])}</div>
+  </div>
+  <div class="g-duo2">
+    <div class="box glass"><div class="bh"><h2>Produtos de ouro</h2></div>
+      <div class="rank">${GERAL.ouro.map((o,i)=>`<div class="rk"><span class="ic2">${i+1}</span><div class="nmr"><b title="${esc(o.n)}">${esc(o.n)}</b></div><div class="vr">${o.lojas} lojistas${o.total?` · ${kC(o.total)}`:''}</div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div></div>
+    <div class="box glass"><div class="bh"><h2>Classe de crédito</h2></div>
+      ${colunas(cr.map(x=>({l:'Classe '+x.k, v:x.n, fmt:String(x.n)})))}</div>
+  </div>`;
+}
+
 function render(){
   const compr=CLI.filter(c=>c.pedidos>=1), fat=CLI.reduce((s,c)=>s+(c.faturamento||0),0), ped=CLI.reduce((s,c)=>s+(c.pedidos||0),0);
   const ticket=ped?fat/ped:0, ltv=compr.length?fat/compr.length:0;
@@ -538,25 +649,11 @@ function render(){
   const q=document.getElementById('q'), foco=q&&document.activeElement===q;
 
   document.getElementById('main').innerHTML = `
-  <div class="r-head"><div><h1>Vendas B2B</h1></div>${atualiz?`<span class="pill-dt">${dBR(atualiz)}</span>`:''}</div>
+  <div class="r-head"><div class="tt"><h1>Vendas B2B</h1><div class="vw no-print"><button class="${VIEW==='painel'?'on':''}" onclick="VIEW='painel';render()">Painel</button><button class="${VIEW==='analitico'?'on':''}" onclick="VIEW='analitico';render()">Analítico</button></div></div>${atualiz?`<span class="pill-dt">${dBR(atualiz)}</span>`:''}</div>
 
-  <div class="hero">
-    <div class="k glass"><div class="lbl">Faturamento da carteira</div><div class="val">${kv(fat)}</div></div>
-    <div class="k hot"><div class="lbl">Recompra atrasada · ${atras.length}</div><div class="val">${kv(riscoV)}</div></div>
-    <div class="k glass"><div class="lbl">Ticket médio</div><div class="val">${kv(ticket)}</div></div>
-    <div class="k glass gcard"><div class="lbl">Taxa de recompra</div>${gauge(compr.length?CLI.filter(c=>c.pedidos>=2).length/compr.length*100:0, false)}</div>
-  </div>
+  ${VIEW==='painel'?painelB2B():''}
 
-  <div class="tri">
-    <div class="box glass"><h2>Recência</h2>${colunas(rec.map(r=>({l:r.l, v:r.n, fmt:String(r.n)})))}</div>
-    <div class="box glass"><h2>Faturamento por estado</h2>
-      <div class="rank">${ufs.map((x,i)=>`<div class="rk"><span class="pos">${i+1}º</span><div class="nmr"><b>${esc(x.u)}</b><div class="tr2"><i style="width:${x.v/maxU*100}%"></i></div></div><div class="vr">${BRLc(x.v)}</div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div></div>
-    <div class="box glass"><h2>Status da carteira</h2>
-      <div class="rank">${st.map(x=>`<div class="rk"><span class="chip2 st-${x.k}" style="width:fit-content">${ST_LBL[x.k]}</span><div class="nmr"><div class="tr2" style="margin:0"><i style="width:${x.l.length/Math.max(1,CLI.length)*100}%;background:${{ativo:'var(--green)',pre_ativo:'var(--yellow)',inativo:'#b9b0a6'}[x.k]}"></i></div></div><div class="vr">${x.l.length}</div></div>`).join('')}
-        <div class="rk" style="margin-top:6px"><span class="pos">LTV</span><div></div><div class="vr">${BRLc(ltv)}</div></div></div></div>
-  </div>
-
-  <div class="clientes glass">
+  ${VIEW==='analitico'?`  <div class="clientes glass">
     <div class="c-head">
       <div class="tabs2">${ABAS.map(([id,t])=>`<button class="${S.aba===id?'on':''}" onclick="S.aba='${id}';S.pag=12;S.aberto=null;render()">${t} <span class="cnt">${cont[id]}</span></button>`).join('')}</div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -568,7 +665,7 @@ function render(){
     <div class="lista" style="margin-top:12px"><div class="li lj cab"><span>Lojista</span><span class="num">Faturamento</span><span class="num">Ticket</span><span class="num">Última compra</span><span class="num">Recompra</span><span>Crédito</span></div>
       ${l.slice(0,S.pag).map(linha).join('')||'<div class="empty">Nenhum lojista neste filtro.</div>'}</div>
     ${l.length>S.pag?`<div class="rodape"><span class="note">Mostrando ${S.pag} de ${l.length}</span><button class="btn-glass no-print" onclick="S.pag+=24;render()">Ver mais ${Math.min(24,l.length-S.pag)}</button></div>`:''}
-  </div>`;
+  </div>`:''}`;
   if(foco){ const e=document.getElementById('q'); e.focus(); e.setSelectionRange(e.value.length,e.value.length); }
 }
 function csvB2B(){
