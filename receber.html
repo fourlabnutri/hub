@@ -107,7 +107,7 @@
   .sub-tabs button.on{ border-color:var(--ink); background:var(--ink); color:#fff; }
   .c-desc{ font-size:12px; color:var(--muted); margin:10px 0 6px; }
   .lista{ display:grid; }
-  .li{ display:grid; grid-template-columns:minmax(0,2.2fr) minmax(0,1.3fr) 130px 120px 92px 56px; gap:14px; align-items:center; padding:12px 10px; border-radius:16px; cursor:pointer; }
+  .li{ display:grid; grid-template-columns:minmax(0,2.4fr) 140px 130px 110px 56px; gap:14px; align-items:center; padding:12px 10px; border-radius:16px; cursor:pointer; }
   .li + .li{ border-top:1px solid rgba(26,19,21,.06); }
   .li:hover{ background:rgba(255,255,255,.7); border-color:transparent; }
   .li.cab{ cursor:default; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding-top:4px; padding-bottom:8px; }
@@ -132,7 +132,7 @@
   .note{ font-size:11.5px; color:var(--muted); line-height:1.5; }
   .tbl-wrap{ overflow-x:auto; }
 
-  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } .hero .k.dark{ grid-column:1/-1; } .li{ grid-template-columns:minmax(0,2fr) 120px 110px 56px; } .li > :nth-child(2), .li > :nth-child(5){ display:none; } }
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } .hero .k.dark{ grid-column:1/-1; } .li{ grid-template-columns:minmax(0,2fr) 120px 110px 56px; } .li > :nth-child(3){ display:none; } }
   @media (max-width:720px){ .hero,.duo{ grid-template-columns:1fr; } .toolbar{ border-radius:22px; } .k .val{ font-size:28px; } .fx{ grid-template-columns:90px 1fr; } .fx .v{ grid-column:1/-1; text-align:left; }
     .li{ grid-template-columns:minmax(0,1fr) auto; } .li > :nth-child(n+3){ display:none; } .li.cab{ display:none; } }
   @media print{ .sidebar,.toolbar,.pastas,.no-print{ display:none !important; } .shell{ display:block; } body::before{ display:none; } .glass{ background:#fff; backdrop-filter:none; } }
@@ -261,18 +261,6 @@ function porCliente(){
   return map;
 }
 
-// ---------- contato ----------
-const digits = s => String(s||'').replace(/\D/g,'');
-const telOk = c => { const d=digits(c.tel).replace(/^55(?=\d{10,11}$)/,''); return d.length>=10 && d.length<=11 && !/^(\d)\1+$/.test(d); };
-function wa(c, msg){ if(!telOk(c)) return ''; const d=digits(c.tel); return `https://wa.me/55${d.replace(/^55(?=\d{10,11}$)/,'')}?text=${encodeURIComponent(msg)}`; }
-function msgCobranca(m){ return `Olá, ${(m.c.nome||'').split(' ')[0]}! Aqui é da FourLab. Identificamos ${m.tits.filter(t=>t.dias>0).length} título(s) em aberto no valor de ${BRL(m.venc)}. Podemos ajudar a regularizar? Obrigado!`; }
-function contatoHtml(m){
-  const c=m.c, w=wa(c,msgCobranca(m));
-  const tel = c.tel && !telOk(c) ? '<span class="muted">telefone inválido</span>' : c.tel ? (w?`<a class="lnk" target="_blank" rel="noopener" href="${w}">${esc(c.tel)} ↗</a>`:esc(c.tel)) : '<span class="muted">sem telefone</span>';
-  const em = c.email ? `<div class="sub2"><a class="lnk" href="mailto:${esc(c.email)}?subject=${encodeURIComponent('FourLab — título em aberto')}">${esc(c.email)}</a></div>` : '<div class="sub2">sem e-mail</div>';
-  return tel+em;
-}
-
 // ---------- gráficos simples ----------
 function bars(rows){ const max=Math.max(1,...rows.map(r=>r.v));
   return rows.map(r=>`<div class="bar-row"><div class="top"><b>${r.l}</b><span class="muted">${BRL(r.v)}${r.n!=null?` · ${r.n} tít.`:''}</span></div><div class="track"><div class="fill" style="width:${r.v/max*100}%;background:${r.c||'var(--orange)'}"></div></div></div>`).join('') || '<div class="desc">Sem dados no filtro.</div>'; }
@@ -330,7 +318,7 @@ function render(){
   const pasta=(id,nome,ico,n,v)=>`<button class="pasta ${S.tipo===id?'on':''}" onclick="S.tipo='${id}';pagLista=12;render()"><span class="ico">${ico}</span><span><b>${nome}</b><small>${n} clientes · ${kCurto(v)}</small></span></button>`;
   const PER=[['tudo','Todo o período'],['hoje','Vence hoje'],['u7','Últimos 7 dias'],['u30','Últimos 30 dias'],['p7','Próximos 7 dias'],['p30','Próximos 30 dias'],['mes','Este mês'],['mesant','Mês passado'],['custom','Personalizado…']];
 
-  const ABAS=[['devedores','Devedores',devedores.length],['regua','Régua do dia',nRegua],['prev','Preventivo',possiveis.length],['score','Score',null]];
+  const ABAS=[['devedores','Devedores',devedores.length],['regua','Aging por cliente',nRegua],['prev','Risco',possiveis.length],['score','Score',null]];
 
   document.getElementById('main').innerHTML = `
   <div class="r-head">
@@ -384,7 +372,7 @@ function render(){
   <div class="clientes glass">
     <div class="c-head">
       <div class="tabs2">${ABAS.map(([id,l,n])=>`<button class="${aba===id?'on':''}" onclick="aba='${id}';pagLista=12;render()">${l}${n!=null?` <span class="cnt">${n}</span>`:''}</button>`).join('')}</div>
-      <div class="no-print" style="display:flex;gap:8px">${aba==='devedores'?`<button class="btn-glass" onclick="csv('devedores')">Baixar CSV</button>`:aba==='prev'?`<button class="btn-glass" onclick="csv('possiveis')">Baixar CSV</button>`:aba==='regua'?`<button class="btn-glass" onclick="csv('regua')">CSV da faixa</button><button class="btn-glass btn-ink" onclick="csv('reguaTudo')">Relatório do dia</button>`:''}</div>
+      <div class="no-print" style="display:flex;gap:8px">${aba==='devedores'?`<button class="btn-glass" onclick="csv('devedores')">Baixar CSV</button>`:aba==='prev'?`<button class="btn-glass" onclick="csv('possiveis')">Baixar CSV</button>`:aba==='regua'?`<button class="btn-glass" onclick="csv('regua')">CSV da faixa</button><button class="btn-glass" onclick="csv('reguaTudo')">CSV completo</button>`:''}</div>
     </div>
     ${aba==='devedores'?listaDevedores(devedores):aba==='regua'?reguaHtml(g):aba==='prev'?listaPrev(possiveis):scorePanel(M)}
   </div>`;
@@ -393,14 +381,14 @@ function render(){
 function mais(n){ return n>pagLista?`<div class="rodape"><span class="note">Mostrando ${pagLista} de ${n}</span><button class="btn-glass no-print" onclick="pagLista+=24;render()">Ver mais ${Math.min(24,n-pagLista)}</button></div>`:''; }
 function listaDevedores(l){
   return `<div class="c-desc">Clientes com título vencido no filtro, do maior para o menor valor. Clique para ver os títulos.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span>Contato</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
-  ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct" onclick="event.stopPropagation()">${contatoHtml(m)}</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
+  ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}
     <div class="vv red"><b>${BRL(m.vencPer)}</b><small>${m.tits.filter(t=>t.dias>0).length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Nenhum devedor no filtro.</div>'}</div>${mais(l.length)}`;
 }
 function listaPrev(l){
-  return `<div class="c-desc">Sem título vencido hoje, com parcelas a vencer e histórico de atraso. Bom alvo para lembrete preventivo.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span>Contato</span><span class="num">A vencer</span><span class="num">Próx. venc.</span><span class="num">Atrasos</span><span>Score</span></div>
-  ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct" onclick="event.stopPropagation()">${contatoHtml(m)}</div>
+  return `<div class="c-desc">Sem título vencido hoje, mas com parcelas a vencer e histórico de atraso: valor da carteira com risco de virar inadimplência.</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">A vencer</span><span class="num">Próx. venc.</span><span class="num">Atrasos</span><span>Score</span></div>
+  ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}
     <div class="vv"><b>${BRL(m.avencer)}</b></div><div class="vv">${dBR(m.prox)}</div><div class="vv"><b>${m.c.atrasos}</b><small>de ${m.c.n}${m.c.atrasoMedio!=null?' · '+m.c.atrasoMedio.toFixed(0)+' d':''}</small></div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Nenhum cliente nesse perfil.</div>'}</div>${mais(l.length)}`;
 }
 
@@ -415,11 +403,11 @@ const REG_LBL = {f0:'Do dia (1 dia)', f1:'2 a 30 dias', f2:'31 a 90 dias', f3:'A
 function reguaHtml(g){
   const lista=g[abaRegua];
   return `<div class="sub-tabs no-print">${Object.keys(REG_LBL).map(k=>`<button class="${abaRegua===k?'on':''}" onclick="abaRegua='${k}';pagLista=12;render()">${REG_LBL[k]} · ${g[k].length}</button>`).join('')}</div>
-  <div class="c-desc">Clientes com título vencido em ${dBR(HOJE)}, pelo atraso do título mais antigo. ${lista.length} clientes · <b class="red">${BRL(lista.reduce((s,m)=>s+m.venc,0))}</b> vencido. Ignora o filtro de período.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span>Contato</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span></span></div>
-  ${lista.slice(0,pagLista).map(m=>{ const w=wa(m.c,msgCobranca(m)); const vs=m.tits.filter(t=>t.dias>0);
-    return `<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct" onclick="event.stopPropagation()">${contatoHtml(m)}</div><div class="vv red"><b>${BRL(m.venc)}</b><small>${vs.length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div>
-    <div class="no-print" onclick="event.stopPropagation()">${w?`<a class="wa" target="_blank" rel="noopener" href="${w}" title="Cobrar no WhatsApp">WA</a>`:''}</div></div>`; }).join('') || '<div class="empty">Ninguém nessa faixa hoje.</div>'}</div>${mais(lista.length)}`;
+  <div class="c-desc">Clientes com título vencido em ${dBR(HOJE)}, agrupados pelo atraso do título mais antigo. ${lista.length} clientes · <b class="red">${BRL(lista.reduce((s,m)=>s+m.venc,0))}</b> vencido. Ignora o filtro de período.</div>
+  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
+  ${lista.slice(0,pagLista).map(m=>{ const vs=m.tits.filter(t=>t.dias>0);
+    return `<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="vv red"><b>${BRL(m.venc)}</b><small>${vs.length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div>
+    <div>${scoreHtml(m.score)}</div></div>`; }).join('') || '<div class="empty">Ninguém nessa faixa hoje.</div>'}</div>${mais(lista.length)}`;
 }
 
 function scorePanel(M){
@@ -429,8 +417,8 @@ function scorePanel(M){
   const q=S.q.trim().toLowerCase(), l2 = q? lista.filter(m=>m.c.nome.toLowerCase().includes(q)||m.c.k.includes(q.replace(/\D/g,'')||'§')) : lista;
   return `<div class="sub-tabs no-print"><button class="${abaScore==='abertos'?'on':''}" onclick="abaScore='abertos';pagLista=12;render()">Com título em aberto</button><button class="${abaScore==='todos'?'on':''}" onclick="abaScore='todos';pagLista=12;render()">Todos com histórico</button></div>
   <div class="c-desc">Compras x pagamento em dia, do menor para o maior score.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span>Pagos em dia</span><span class="num">Compras</span><span class="num">Em aberto</span><span class="num">Atraso méd.</span><span>Score</span></div>
-  ${l2.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="ct"><b>${m.c.emDia}</b> <span class="muted">de ${m.c.n} títulos</span></div><div class="vv">${BRL(m.c.emitidoV)}</div><div class="vv"><b>${m.venc+m.avencer?BRL(m.venc+m.avencer):'—'}</b></div><div class="num muted">${m.c.atrasoMedio!=null?m.c.atrasoMedio.toFixed(0)+' d':'—'}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Sem clientes.</div>'}</div>${mais(l2.length)}
+  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Compras</span><span class="num">Em aberto</span><span class="num">Atraso méd.</span><span>Score</span></div>
+  ${l2.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="vv">${BRL(m.c.emitidoV)}<small>${m.c.emDia} de ${m.c.n} pagos em dia</small></div><div class="vv"><b>${m.venc+m.avencer?BRL(m.venc+m.avencer):'—'}</b></div><div class="num muted">${m.c.atrasoMedio!=null?m.c.atrasoMedio.toFixed(0)+' d':'—'}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Sem clientes.</div>'}</div>${mais(l2.length)}
   <details class="how"><summary>Como o score é calculado</summary><p>0 a 100. 75 pontos vêm da pontualidade (metade pelo nº de títulos pagos em dia, metade pelo valor) e 25 pontos da gravidade do atraso médio (30 dias ou mais zera esses 25). Atraso atual acima de 30 dias limita o score a 45; acima de 90 dias, a 25. Classes: A ≥ 80, B 60–79, C 40–59, D &lt; 40. Cliente sem histórico fica sem score (—). O histórico vem do Asaas desde jan/2026; o Bling ainda não traz títulos já pagos. A pasta de cada cliente é estimada pelo nome da empresa.</p></details>`;
 }
 
@@ -442,7 +430,6 @@ function detalhe(k){
   document.getElementById('modalBox').innerHTML = `
     <div class="card-head"><div><h2 style="font-size:20px">${esc(c.nome)}</h2><div class="desc">${esc(k)}${c.loc?' · '+esc(c.loc):''}</div></div><button class="icon-btn" onclick="fechar()">✕</button></div>
     <div class="grid-3" style="margin-bottom:14px"><div><div class="kpi-label">Vencido</div><div class="red" style="font-size:18px">${BRL(V)}</div></div><div><div class="kpi-label">A vencer</div><div style="font-size:18px;font-weight:700">${BRL(A)}</div></div><div><div class="kpi-label">Score</div>${scoreHtml(score(c,Math.max(0,...ts.map(t=>t.dias))))}</div></div>
-    <div style="margin-bottom:12px">${contatoHtml(m)}</div>
     <div class="note" style="margin-bottom:10px">Histórico: ${c.n?`${c.emDia} de ${c.n} títulos pagos em dia${c.atrasoMedio!=null?`, atraso médio de ${c.atrasoMedio.toFixed(0)} dias`:''}`:'sem histórico de pagamento'} · compras: ${BRL(c.emitidoV)}</div>
     <div class="tbl-wrap"><table><thead><tr><th>Vencimento</th><th>Pedido</th><th>Parcela</th><th>Forma</th><th class="num">Valor</th><th class="num">Situação</th></tr></thead><tbody>
     ${ts.map(t=>`<tr><td>${dBR(t.venc)}</td><td>${esc(t.ped)||'—'}</td><td>${esc(t.parc)||'—'}</td><td>${FORMA[t.forma]||t.forma}</td><td class="num">${BRL(t.v)}</td><td class="num ${t.dias>0?'red':''}">${t.dias>0?`vencido há ${t.dias} d`:t.dias===0?'vence hoje':`vence em ${-t.dias} d`}</td></tr>`).join('')}
@@ -455,10 +442,10 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') fechar(); });
 
 function csv(tipo){
   const M=porCliente(); let rows=[], nome=tipo;
-  const cab=['Cliente','CNPJ/CPF','Telefone','E-mail','Cidade/UF','Vencido','A vencer','Títulos vencidos','Maior atraso (dias)','Faixa','Score'];
-  const linha=(m,fx)=>[m.c.nome,m.c.k,m.c.tel,m.c.email,m.c.loc,m.venc.toFixed(2).replace('.',','),m.avencer.toFixed(2).replace('.',','),m.tits.filter(t=>t.dias>0).length,m.maxDias,fx||FAIXA_LBL[faixa(m.maxDias)],m.score==null?'':m.score];
+  const cab=['Cliente','CNPJ/CPF','Pasta','Cidade/UF','Vencido','A vencer','Títulos vencidos','Maior atraso (dias)','Faixa','Score'];
+  const linha=(m,fx)=>[m.c.nome,m.c.k,(TIPOS.find(t=>t.id===tipoDe(m.c.k))||{}).nome,m.c.loc,m.venc.toFixed(2).replace('.',','),m.avencer.toFixed(2).replace('.',','),m.tits.filter(t=>t.dias>0).length,m.maxDias,fx||FAIXA_LBL[faixa(m.maxDias)],m.score==null?'':m.score];
   if(tipo==='devedores') rows=Object.values(M).filter(m=>m.vencPer>0).sort((a,b)=>b.vencPer-a.vencPer).map(m=>linha(m));
-  else if(tipo==='possiveis') rows=Object.values(M).filter(m=>m.venc===0&&m.avencer>0&&m.c.atrasos>0).map(m=>linha(m,'Possível inadimplente'));
+  else if(tipo==='possiveis') rows=Object.values(M).filter(m=>m.venc===0&&m.avencer>0&&m.c.atrasos>0).map(m=>linha(m,'Risco'));
   else { const g=reguaGrupos(M);
     if(tipo==='regua'){ rows=g[abaRegua].map(m=>linha(m,REG_LBL[abaRegua])); nome='regua_'+abaRegua; }
     else { rows=Object.keys(g).flatMap(k=>g[k].map(m=>linha(m,REG_LBL[k]))); nome='regua_do_dia'; } }
