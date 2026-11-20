@@ -256,6 +256,22 @@
   .cred.A{ background:var(--green-soft); color:var(--green); } .cred.B{ background:#fff4c9; color:#8a6a00; } .cred.C{ background:var(--orange-soft); color:#b5680a; } .cred.D{ background:var(--red-soft); color:var(--red); }
   .sub2,.note,.muted{ color:var(--muted) !important; } .sub2{ font-size:11px; }
   .f-wrap{ grid-column:1/-1; }
+  .hero{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .k{ justify-content:flex-start; min-height:0; padding:16px 20px; gap:6px; }
+  .k .val{ font-size:26px; letter-spacing:-.6px; }
+  .hero{ align-items:stretch; }
+  .gcard{ flex-direction:row; align-items:center; justify-content:space-between; } .gcard .lbl{ align-self:flex-start; }
+  .k .lbl{ font-size:13px; color:var(--ink-2); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border-radius:26px; }
+  .k.hot .lbl{ color:rgba(255,255,255,.9); }
+  .gcard{ padding-bottom:12px; } .gauge{ width:118px; flex:0 0 118px; margin:-4px -4px -8px 0; }
+  .gauge text{ font-family:var(--font-title); font-size:40px; font-weight:600; fill:var(--ink); letter-spacing:-1px; }
+  .pill-dt{ font-size:12px; font-weight:700; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.8); }
+  .box h2{ font-size:14px; } .box{ padding:16px 20px; } .duo,.tri,.hero{ gap:12px; margin-bottom:12px; } .col .bar{ max-width:52px; } .cols{ height:150px; padding-top:22px; }
+  .segm button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.1); }
+  .rk{ grid-template-columns:auto minmax(0,1fr) auto; }
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .hero{ grid-template-columns:1fr; } }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -494,6 +510,14 @@ function linha(c){
     <div><span class="cred ${esc(c.classe_credito||'')}" title="Classe de crédito">${esc(c.classe_credito||'—')}</span></div></div>${ab?`<div class="f-wrap">${ficha(c)}</div>`:''}`;
 }
 
+
+function gauge(pct, alerta=true){ const N=22, on=Math.round(Math.min(100,pct)/100*N), cx=110, cy=104; let seg='';
+  for(let i=0;i<N;i++){ const ang=Math.PI*(1-i/(N-1)), c=Math.cos(ang), s=Math.sin(ang);
+    seg+=`<line x1="${cx+c*76}" y1="${cy-s*76}" x2="${cx+c*96}" y2="${cy-s*96}" stroke="${i<on?'var(--orange)':'rgba(26,19,21,.09)'}" stroke-width="9" stroke-linecap="round"/>`; }
+  return `<svg class="gauge" viewBox="0 0 220 112">${seg}<text x="110" y="104" text-anchor="middle">${pct.toFixed(0)}%</text></svg>`; }
+function colunas(rows){ const max=Math.max(1,...rows.map(r=>r.v));
+  return `<div class="cols">${rows.map(r=>`<div class="col ${r.v===max&&r.v>0?'top':''}"><div class="bar" style="height:${Math.max(4,r.v/max*100)}%"><em>${r.fmt||BRLc(r.v)}</em></div><div class="m">${esc(r.l)}</div></div>`).join('')}</div>`; }
+
 function render(){
   const compr=CLI.filter(c=>c.pedidos>=1), fat=CLI.reduce((s,c)=>s+(c.faturamento||0),0), ped=CLI.reduce((s,c)=>s+(c.pedidos||0),0);
   const ticket=ped?fat/ped:0, ltv=compr.length?fat/compr.length:0;
@@ -514,40 +538,22 @@ function render(){
   const q=document.getElementById('q'), foco=q&&document.activeElement===q;
 
   document.getElementById('main').innerHTML = `
-  <div class="r-head"><div><h1>Vendas B2B</h1><div class="sub">Indicadores da carteira de lojistas · Nekt${atualiz?`, atualizado em ${dBR(atualiz)}`:''}</div></div></div>
+  <div class="r-head"><div><h1>Vendas B2B</h1></div>${atualiz?`<span class="pill-dt">${dBR(atualiz)}</span>`:''}</div>
 
-  <div class="hero hero4">
-    <div class="k glass dark">
-      <div class="lbl">Faturamento da carteira</div>
-      <div class="val">${kv(fat)}</div>
-      <div class="foot">${CLI.length} lojistas · ${ped} pedidos</div>
-      <div class="stack">${st.map(x=>x.l.length?`<span style="flex:${x.l.length};background:${CST[x.k]}"></span>`:'').join('')}</div>
-      <div class="legend">${st.map(x=>`<span><i style="background:${CST[x.k]}"></i>${ST_LBL[x.k]} ${x.l.length}</span>`).join('')}</div>
-    </div>
-    <div class="k glass hot">
-      <div class="lbl">Recompra atrasada <span class="badge">${atras.length} lojistas</span></div>
-      <div class="val">${kv(riscoV)}</div>
-      <div class="foot">um ticket médio de cada lojista atrasado</div>
-    </div>
-    <div class="k glass">
-      <div class="lbl">Ticket médio · LTV</div>
-      <div class="val">${kv(ticket)}</div>
-      <div class="foot">LTV médio ${BRL(ltv)} por lojista</div>
-    </div>
-    <div class="k glass">
-      <div class="lbl">Taxa de recompra</div>
-      <div class="val">${compr.length?Math.round(CLI.filter(c=>c.pedidos>=2).length/compr.length*100):0}<small style="font-size:.5em;opacity:.55">%</small></div>
-      <div class="foot">${CLI.filter(c=>c.pedidos>=2).length} de ${compr.length} compraram 2+ vezes${vencB2B?` · vencido ${BRL(vencB2B)}`:''}</div>
-    </div>
+  <div class="hero">
+    <div class="k glass"><div class="lbl">Faturamento da carteira</div><div class="val">${kv(fat)}</div></div>
+    <div class="k hot"><div class="lbl">Recompra atrasada · ${atras.length}</div><div class="val">${kv(riscoV)}</div></div>
+    <div class="k glass"><div class="lbl">Ticket médio</div><div class="val">${kv(ticket)}</div></div>
+    <div class="k glass gcard"><div class="lbl">Taxa de recompra</div>${gauge(compr.length?CLI.filter(c=>c.pedidos>=2).length/compr.length*100:0, false)}</div>
   </div>
 
   <div class="tri">
-    <div class="box glass"><h2>Recência da carteira</h2><div class="desc">Lojistas por tempo desde a última compra</div>
-      <div class="faixas">${rec.map((r,i)=>`<div class="fx"><div class="n">${r.l}<small>${r.n} lojistas</small></div><div class="t"><div style="width:${r.v/maxR*100}%;background:${['var(--green)','#7cc49a','var(--yellow)','var(--orange)','var(--pink)'][i]}"></div></div><div class="v" style="font-size:13px;min-width:96px">${BRLc(r.v)}<small>faturamento</small></div></div>`).join('')}</div></div>
-    <div class="box glass"><h2>Faturamento por estado</h2><div class="desc">Top ${ufs.length} UFs</div>
-      <div class="rank">${ufs.map((x,i)=>`<div class="rk"><span class="pos">${i+1}º</span><div class="nmr"><b>${esc(x.u)}</b><div class="tr2"><i style="width:${x.v/maxU*100}%"></i></div></div><div class="vr">${BRLc(x.v)}<small>${x.n} lojistas</small></div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div></div>
-    <div class="box glass"><h2>Produtos de ouro</h2><div class="desc">Melhor oportunidade somada na carteira</div>
-      <div class="rank">${GERAL.ouro.map((o,i)=>`<div class="rk"><span class="pos">${i+1}º</span><div class="nmr"><b title="${esc(o.n)}">${esc(o.n)}</b><small class="sub2">${o.lojas} ${o.lojas===1?'lojista':'lojistas'}</small></div><div class="vr">${o.total?BRLc(o.total):'—'}<small>potencial</small></div></div>`).join('')||'<div class="empty">Sem dados de oportunidade.</div>'}</div></div>
+    <div class="box glass"><h2>Recência</h2>${colunas(rec.map(r=>({l:r.l, v:r.n, fmt:String(r.n)})))}</div>
+    <div class="box glass"><h2>Faturamento por estado</h2>
+      <div class="rank">${ufs.map((x,i)=>`<div class="rk"><span class="pos">${i+1}º</span><div class="nmr"><b>${esc(x.u)}</b><div class="tr2"><i style="width:${x.v/maxU*100}%"></i></div></div><div class="vr">${BRLc(x.v)}</div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div></div>
+    <div class="box glass"><h2>Status da carteira</h2>
+      <div class="rank">${st.map(x=>`<div class="rk"><span class="chip2 st-${x.k}" style="width:fit-content">${ST_LBL[x.k]}</span><div class="nmr"><div class="tr2" style="margin:0"><i style="width:${x.l.length/Math.max(1,CLI.length)*100}%;background:${{ativo:'var(--green)',pre_ativo:'var(--yellow)',inativo:'#b9b0a6'}[x.k]}"></i></div></div><div class="vr">${x.l.length}</div></div>`).join('')}
+        <div class="rk" style="margin-top:6px"><span class="pos">LTV</span><div></div><div class="vr">${BRLc(ltv)}</div></div></div></div>
   </div>
 
   <div class="clientes glass">
@@ -562,8 +568,7 @@ function render(){
     <div class="lista" style="margin-top:12px"><div class="li lj cab"><span>Lojista</span><span class="num">Faturamento</span><span class="num">Ticket</span><span class="num">Última compra</span><span class="num">Recompra</span><span>Crédito</span></div>
       ${l.slice(0,S.pag).map(linha).join('')||'<div class="empty">Nenhum lojista neste filtro.</div>'}</div>
     ${l.length>S.pag?`<div class="rodape"><span class="note">Mostrando ${S.pag} de ${l.length}</span><button class="btn-glass no-print" onclick="S.pag+=24;render()">Ver mais ${Math.min(24,l.length-S.pag)}</button></div>`:''}
-  </div>
-  <div class="note">Atividade comercial registrada no Agendor: ${em(7)} contatos em 7 dias · ${em(30)} em 30 dias. Leads novos e carrinhos do B2B entram quando essas fontes chegarem ao Nekt.</div>`;
+  </div>`;
   if(foco){ const e=document.getElementById('q'); e.focus(); e.setSelectionRange(e.value.length,e.value.length); }
 }
 function csvB2B(){

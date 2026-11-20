@@ -33,7 +33,7 @@
   .toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:8px; margin-bottom:12px; border-radius:999px; }
   .segm{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:999px; padding:3px; }
   .segm button{ border:0; background:none; padding:7px 14px; border-radius:999px; font-size:12px; font-weight:700; color:var(--ink-2); cursor:pointer; }
-  .segm button.on{ background:var(--ink); color:#fff; box-shadow:0 4px 12px rgba(26,19,21,.2); }
+  .segm button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.1); }
   .sel{ position:relative; }
   .sel select{ appearance:none; -webkit-appearance:none; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:9px 34px 9px 14px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; width:auto; }
   .sel::after{ content:""; position:absolute; right:14px; top:50%; width:6px; height:6px; border-right:2px solid var(--ink-2); border-bottom:2px solid var(--ink-2); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
@@ -53,9 +53,9 @@
   .pasta{ flex:0 0 auto; display:flex; align-items:center; gap:10px; border:1px solid rgba(255,255,255,.75); background:rgba(255,255,255,.45); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
     border-radius:16px; padding:9px 14px 9px 10px; cursor:pointer; text-align:left; transition:.15s; }
   .pasta:hover{ background:rgba(255,255,255,.8); }
-  .pasta .ico{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; font-size:15px; background:rgba(26,19,21,.06); }
+  .pasta .ico{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:rgba(26,19,21,.06); color:var(--ink-2); } .pasta.on .ico{ color:var(--orange); }
   .pasta b{ display:block; font-size:12.5px; } .pasta small{ font-size:11px; color:var(--muted); }
-  .pasta.on{ background:var(--ink); color:#fff; border-color:var(--ink); } .pasta.on small{ color:rgba(255,255,255,.65); } .pasta.on .ico{ background:rgba(255,255,255,.14); }
+  .pasta.on{ background:#fff; border-color:var(--orange); box-shadow:0 0 0 1px var(--orange) inset; } .pasta.on .ico{ background:var(--orange-soft); }
 
   /* topo: KPIs */
   .hero{ display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:16px; margin-bottom:16px; }
@@ -136,6 +136,21 @@
   @media (max-width:720px){ .hero,.duo{ grid-template-columns:1fr; } .toolbar{ border-radius:22px; } .k .val{ font-size:28px; } .fx{ grid-template-columns:90px 1fr; } .fx .v{ grid-column:1/-1; text-align:left; }
     .li{ grid-template-columns:minmax(0,1fr) auto; } .li > :nth-child(n+3){ display:none; } .li.cab{ display:none; } }
   @media print{ .sidebar,.toolbar,.pastas,.no-print{ display:none !important; } .shell{ display:block; } body::before{ display:none; } .glass{ background:#fff; backdrop-filter:none; } }
+  .hero{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .k{ justify-content:flex-start; min-height:0; padding:16px 20px; gap:6px; }
+  .k .val{ font-size:26px; letter-spacing:-.6px; }
+  .hero{ align-items:stretch; }
+  .gcard{ flex-direction:row; align-items:center; justify-content:space-between; } .gcard .lbl{ align-self:flex-start; }
+  .k .lbl{ font-size:13px; color:var(--ink-2); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border-radius:26px; }
+  .k.hot .lbl{ color:rgba(255,255,255,.9); }
+  .gcard{ padding-bottom:12px; } .gauge{ width:118px; flex:0 0 118px; margin:-4px -4px -8px 0; }
+  .gauge text{ font-family:var(--font-title); font-size:40px; font-weight:600; fill:var(--ink); letter-spacing:-1px; }
+  .pill-dt{ font-size:12px; font-weight:700; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.8); }
+  .box h2{ font-size:14px; } .box{ padding:16px 20px; } .duo,.tri,.hero{ gap:12px; margin-bottom:12px; } .col .bar{ max-width:52px; }
+  .cols{ height:150px; padding-top:22px; }
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .hero{ grid-template-columns:1fr; } }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -268,13 +283,13 @@ function bars(rows){ const max=Math.max(1,...rows.map(r=>r.v));
 // ---------- tipo de comércio (pastas) ----------
 // Classificação pelo nome/razão social. CPF = pessoa física. Sem palavra-chave conhecida = "Outros".
 const TIPOS = [
-  {id:'bike', nome:'Bike shops', ico:'🚲', re:/BIK|BICICL|CICL|PEDAL|SPEED|MTB|EUROBIKE/},
-  {id:'supl', nome:'Suplementos e naturais', ico:'💊', re:/SUPLEM|NUTRI|NATURA|SAUDAV|SAUDE|POWER|FIT|WHEY|EMPORIO|GRANEL|VIDA/},
-  {id:'farm', nome:'Farmácias e saúde', ico:'⚕️', re:/FARMA|DROGA|CLINIC|MEDIC|ODONT|FISIO|LABORAT/},
-  {id:'esp',  nome:'Esportes e academias', ico:'🏋️', re:/SPORT|ESPORT|TRAIN|ACADEM|CROSS|ATLET|CORRID|RUN|ARENA|GYM|SHOES/},
-  {id:'alim', nome:'Alimentos e mercados', ico:'🛒', re:/ALIMENT|MERCAD|SUPERM|PADAR|DOCE|SWEET|CAFE|BEBID/},
-  {id:'pf',   nome:'Pessoa física', ico:'👤'},
-  {id:'out',  nome:'Outros comércios', ico:'🏬'},
+  {id:'bike', nome:'Bike shops', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8l2 8h-6M14 5h2"/></svg>', re:/BIK|BICICL|CICL|PEDAL|SPEED|MTB|EUROBIKE/},
+  {id:'supl', nome:'Suplementos e naturais', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-35 12 12.5)"/><path d="M9.5 8.5l5 7"/></svg>', re:/SUPLEM|NUTRI|NATURA|SAUDAV|SAUDE|POWER|FIT|WHEY|EMPORIO|GRANEL|VIDA/},
+  {id:'farm', nome:'Farmácias e saúde', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>', re:/FARMA|DROGA|CLINIC|MEDIC|ODONT|FISIO|LABORAT/},
+  {id:'esp',  nome:'Esportes e academias', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7v10M18 7v10M3 9.5v5M21 9.5v5M6 12h12"/></svg>', re:/SPORT|ESPORT|TRAIN|ACADEM|CROSS|ATLET|CORRID|RUN|ARENA|GYM|SHOES/},
+  {id:'alim', nome:'Alimentos e mercados', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11h11l2-8H6.2"/></svg>', re:/ALIMENT|MERCAD|SUPERM|PADAR|DOCE|SWEET|CAFE|BEBID/},
+  {id:'pf',   nome:'Pessoa física', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'},
+  {id:'out',  nome:'Outros comércios', ico:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l1.5-6h13L20 10M4 10h16M4 10v10h16V10M9 20v-5h6v5"/></svg>'},
 ];
 const tipoCache = {};
 function tipoDe(k){
@@ -291,10 +306,19 @@ function avatar(c){ const n=(c.nome||'?').replace(/\b(LTDA|ME|EIRELI|EPP|S\/?A)\
   const ini=((p[0]||'?')[0]+(p[1]?p[1][0]:'')).toUpperCase(); let h=0; for(const ch of c.k) h=(h*31+ch.charCodeAt(0))%997; const [bg,fg]=CORES[h%CORES.length];
   return `<span class="av" style="background:${bg};color:${fg}">${esc(ini)}</span>`; }
 const nomeCurto = s => String(s||'').replace(/\s+(LTDA|ME|EIRELI|EPP)\.?$/i,'').trim();
-function quem(m){ const t=TIPOS.find(x=>x.id===tipoDe(m.c.k)); return `<div class="who">${avatar(m.c)}<div style="min-width:0"><b title="${esc(m.c.nome)}">${esc(nomeCurto(m.c.nome))}</b><small>${t.ico} ${t.nome}${m.c.loc?' · '+esc(m.c.loc):''}</small></div></div>`; }
+function quem(m){ const t=TIPOS.find(x=>x.id===tipoDe(m.c.k)); return `<div class="who">${avatar(m.c)}<div style="min-width:0"><b title="${esc(m.c.nome)}">${esc(nomeCurto(m.c.nome))}</b><small>${t.nome}${m.c.loc?' · '+esc(m.c.loc):''}</small></div></div>`; }
 const diasHtml = d => `<span class="dias ${d<=0?'d0':d<=30?'d1':d<=90?'d2':'d3'}">${d<=0?'em dia':d+' d'}</span>`;
 const kv = v => { const [i,c]=(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}).split(','); return `<small>R$</small>${i}<span style="opacity:.45">,${c}</span>`; };
 const kCurto = v => v>=1e6? 'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi' : v>=1e3? 'R$ '+Math.round(v/1e3)+' mil' : BRL(v);
+
+
+// ---------- gráficos ----------
+function gauge(pct){ const N=22, on=Math.round(Math.min(100,pct)/100*N), cx=110, cy=104; let seg='';
+  for(let i=0;i<N;i++){ const ang=Math.PI*(1-i/(N-1)), c=Math.cos(ang), s=Math.sin(ang);
+    seg+=`<line x1="${cx+c*76}" y1="${cy-s*76}" x2="${cx+c*96}" y2="${cy-s*96}" stroke="${i<on?(pct>=25?'var(--red)':'var(--orange)'):'rgba(26,19,21,.09)'}" stroke-width="9" stroke-linecap="round"/>`; }
+  return `<svg class="gauge" viewBox="0 0 220 112">${seg}<text x="110" y="104" text-anchor="middle">${pct.toFixed(0)}%</text></svg>`; }
+function colunas(rows){ const max=Math.max(1,...rows.map(r=>r.v));
+  return `<div class="cols">${rows.map(r=>`<div class="col ${r.v===max&&r.v>0?'top':''}"><div class="bar" style="height:${Math.max(4,r.v/max*100)}%"><em>${kCurto(r.v)}</em></div><div class="m">${esc(r.l)}</div></div>`).join('')}</div>`; }
 
 function render(){
   const ts = titulos(), vencidos = ts.filter(t=>t.dias>0), avencer = ts.filter(t=>t.dias<=0);
@@ -315,15 +339,15 @@ function render(){
   // pastas: contagem ignora o próprio filtro de pasta
   const tipoAtual=S.tipo; S.tipo='todos'; const base=titulos(); S.tipo=tipoAtual;
   const porTipo={}; base.forEach(t=>{ const id=tipoDe(t.k); (porTipo[id]=porTipo[id]||{k:new Set(),v:0}).k.add(t.k); porTipo[id].v+=t.v; });
-  const pasta=(id,nome,ico,n,v)=>`<button class="pasta ${S.tipo===id?'on':''}" onclick="S.tipo='${id}';pagLista=12;render()"><span class="ico">${ico}</span><span><b>${nome}</b><small>${n} clientes · ${kCurto(v)}</small></span></button>`;
+  const pasta=(id,nome,ico,n,v)=>`<button class="pasta ${S.tipo===id?'on':''}" onclick="S.tipo='${id}';pagLista=12;render()"><span class="ico">${ico}</span><span><b>${nome}</b><small>${kCurto(v)}</small></span></button>`;
   const PER=[['tudo','Todo o período'],['hoje','Vence hoje'],['u7','Últimos 7 dias'],['u30','Últimos 30 dias'],['p7','Próximos 7 dias'],['p30','Próximos 30 dias'],['mes','Este mês'],['mesant','Mês passado'],['custom','Personalizado…']];
 
   const ABAS=[['devedores','Devedores',devedores.length],['regua','Aging por cliente',nRegua],['prev','Risco',possiveis.length],['score','Score',null]];
 
   document.getElementById('main').innerHTML = `
   <div class="r-head">
-    <div><h1>Contas a receber</h1><div class="sub">Posição de ${dBR(HOJE)} · Asaas + Bling via Nekt${S.preset!=='tudo'?` · vencimento de ${dBR(ia)} a ${dBR(ib)}`:''}</div></div>
-    <div class="no-print" style="display:flex;gap:8px"><button class="btn-glass" onclick="window.print()">Imprimir / PDF</button></div>
+    <div><h1>Contas a receber</h1></div>
+    <div class="no-print" style="display:flex;gap:8px;align-items:center"><span class="pill-dt">${dBR(HOJE)}</span><button class="btn-glass" onclick="window.print()">Imprimir / PDF</button></div>
   </div>
 
   <div class="toolbar glass no-print">
@@ -336,37 +360,22 @@ function render(){
   </div>
 
   <div class="pastas no-print">
-    ${pasta('todos','Todas as pastas','🗂️',new Set(base.map(t=>t.k)).size,soma(base))}
+    ${pasta('todos','Todas as pastas','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',new Set(base.map(t=>t.k)).size,soma(base))}
     ${TIPOS.filter(t=>porTipo[t.id]).map(t=>pasta(t.id,t.nome,t.ico,porTipo[t.id].k.size,porTipo[t.id].v)).join('')}
   </div>
 
   <div class="hero">
-    <div class="k glass dark">
-      <div class="lbl">Carteira em aberto</div>
-      <div class="val">${kv(tot)}</div>
-      <div class="foot">${ts.length} títulos · ${nCli(ts)} clientes</div>
-      <div class="stack">${tot?`<span style="flex:${A};background:rgba(255,255,255,.85)"></span>`+['f1','f2','f3'].map((f,i)=>soma(fx[f])?`<span style="flex:${soma(fx[f])};background:${['var(--yellow)','var(--orange)','var(--pink)'][i]}"></span>`:'').join(''):''}</div>
-      <div class="legend"><span><i style="background:rgba(255,255,255,.85)"></i>A vencer</span><span><i style="background:var(--yellow)"></i>1–30 d</span><span><i style="background:var(--orange)"></i>31–90 d</span><span><i style="background:var(--pink)"></i>+90 d</span></div>
-    </div>
-    <div class="k glass hot">
-      <div class="lbl">Vencido <span class="badge">${pct.toFixed(1).replace('.',',')}% da carteira</span></div>
-      <div class="val">${kv(V)}</div>
-      <div class="foot">${vencidos.length} títulos · ${nCli(vencidos)} clientes</div>
-    </div>
-    <div class="k glass">
-      <div class="lbl">A vencer</div>
-      <div class="val">${kv(A)}</div>
-      <div class="foot">${avencer.length} títulos · ${nCli(avencer)} clientes${meses[0]?` · ${kCurto(porMes[meses[0]])} em ${NM[+meses[0].slice(5)-1]}`:''}</div>
-    </div>
+    <div class="k glass"><div class="lbl">Carteira em aberto</div><div class="val">${kv(tot)}</div></div>
+    <div class="k hot"><div class="lbl">Vencido</div><div class="val">${kv(V)}</div></div>
+    <div class="k glass"><div class="lbl">A vencer</div><div class="val">${kv(A)}</div></div>
+    <div class="k glass gcard"><div class="lbl">% vencido</div>${gauge(pct)}</div>
   </div>
 
   <div class="duo">
-    <div class="box glass"><h2>Vencido por faixa de atraso</h2><div class="desc">Quanto mais antigo, mais difícil de receber</div>
-      <div class="faixas">${['f1','f2','f3'].map((f,i)=>{ const v=soma(fx[f]); return `<div class="fx"><div class="n">${FAIXA_LBL[f]}<small>${fx[f].length} títulos · ${nCli(fx[f])} clientes</small></div>
-        <div class="t"><div style="width:${V?v/V*100:0}%;background:${['var(--yellow)','var(--orange)','var(--pink)'][i]}"></div></div>
-        <div class="v">${BRL(v)}<small>${V?(v/V*100).toFixed(0):0}% do vencido</small></div></div>`; }).join('')}</div></div>
-    <div class="box glass"><h2>A vencer por mês</h2><div class="desc">Entradas previstas</div>
-      ${meses.length?`<div class="cols">${meses.map(k=>`<div class="col ${porMes[k]===maxMes?'top':''}"><div class="bar" style="height:${Math.max(4,porMes[k]/maxMes*100)}%"><em>${kCurto(porMes[k])}</em></div><div class="m">${NM[+k.slice(5)-1]}/${k.slice(2,4)}</div></div>`).join('')}</div>`:'<div class="empty">Nada a vencer no filtro.</div>'}</div>
+    <div class="box glass"><h2>Vencido por atraso</h2>
+      ${colunas(['f1','f2','f3'].map(f=>({l:FAIXA_LBL[f].replace('Acima de ','+').replace(' dias',' d'), v:soma(fx[f])})))}</div>
+    <div class="box glass"><h2>A vencer por mês</h2>
+      ${meses.length?colunas(meses.map(k=>({l:NM[+k.slice(5)-1]+'/'+k.slice(2,4), v:porMes[k]}))):'<div class="empty">Nada a vencer no filtro.</div>'}</div>
   </div>
 
   <div class="clientes glass">
@@ -380,14 +389,12 @@ function render(){
 
 function mais(n){ return n>pagLista?`<div class="rodape"><span class="note">Mostrando ${pagLista} de ${n}</span><button class="btn-glass no-print" onclick="pagLista+=24;render()">Ver mais ${Math.min(24,n-pagLista)}</button></div>`:''; }
 function listaDevedores(l){
-  return `<div class="c-desc">Clientes com título vencido no filtro, do maior para o menor valor. Clique para ver os títulos.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
+  return `  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
   ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}
     <div class="vv red"><b>${BRL(m.vencPer)}</b><small>${m.tits.filter(t=>t.dias>0).length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Nenhum devedor no filtro.</div>'}</div>${mais(l.length)}`;
 }
 function listaPrev(l){
-  return `<div class="c-desc">Sem título vencido hoje, mas com parcelas a vencer e histórico de atraso: valor da carteira com risco de virar inadimplência.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">A vencer</span><span class="num">Próx. venc.</span><span class="num">Atrasos</span><span>Score</span></div>
+  return `  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">A vencer</span><span class="num">Próx. venc.</span><span class="num">Atrasos</span><span>Score</span></div>
   ${l.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}
     <div class="vv"><b>${BRL(m.avencer)}</b></div><div class="vv">${dBR(m.prox)}</div><div class="vv"><b>${m.c.atrasos}</b><small>de ${m.c.n}${m.c.atrasoMedio!=null?' · '+m.c.atrasoMedio.toFixed(0)+' d':''}</small></div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Nenhum cliente nesse perfil.</div>'}</div>${mais(l.length)}`;
 }
@@ -403,8 +410,7 @@ const REG_LBL = {f0:'Do dia (1 dia)', f1:'2 a 30 dias', f2:'31 a 90 dias', f3:'A
 function reguaHtml(g){
   const lista=g[abaRegua];
   return `<div class="sub-tabs no-print">${Object.keys(REG_LBL).map(k=>`<button class="${abaRegua===k?'on':''}" onclick="abaRegua='${k}';pagLista=12;render()">${REG_LBL[k]} · ${g[k].length}</button>`).join('')}</div>
-  <div class="c-desc">Clientes com título vencido em ${dBR(HOJE)}, agrupados pelo atraso do título mais antigo. ${lista.length} clientes · <b class="red">${BRL(lista.reduce((s,m)=>s+m.venc,0))}</b> vencido. Ignora o filtro de período.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
+    <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Vencido</span><span class="num">A vencer</span><span class="num">Atraso</span><span>Score</span></div>
   ${lista.slice(0,pagLista).map(m=>{ const vs=m.tits.filter(t=>t.dias>0);
     return `<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="vv red"><b>${BRL(m.venc)}</b><small>${vs.length} títulos</small></div><div class="vv">${m.avencer?BRL(m.avencer):'<span class="muted">—</span>'}</div><div class="num">${diasHtml(m.maxDias)}</div>
     <div>${scoreHtml(m.score)}</div></div>`; }).join('') || '<div class="empty">Ninguém nessa faixa hoje.</div>'}</div>${mais(lista.length)}`;
@@ -416,8 +422,7 @@ function scorePanel(M){
   const lista = (abaScore==='abertos'? abertos : [...abertos,...hist]).sort((a,b)=>a.score-b.score);
   const q=S.q.trim().toLowerCase(), l2 = q? lista.filter(m=>m.c.nome.toLowerCase().includes(q)||m.c.k.includes(q.replace(/\D/g,'')||'§')) : lista;
   return `<div class="sub-tabs no-print"><button class="${abaScore==='abertos'?'on':''}" onclick="abaScore='abertos';pagLista=12;render()">Com título em aberto</button><button class="${abaScore==='todos'?'on':''}" onclick="abaScore='todos';pagLista=12;render()">Todos com histórico</button></div>
-  <div class="c-desc">Compras x pagamento em dia, do menor para o maior score.</div>
-  <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Compras</span><span class="num">Em aberto</span><span class="num">Atraso méd.</span><span>Score</span></div>
+    <div class="lista"><div class="li cab"><span>Cliente</span><span class="num">Compras</span><span class="num">Em aberto</span><span class="num">Atraso méd.</span><span>Score</span></div>
   ${l2.slice(0,pagLista).map(m=>`<div class="li" onclick="detalhe('${m.c.k}')">${quem(m)}<div class="vv">${BRL(m.c.emitidoV)}<small>${m.c.emDia} de ${m.c.n} pagos em dia</small></div><div class="vv"><b>${m.venc+m.avencer?BRL(m.venc+m.avencer):'—'}</b></div><div class="num muted">${m.c.atrasoMedio!=null?m.c.atrasoMedio.toFixed(0)+' d':'—'}</div><div>${scoreHtml(m.score)}</div></div>`).join('') || '<div class="empty">Sem clientes.</div>'}</div>${mais(l2.length)}
   <details class="how"><summary>Como o score é calculado</summary><p>0 a 100. 75 pontos vêm da pontualidade (metade pelo nº de títulos pagos em dia, metade pelo valor) e 25 pontos da gravidade do atraso médio (30 dias ou mais zera esses 25). Atraso atual acima de 30 dias limita o score a 45; acima de 90 dias, a 25. Classes: A ≥ 80, B 60–79, C 40–59, D &lt; 40. Cliente sem histórico fica sem score (—). O histórico vem do Asaas desde jan/2026; o Bling ainda não traz títulos já pagos. A pasta de cada cliente é estimada pelo nome da empresa.</p></details>`;
 }
