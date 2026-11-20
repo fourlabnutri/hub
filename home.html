@@ -7,39 +7,39 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="shared.css">
 <style>
+  body{ background:#efe9e3; }
+  body::before{ content:""; position:fixed; inset:-20%; z-index:-1; pointer-events:none;
+    background:radial-gradient(38% 34% at 78% 8%, rgba(233,103,9,.22), transparent 70%),
+               radial-gradient(30% 30% at 12% 70%, rgba(115,27,88,.16), transparent 70%),
+               radial-gradient(26% 26% at 60% 92%, rgba(253,204,3,.18), transparent 70%); filter:blur(10px); }
   main{ padding-top:28px !important; }
   
-  .area{ margin-bottom:26px; }
-  .area-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-  .area-head h2{ font-family:var(--font-title); font-size:17px; font-weight:700; }
-  .area-head .desc{ font-size:12.5px; color:var(--muted); }
-  .mods{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-  .mod{ display:flex; flex-direction:column; gap:10px; text-decoration:none; color:inherit; background:var(--card); border:1px solid rgba(235,228,220,.7); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
-  a.mod:hover{ transform:translateY(-2px); border-color:var(--orange); box-shadow:0 10px 28px rgba(233,103,9,.14); }
-  .mod .top{ display:flex; justify-content:space-between; align-items:center; }
-  .mod h3{ font-size:15px; font-weight:700; }
-  .mod p{ font-size:12.5px; color:var(--muted); line-height:1.5; }
-  .mod.soon{ opacity:.55; border-style:dashed; box-shadow:none; cursor:default; }
-  .mod.soon:hover{ transform:none; border-color:rgba(235,228,220,.7); box-shadow:none; }
-  .tag{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; padding:3px 9px; border-radius:999px; background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
-  .hero{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:20px; padding:28px 30px; border-radius:24px; color:#fff; background:linear-gradient(115deg,var(--purple),#8a1668 55%,var(--pink)); margin-bottom:22px; }
-  .hero .dt{ font-size:12px; font-weight:700; opacity:.8; text-transform:capitalize; margin-bottom:6px; }
-  .hero h1{ font-family:var(--font-title); font-size:30px; font-weight:800; color:#fff; }
-  .hero p{ font-size:13.5px; opacity:.85; margin-top:4px; }
-  .sec{ font-family:var(--font-title); font-size:17px; font-weight:800; margin:0 0 12px; }
-  .wg{ display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:16px; margin-bottom:28px; }
-  .w{ display:block; text-decoration:none; color:inherit; background:var(--card); border:1px solid rgba(235,228,220,.7); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); transition:transform .12s, border-color .12s; }
-  .w:hover{ transform:translateY(-2px); border-color:var(--orange); }
-  .w .l{ font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
-  .w .v{ font-family:var(--font-title); font-size:28px; font-weight:800; margin:8px 0 4px; }
-  .w .v.red{ color:var(--red); }
-  .w .f{ font-size:12.5px; color:var(--muted); line-height:1.45; }
-  .sk{ color:transparent; background:var(--surface-2); border-radius:8px; }
-  .mods{ grid-template-columns:repeat(auto-fill,minmax(225px,1fr)) !important; gap:12px !important; }
-  .mod{ padding:14px 16px !important; flex-direction:row !important; align-items:center; }
-  .mod .top{ flex:none; } .mod .tag{ display:none; } .mod p{ display:none; }
-  .mod h3{ font-size:13.5px !important; }
-  .tag.live{ background:var(--green-soft); color:var(--green); border-color:transparent; }
+  .glass{ background:rgba(255,255,255,.58); -webkit-backdrop-filter:blur(22px) saturate(170%); backdrop-filter:blur(22px) saturate(170%);
+    border:1px solid rgba(255,255,255,.75); border-radius:22px; box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 40px rgba(60,30,20,.07); }
+  .top{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+  .top h1{ font-size:30px; letter-spacing:-.8px; }
+  .pill-dt{ font-size:12px; font-weight:700; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.8); text-transform:capitalize; }
+  .kp{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-bottom:26px; }
+  .w{ display:flex; flex-direction:column; gap:6px; padding:16px 20px; text-decoration:none; color:inherit; transition:transform .12s; }
+  .w:hover{ transform:translateY(-2px); }
+  .w .l{ font-size:13px; color:var(--ink-2); display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .w .l svg{ opacity:.35; }
+  .w .v{ font-family:var(--font-title); font-size:26px; font-weight:600; letter-spacing:-.6px; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .w .v small{ font-size:.5em; opacity:.55; margin-right:3px; font-weight:500; }
+  .w .p{ align-self:flex-start; font-size:11px; font-weight:700; padding:3px 9px; border-radius:99px; background:rgba(26,19,21,.06); color:var(--ink-2); }
+  .w.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border:0; box-shadow:0 14px 40px rgba(233,103,9,.25); }
+  .w.hot .l{ color:rgba(255,255,255,.9); } .w.hot .p{ background:rgba(255,255,255,.2); color:#fff; }
+  .sk{ color:transparent !important; background:rgba(26,19,21,.06); border-radius:8px; }
+  .sec{ font-family:var(--font-title); font-size:14px; font-weight:700; color:var(--ink-2); margin:0 0 10px; }
+  .areas{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; align-items:start; }
+  .area{ padding:14px 16px; }
+  .area h2{ display:flex; align-items:center; gap:10px; font-size:13.5px; font-weight:700; margin-bottom:8px; }
+  .area h2 .ic{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--orange-soft); color:var(--orange); }
+  .area h2 .ic svg{ width:16px; height:16px; }
+  .lk{ display:flex; flex-wrap:wrap; gap:6px; }
+  .lk a, .lk span{ font-size:12px; font-weight:600; padding:6px 11px; border-radius:99px; background:rgba(255,255,255,.75); border:1px solid rgba(26,19,21,.07); color:var(--ink); text-decoration:none; }
+  .lk a:hover{ border-color:var(--orange); color:var(--orange); }
+  .lk span{ opacity:.45; }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -93,36 +93,33 @@ const PERFIL = (typeof DATA !== 'undefined' && DATA && DATA.perfil) ? DATA.perfi
 const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const primeiroNome = (PERFIL.nome || '').split(' ')[0];
 
-function card(m) {
-  const soon = !!m.breve;
-  const inner = `<div class="top"><span class="ic-bubble">${m.icone}</span><span class="tag ${soon ? '' : 'live'}">${soon ? 'Em breve' : 'Ao vivo'}</span></div><h3>${esc(m.nome)}</h3><p>${esc(m.desc)}</p>`;
-  return soon ? `<div class="mod soon">${inner}</div>` : `<a class="mod" href="${m.href}">${inner}</a>`;
+const SETA='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+function area(a){
+  const mods=a.modulos.filter(m=>m.breve||PERFIL.paginas.includes(m.id));
+  if(!mods.length) return '';
+  return `<section class="area glass"><h2><span class="ic">${a.icone}</span>${esc(a.nome)}</h2><div class="lk">${mods.map(m=>m.breve?`<span>${esc(m.nome)}</span>`:`<a href="${m.href}">${esc(m.nome)}</a>`).join('')}</div></section>`;
 }
-function area(a) {
-  const mods = a.modulos.filter(m => m.breve || PERFIL.paginas.includes(m.id));
-  if (!mods.length) return '';
-  return `<section class="area"><div class="area-head"><span class="ic-bubble">${a.icone}</span><div><h2>${esc(a.nome)}</h2><div class="desc">${esc(a.desc)}</div></div></div><div class="mods">${mods.map(card).join('')}</div></section>`;
-}
-const ativas = AREAS.filter(a => !a.breve), breves = AREAS.filter(a => a.breve);
-const BRL = v => 'R$ ' + (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const ativas = AREAS.filter(a => !a.breve);
 const pode = id => PERFIL.paginas.includes(id);
+const kv = v => { const [i,c]=(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}).split(','); return `<small>R$</small>${i}<span style="opacity:.45">,${c}</span>`; };
+const kC = v => v>=1e6?'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi':v>=1e3?'R$ '+Math.round(v/1e3)+' mil':'R$ '+Math.round(v||0);
 const WIDGETS = [
-  {id:'comercial', l:'Ligações do comercial', v:r=>r.boleto+r.recompra+r.chegando+r.reativar, f:r=>`${r.boleto} boletos vencidos · ${r.recompra} recompras atrasadas · ${r.chegando} chegando`},
-  {id:'receber', l:'A receber vencido', red:1, v:r=>BRL(r.vencido), f:r=>`${r.qtd_vencido} títulos · ${BRL(r.a_vencer)} a vencer`},
-  {id:'pagar', l:'A pagar vencido', red:1, v:r=>BRL(r.vencido), f:r=>`${r.qtd_vencido} títulos · ${BRL(r.a_vencer)} a vencer`},
-  {id:'loja', l:'Loja em 30 dias', v:r=>BRL(r.receita), f:r=>`${r.pedidos} pedidos pagos`},
-  {id:'producao', l:'Produção agora', v:r=>r.produzindo, f:r=>`ordens produzindo · ${r.na_fila} aguardando início`},
+  {id:'receber', l:'Recebíveis vencidos', hot:1, v:r=>kv(r.vencido), p:r=>`${kC(r.a_vencer)} a vencer`},
+  {id:'pagar', l:'Contas a pagar vencidas', v:r=>kv(r.vencido), p:r=>`${kC(r.a_vencer)} a vencer`},
+  {id:'loja', l:'Loja · 30 dias', v:r=>kv(r.receita), p:r=>`${r.pedidos} pedidos`},
+  {id:'comercial', href:'comercial.html', l:'Recompra atrasada', v:r=>`${r.recompra}<small style="margin-left:6px">lojistas</small>`, p:r=>`${r.reativar} para reativar`},
+  {id:'producao', l:'Produção', v:r=>`${r.produzindo}<small style="margin-left:6px">ordens</small>`, p:r=>`${r.na_fila} na fila`},
 ].filter(w=>pode(w.id));
 function widgets(res){
   return WIDGETS.map(w=>{ const r=res&&res[w.id], ok=!!r;
-    return `<a class="w" href="${w.id}.html"><div class="l">${w.l}</div><div class="v ${w.red&&ok?'red':''} ${res?'':'sk'}">${ok?w.v(r):res?'—':'000'}</div><div class="f ${res?'':'sk'}">${ok?w.f(r):res?'Não foi possível carregar':'carregando'}</div></a>`; }).join('');
+    return `<a class="w glass ${w.hot?'hot':''}" href="${w.id}.html"><div class="l">${w.l}${SETA}</div><div class="v ${res?'':'sk'}">${ok?w.v(r):res?'—':'0000000'}</div><span class="p ${res?'':'sk'}">${ok?w.p(r):res?'sem dados':'carregando'}</span></a>`; }).join('');
 }
 const hojeTxt = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Sao_Paulo'});
 document.getElementById('main').innerHTML = `
-  <section class="hero"><div><div class="dt">${esc(hojeTxt)}</div><h1>Olá${primeiroNome ? ', ' + esc(primeiroNome) : ''}</h1><p>Hub FourLab · o resumo do dia, com dados do Nekt atualizados pela manhã.</p></div></section>
-  ${WIDGETS.length?`<h2 class="sec">Seu painel</h2><div class="wg" id="wg">${widgets(null)}</div>`:''}
+  <div class="top"><h1>Olá${primeiroNome ? ', ' + esc(primeiroNome) : ''}</h1><span class="pill-dt">${esc(hojeTxt)}</span></div>
+  ${WIDGETS.length?`<div class="kp" id="wg">${widgets(null)}</div>`:''}
   <h2 class="sec">Módulos</h2>
-  ${ativas.map(area).join('')}`;
+  <div class="areas">${ativas.map(area).join('')}</div>`;
 (async()=>{ if(!WIDGETS.length) return; let res={};
   try{ const {data}=await sb.auth.getSession(); const r=await fetch('/api/report?resumo=1',{headers:{Authorization:'Bearer '+data.session.access_token}}); if(r.ok) res=(await r.json()).resumo; }catch(e){}
   document.getElementById('wg').innerHTML=widgets(res); })();
