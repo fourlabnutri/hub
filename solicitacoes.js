@@ -1,6 +1,9 @@
-// Laboratório: chamado de manutenção (com fotos) e solicitação de materiais de uso e consumo. Back em /api/lab.
+// Solicitações: chamado de manutenção (com fotos), pedido de materiais de uso e consumo e registros (com cadastro de materiais pela chefia).
+// Uma página por aba (sol-manutencao, sol-materiais, sol-registros), definida por window.SOL_ABA. Back em /api/lab.
 (async () => {
-  if (typeof GESTAO !== 'undefined' && !(await GESTAO.entrar('@laboratorio'))) return;
+  const ABA = window.SOL_ABA || 'manut', PAG = window.SOL_PAGINA || 'sol-manutencao';
+  let EU = null;
+  if (typeof GESTAO !== 'undefined') { EU = await GESTAO.entrar('@' + PAG); if (!EU) return; }
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const dt = iso => new Date(iso).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -15,7 +18,8 @@
   }
 
   // ---------- abas ----------
-  let aba = 'manut', regAba = 'manut';
+  let aba = ABA, regAba = 'manut';
+  $('#tit').textContent = { manut: 'Manutenção', mat: 'Materiais', reg: 'Registros' }[ABA];
   function irPara(a) {
     aba = a; ['manut', 'mat', 'reg', 'ok'].forEach(k => $('#s-' + k).hidden = k !== a);
     document.querySelectorAll('#abas button').forEach(b => b.classList.toggle('on', b.dataset.a === a));
@@ -72,7 +76,7 @@
   };
 
   // ---------- materiais ----------
-  const PADRAO = { 'Material de escritório': ['Caneta esferográfica azul', 'Caneta esferográfica preta', 'Caneta marca-texto', 'Caneta permanente (marcador)', 'Lápis', 'Borracha', 'Papel A4 (resma)', 'Bloco de notas / post-it', 'Fita adesiva transparente', 'Fita crepe', 'Fita dupla face', 'Etiquetas adesivas', 'Grampos', 'Clipes', 'Pasta / arquivo', 'Pilhas AA', 'Pilhas AAA', 'Lâmpada'],
+  const PADRAO = { 'Material de escritório': ['Caneta esferográfica azul', 'Caneta esferográfica preta', 'Caneta marca-texto', 'Marca-texto', 'Caneta permanente (marcador)', 'Lápis', 'Borracha', 'Papel A4 (resma)', 'Bloco de notas / post-it', 'Fita adesiva transparente', 'Fita crepe', 'Fita dupla face', 'Etiquetas adesivas', 'Etiqueta de frágil', 'Etiqueta 10x15', 'Lacre de display (adesivo)', 'Grampos', 'Clipes', 'Pasta / arquivo', 'Pilhas AA', 'Pilhas AAA', 'Lâmpada'],
     'Material de limpeza': ['Álcool 70%', 'Detergente', 'Desinfetante', 'Água sanitária', 'Sabonete líquido', 'Papel toalha', 'Papel higiênico', 'Saco de lixo 100 L', 'Saco de lixo 50 L', 'Esponja', 'Pano de limpeza', 'Rodo', 'Vassoura'],
     'EPI': ['Luva nitrílica (caixa)', 'Luva de látex (caixa)', 'Máscara descartável', 'Máscara PFF2', 'Touca descartável', 'Óculos de proteção', 'Jaleco', 'Protetor auricular', 'Propé descartável', 'Avental', 'Bota de segurança'] };
   let CAT = Object.fromEntries(Object.entries(PADRAO).map(([c, l]) => [c, l.map(item => ({ item, unidade: 'un' }))]));
@@ -118,7 +122,7 @@
   let voltar = 'manut';
   function sucesso(tit, txt, de) { voltar = de; $('#okTit').textContent = '✓ ' + tit; $('#okTxt').innerHTML = txt; irPara('ok'); scrollTo(0, 0); }
   $('#okNovo').onclick = () => irPara(voltar);
-  $('#okReg').onclick = () => { regAba = voltar; irPara('reg'); };
+  $('#okReg').onclick = () => { location.href = 'sol-registros.html'; };
 
   // ---------- registros ----------
   let REG = null, aberto = null;
@@ -143,4 +147,28 @@
     const r = REG.manutencao.find(x => x.id === id); if (!r || !r.fotos) return;
     try { const { fotos } = await api('fotosChamado', { id }); const g = $('#gal'); if (g) g.innerHTML = fotos.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="" loading="lazy"></a>`).join(''); } catch { }
   }
+
+  // ---------- cadastro de materiais (só quem tem "sol-catalogo") ----------
+  const podeCadastrar = !EU || EU.perfil.paginas.includes('sol-catalogo');
+  let CATA = [];
+  async function carregarCat() {
+    if (!hub) { CATA = Object.entries(PADRAO).flatMap(([categoria, l]) => l.map(item => ({ categoria, item, unidade: 'un', ativo: true }))); return desenharCat(); }
+    try { CATA = (await api('catalogoTodos')).itens; desenharCat(); } catch (e) { erroEm($('#cErro'), e.message); }
+  }
+  function desenharCat() {
+    const g = {}; CATA.forEach(x => (g[x.categoria] = g[x.categoria] || []).push(x));
+    $('#cCats').innerHTML = Object.keys(g).map(c => `<option value="${esc(c)}">`).join('');
+    $('#catLista').innerHTML = Object.entries(g).map(([c, l]) => `<div class="cat-g"><h3>${esc(c)} · ${l.filter(x => x.ativo).length}</h3>${l.map(x => `<div class="cat-i ${x.ativo ? '' : 'off'}"><span>${esc(x.item)}<small>${esc(x.unidade)}</small></span><button type="button" data-c="${esc(c)}" data-i="${esc(x.item)}" data-u="${esc(x.unidade)}" data-a="${x.ativo ? 0 : 1}">${x.ativo ? 'Desativar' : 'Reativar'}</button></div>`).join('')}</div>`).join('');
+    $('#catLista').querySelectorAll('button').forEach(b => b.onclick = () => salvarItem(b.dataset.c, b.dataset.i, b.dataset.u, b.dataset.a === '1'));
+  }
+  async function salvarItem(categoria, item, unidade, ativo) {
+    erroEm($('#cErro'), '');
+    if (!categoria || !item) return erroEm($('#cErro'), 'Informe a categoria e o item.');
+    try { if (!hub) throw new Error('O cadastro funciona no Hub ao vivo.'); CATA = (await api('salvarItem', { categoria, item, unidade: unidade || 'un', ativo })).itens; desenharCat(); $('#cItem').value = ''; }
+    catch (e) { erroEm($('#cErro'), e.message); }
+  }
+  $('#cAdd').onclick = () => salvarItem($('#cCat').value.trim(), $('#cItem').value.trim(), $('#cUn').value.trim(), true);
+
+  irPara(ABA);
+  if (ABA === 'reg' && podeCadastrar) { $('#catBox').hidden = false; carregarCat(); }
 })();

@@ -1,6 +1,6 @@
 // Laboratório: chamados de manutenção (com fotos) e solicitação de materiais de uso e consumo.
 // Banco: SQL 007 (tabelas public.lab_*). Fotos no bucket privado rnc-fotos, pasta manutencao/, com upload direto do celular (URL assinada).
-// Acesso: página "laboratorio" do hub.
+// Acesso: páginas sol-manutencao, sol-materiais e sol-registros. Cadastro de materiais: sol-catalogo (chefia).
 import { createClient } from '@supabase/supabase-js';
 import { quem } from './_auth.js';
 import { randomUUID } from 'node:crypto';
@@ -15,7 +15,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return erro(res, 405, 'use POST');
   try {
     const eu = await quem(req);
-    if (!eu || !eu.paginas.includes('laboratorio')) return erro(res, eu ? 403 : 401, eu ? 'sem acesso' : 'não autenticado');
+    const SOL = ['sol-manutencao', 'sol-materiais', 'sol-registros'];
+    if (!eu || !SOL.some(p => eu.paginas.includes(p))) return erro(res, eu ? 403 : 401, eu ? 'sem acesso' : 'não autenticado');
     if (!process.env.SUPABASE_SERVICE_KEY) return erro(res, 500, 'Falta SUPABASE_SERVICE_KEY no Vercel.');
     const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY, { auth: { persistSession: false } });
     const b = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
@@ -23,6 +24,19 @@ export default async function handler(req, res) {
 
     if (b.acao === 'catalogo') {
       const r = await sb.from('lab_materiais_catalogo').select('categoria, item, unidade').eq('ativo', true).order('categoria').order('item');
+      if (r.error) return erro(res, 500, falta(r.error));
+      return res.status(200).json({ itens: r.data });
+    }
+
+    if (b.acao === 'catalogoTodos' || b.acao === 'salvarItem') {
+      if (!eu.paginas.includes('sol-catalogo')) return erro(res, 403, 'Só a chefia cadastra materiais.');
+      if (b.acao === 'salvarItem') {
+        const categoria = txt(b.categoria, 60), item = txt(b.item, 120), unidade = txt(b.unidade, 20) || 'un';
+        if (!categoria || !item) return erro(res, 400, 'Informe a categoria e o item.');
+        const w = await sb.from('lab_materiais_catalogo').upsert({ categoria, item, unidade, ativo: b.ativo !== false }, { onConflict: 'categoria,item' });
+        if (w.error) return erro(res, 500, falta(w.error));
+      }
+      const r = await sb.from('lab_materiais_catalogo').select('categoria, item, unidade, ativo').order('categoria').order('item');
       if (r.error) return erro(res, 500, falta(r.error));
       return res.status(200).json({ itens: r.data });
     }
