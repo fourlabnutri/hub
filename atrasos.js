@@ -38,9 +38,9 @@
 
   // ---------- dados ----------
   let CASOS = [], erroCarga = '';
-  const S = { view: 'painel', aba: 'abertos', q: '', tr: 'todas', pag: 25 };
+  const S = { view: 'analitico', aba: 'hoje', q: '', tr: 'todas', pag: 25 };
   const aberto = c => !c.encerrado_em;
-  function prep(c) { const fim = c.encerrado_em ? String(c.encerrado_em).slice(0, 10) : HOJE; return { ...c, dias: c.prazo_data ? dias(fim, c.prazo_data) : 0, valor: Number(c.valor_pedido) || 0, reemb: Number(c.reembolso_valor) || 0 }; }
+  function prep(c) { const fim = c.encerrado_em ? String(c.encerrado_em).slice(0, 10) : HOJE; return { ...c, dias: c.dias_atraso != null ? c.dias_atraso : c.prazo_data ? dias(fim, c.prazo_data) : 0, valor: Number(c.valor_pedido) || 0, reemb: Number(c.reembolso_valor) || 0 }; }
 
   function filtrados() {
     const q = S.q.trim().toLowerCase();
@@ -99,14 +99,33 @@
     </div>`;
   }
 
+  // ---------- filas de trabalho (spec do Jr) ----------
+  const ANDAMENTO = ['ticket_aberto', 'aguardando', 'em_busca'];
+  const FILAS = [
+    ['hoje', 'Para tratar hoje', c => c.status === 'detectado'],
+    ['andamento', 'Em andamento', c => ANDAMENTO.includes(c.status)],
+    ['decisao', 'Decisão humana', c => c.status === 'pendente_decisao'],
+    ['antigos', 'Antigos', c => aberto(c) && c.dias > 15],
+    ['todos', 'Todos', () => true],
+  ];
+  const codigos = c => String(c.codigo_rastreio || '').split(/[\s,;|]+/).filter(Boolean);
+  function linkRastreio(transp, cod) {
+    const t = String(transp || '').toLowerCase(), e = encodeURIComponent(cod);
+    if (/correio|sedex|pac/.test(t)) return `https://rastreamento.correios.com.br/app/index.php?objetos=${e}`;
+    if (/jadlog/.test(t)) return `https://www.jadlog.com.br/jadlog/tracking?cte=${e}`;
+    if (/loggi/.test(t)) return `https://www.loggi.com/rastreador/${e}`;
+    return `https://www.google.com/search?q=${encodeURIComponent('rastreio ' + (transp || '') + ' ' + cod)}`;
+  }
+  const rastreioHtml = c => codigos(c).map(x => `<a class="trk" href="${linkRastreio(c.transportadora, x)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(x)} ↗</a>`).join('') || '—';
+
   function analitico(L) {
-    const lista = (S.aba === 'abertos' ? L.filter(aberto) : S.aba === 'encerrados' ? L.filter(c => !aberto(c)) : L).sort((a, b) => b.dias - a.dias);
-    const n = k => k === 'abertos' ? L.filter(aberto).length : k === 'encerrados' ? L.filter(c => !aberto(c)).length : L.length;
-    return `<div class="clientes glass"><div class="c-head"><div class="tabs2">${[['abertos', 'Abertos'], ['encerrados', 'Encerrados'], ['todos', 'Todos']].map(([id, l]) => `<button class="${S.aba === id ? 'on' : ''}" data-aba="${id}">${l} <span class="cnt">${n(id)}</span></button>`).join('')}</div>
+    const f = FILAS.find(x => x[0] === S.aba) || FILAS[0];
+    const lista = L.filter(f[2]).sort((a, b) => b.dias - a.dias);
+    return `<div class="clientes glass"><div class="c-head"><div class="tabs2">${FILAS.map(([id, l, fn]) => `<button class="${S.aba === id ? 'on' : ''}" data-aba="${id}">${l} <span class="cnt">${L.filter(fn).length}</span></button>`).join('')}</div>
       <button class="btn-glass no-print" id="csv">Baixar CSV</button></div>
-      <div class="lista" style="margin-top:12px"><div class="li at cab"><span>Pedido</span><span>Transportadora</span><span class="num">Prazo</span><span class="num">Valor</span><span class="num">Atraso</span><span>Situação</span></div>
-      ${lista.slice(0, S.pag).map(c => `<div class="li at" data-caso="${c.id}"><div class="who"><span class="av" style="background:var(--orange-soft);color:#b5680a">${esc((c.uf || '—').slice(0, 2))}</span><div style="min-width:0"><b>Pedido ${esc(c.pedido_numero || '—')}${c.nf_numero ? ` · NF ${esc(c.nf_numero)}` : ''}</b><small>${esc(titulo(c.cliente))} · ${esc(titulo(c.municipio))}/${esc(c.uf || '')}</small></div></div>
-        <div class="vv" style="text-align:left">${esc(c.transportadora || '—')}<small>${esc(c.servico || '')}</small></div><div class="vv">${dBR(c.prazo_data)}</div><div class="vv"><b>${BRL(c.valor)}</b></div><div class="num">${diasHtml(c.dias)}</div><div><span class="chip-st">${rot(c.status)}</span></div></div>`).join('') || '<div class="empty">Nenhum caso.</div>'}</div>
+      <div class="tb-wrap"><table class="tb"><thead><tr><th>Pedido · NF</th><th>Cliente</th><th>Cidade/UF</th><th>Transportadora</th><th>Rastreio</th><th>Saída</th><th>Prazo</th><th class="num">Atraso</th><th>Status</th><th>Ticket</th><th>Último evento</th></tr></thead><tbody>
+      ${lista.slice(0, S.pag).map(c => `<tr data-caso="${c.id}"><td><b>${esc(c.pedido_numero || '—')}</b><small>NF ${esc(c.nf_numero || '—')}</small></td><td>${esc(titulo(c.cliente))}</td><td>${esc(titulo(c.municipio))}/${esc(c.uf || '')}</td><td>${esc(c.transportadora || '—')}<small>${esc(c.servico || '')}</small></td><td>${rastreioHtml(c)}</td><td>${dBR(c.data_saida)}</td><td>${dBR(c.prazo_data)}</td><td class="num">${diasHtml(c.dias)}</td><td><span class="chip-st st-${esc(c.status)}">${rot(c.status)}</span></td><td>${esc(c.ticket_numero || '—')}</td><td>${c.ultimo_evento ? `${rot(c.ultimo_evento)}<small>${c.ultimo_evento_em ? dBR(c.ultimo_evento_em) : ''}</small>` : '—'}</td></tr>`).join('') || `<tr><td colspan="11"><div class="empty">Nada em "${f[1]}".</div></td></tr>`}
+      </tbody></table></div>
       ${lista.length > S.pag ? `<div class="rodape"><span class="note">Mostrando ${S.pag} de ${lista.length}</span><button class="btn-glass no-print" id="mais">Ver mais</button></div>` : ''}</div>`;
   }
 
@@ -144,13 +163,37 @@
         <div><span>Ticket</span><b>${esc(c.ticket_numero || '—')}</b><span>${c.proxima_cobranca ? 'próx. cobrança ' + dBR(c.proxima_cobranca) : ''}</span></div>
       </div>
       ${c.motivo || c.desfecho ? `<div class="pop-hist" style="grid-template-columns:1fr 1fr"><div><span>Motivo</span><b>${rot(c.motivo)}</b></div><div><span>Desfecho</span><b>${rot(c.desfecho)}</b></div></div>` : ''}
+      ${codigos(c).length ? `<div class="trk-l">${rastreioHtml(c)}</div>` : ''}
+      ${c.texto_ticket ? `<div class="tkt"><div class="tkt-h"><b>Texto do ticket</b><button class="btn-glass" id="cpy">Copiar</button></div><pre id="tktTxt">${esc(c.texto_ticket)}</pre></div>` : ''}
+      <div class="acts no-print">
+        <button data-b="entregue">Entregue — sem ticket</button><button data-b="nao_postado">Possível não postado</button><button data-b="ticket_preparado">Ticket preparado</button><button data-b="ticket_enviado">Ticket enviado</button><button data-b="encerrar" class="enc">Encerrar com observação</button>
+      </div>
+      <div class="enc-box" id="encBox" hidden><textarea id="encObs" placeholder="Observação do encerramento" maxlength="2000"></textarea><button class="btn-glass btn-ok" id="encOk">Confirmar encerramento</button></div>
+      <div class="act-msg" id="actMsg" hidden></div>
       <h3 style="font-size:13px;margin:16px 0 6px">Histórico</h3>
       <div class="pop-l">${ev === null ? '<div class="empty">Carregando…</div>' : ev.length ? ev.map(e => `<div class="pl ev"><span>${new Date(e.criado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span><span><b>${rot(e.tipo)}</b><small>${esc(e.detalhe || '')}</small></span><span>${esc(e.origem || '')}</span></div>`).join('') : '<div class="empty">Sem eventos.</div>'}</div></div>`;
-    const ligar = () => { const b = $('#fx'); if (b) b.onclick = fechar; };
+    const ligar = () => {
+      const b = $('#fx'); if (b) b.onclick = fechar;
+      const cp = $('#cpy'); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText($('#tktTxt').textContent); cp.textContent = 'Copiado ✓'; } catch { cp.textContent = 'Selecione e copie'; } setTimeout(() => cp.textContent = 'Copiar', 2000); };
+      box.querySelectorAll('.acts [data-b]').forEach(x => x.onclick = () => x.dataset.b === 'encerrar' ? ($('#encBox').hidden = false, $('#encObs').focus()) : acao(id, x.dataset.b, ''));
+      const ok = $('#encOk'); if (ok) ok.onclick = () => acao(id, 'encerrar', $('#encObs').value);
+    };
     desenhar(base, null); ligar();
     if (!hub) { desenhar(base, []); ligar(); return; }
     try { const j = await api('caso', { id }); desenhar(prep(j.caso), j.eventos); ligar(); } catch (e) { desenhar(base, []); ligar(); }
   }
+  async function acao(id, botao, obs) {
+    const msg = $('#actMsg'); msg.hidden = false; msg.className = 'act-msg'; msg.textContent = 'Gravando…';
+    box().querySelectorAll('.acts button, #encOk').forEach(b => b.disabled = true);
+    try {
+      if (!hub) throw new Error('As ações funcionam no Hub ao vivo.');
+      const r = await api('mudar', { id, botao, obs });
+      const c = CASOS.find(x => x.id === id); if (c) { c.status = r.status; if (['entregue', 'encerrado'].includes(r.status)) c.encerrado_em = new Date().toISOString(); }
+      render(); await detalhe(id);
+      const m = $('#actMsg'); if (m) { m.hidden = false; m.className = 'act-msg ok'; m.textContent = 'Status alterado para ' + rot(r.status) + '.'; }
+    } catch (e) { msg.className = 'act-msg err'; msg.textContent = e.message; box().querySelectorAll('.acts button, #encOk').forEach(b => b.disabled = false); }
+  }
+  const box = () => $('#modalBox');
   function fechar() { $('#modalBg').classList.remove('active'); }
   $('#modalBg').addEventListener('click', e => { if (e.target.id === 'modalBg') fechar(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') fechar(); });
