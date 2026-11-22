@@ -9,7 +9,7 @@
     "api/frete/[acao].mjs": {
       "maxDuration": 60
     },
-    "api/cte/piloto.mjs": {
+    "api/cte/[acao].mjs": {
       "maxDuration": 60
     }
   },
