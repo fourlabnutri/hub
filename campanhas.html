@@ -41,6 +41,230 @@
   a.lnk{ color:var(--orange); font-weight:700; text-decoration:none; } a.lnk:hover{ text-decoration:underline; }
   .aviso{ background:#fff4c9; border:1px solid #f5e39a; color:#6b5200; border-radius:14px; padding:12px 14px; font-size:12px; line-height:1.55; margin-bottom:18px; }
   @media print{ .sidebar,.filters,.no-print{ display:none !important; } .shell{ display:block; } }
+/* ===== BI ===== */
+  /* ===== Contas a receber · v2 (vidro) ===== */
+  body{ background:#efe9e3; }
+  body::before{ content:""; position:fixed; inset:-20%; z-index:-1; pointer-events:none;
+    background:radial-gradient(38% 34% at 78% 8%, rgba(233,103,9,.22), transparent 70%),
+               radial-gradient(30% 30% at 12% 70%, rgba(115,27,88,.16), transparent 70%),
+               radial-gradient(26% 26% at 60% 92%, rgba(253,204,3,.18), transparent 70%); filter:blur(10px); }
+  main{ padding-top:28px !important; }
+  
+  .glass{ background:rgba(255,255,255,.58); -webkit-backdrop-filter:blur(22px) saturate(170%); backdrop-filter:blur(22px) saturate(170%);
+    border:1px solid rgba(255,255,255,.75); border-radius:26px; box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 40px rgba(60,30,20,.07); }
+  .r-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .r-head h1{ font-size:34px; letter-spacing:-.8px; }
+  .r-head .sub{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .muted{ color:var(--muted); } .red{ color:var(--red); font-weight:700; }
+  .sub2{ font-size:11px; color:var(--muted); }
+  a.lnk{ color:var(--orange); font-weight:700; text-decoration:none; } a.lnk:hover{ text-decoration:underline; }
+
+  /* barra de filtros */
+  .toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:8px; margin-bottom:12px; border-radius:999px; }
+  .segm{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:999px; padding:3px; }
+  .segm button{ border:0; background:none; padding:7px 14px; border-radius:999px; font-size:12px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .segm button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.1); }
+  .sel{ position:relative; }
+  .sel select{ appearance:none; -webkit-appearance:none; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:9px 34px 9px 14px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; width:auto; }
+  .sel::after{ content:""; position:absolute; right:14px; top:50%; width:6px; height:6px; border-right:2px solid var(--ink-2); border-bottom:2px solid var(--ink-2); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .dates{ display:flex; gap:6px; align-items:center; font-size:12px; }
+  .dates input{ width:auto; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:7px 12px; font-size:12px; }
+  .busca{ flex:1; min-width:200px; position:relative; }
+  .busca input{ width:100%; border:0; background:rgba(255,255,255,.8); border-radius:999px; padding:9px 14px 9px 36px; font-size:12.5px; }
+  .busca svg{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); }
+  .sw{ display:inline-flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; color:var(--ink-2); cursor:pointer; margin:0 8px 0 0; white-space:nowrap; }
+  .sw input{ display:none; }
+  .sw i{ width:30px; height:18px; border-radius:99px; background:rgba(26,19,21,.15); position:relative; transition:.2s; }
+  .sw i::after{ content:""; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .sw input:checked + i{ background:var(--orange); } .sw input:checked + i::after{ left:14px; }
+
+  /* pastas por tipo de comércio */
+  .pastas{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 6px; margin-bottom:20px; scrollbar-width:none; }
+  .pasta{ flex:0 0 auto; display:flex; align-items:center; gap:10px; border:1px solid rgba(255,255,255,.75); background:rgba(255,255,255,.45); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border-radius:16px; padding:9px 14px 9px 10px; cursor:pointer; text-align:left; transition:.15s; }
+  .pasta:hover{ background:rgba(255,255,255,.8); }
+  .pasta .ico{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:rgba(26,19,21,.06); color:var(--ink-2); } .pasta.on .ico{ color:var(--orange); }
+  .pasta b{ display:block; font-size:12.5px; } .pasta small{ font-size:11px; color:var(--muted); }
+  .pasta.on{ background:#fff; border-color:var(--orange); box-shadow:0 0 0 1px var(--orange) inset; } .pasta.on .ico{ background:var(--orange-soft); }
+
+  /* topo: KPIs */
+  .hero{ display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+  .k{ padding:22px 24px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .k .lbl{ font-size:12px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .k .val{ font-family:var(--font-title); font-size:34px; font-weight:600; letter-spacing:-1px; line-height:1.05; font-variant-numeric:tabular-nums; }
+  .k .val small{ font-size:.5em; font-weight:500; opacity:.55; margin-right:4px; letter-spacing:0; }
+  .k .foot{ font-size:11.5px; color:var(--muted); }
+  .k.dark{ background:linear-gradient(150deg,#241a1d 0%,#140e10 100%); color:#fff; border:0; }
+  .k.dark .lbl, .k.dark .foot{ color:rgba(255,255,255,.6); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border:0; box-shadow:0 14px 40px rgba(233,103,9,.28); }
+  .k.hot .lbl,.k.hot .foot{ color:rgba(255,255,255,.82); }
+  .badge{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px; background:rgba(255,255,255,.18); }
+  .badge.r{ background:var(--red-soft); color:var(--red); } .badge.g{ background:var(--green-soft); color:var(--green); }
+  .stack{ display:flex; height:12px; border-radius:99px; overflow:hidden; gap:3px; margin-top:12px; }
+  .stack span{ display:block; height:100%; border-radius:99px; min-width:4px; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; margin-top:8px; }
+  .legend i{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+  .k.dark .legend{ color:rgba(255,255,255,.75); }
+
+  /* gráficos */
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .box{ padding:22px 24px; }
+  .box h2{ font-size:15px; font-weight:700; } .box .desc{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .faixas{ display:grid; gap:14px; margin-top:18px; }
+  .fx{ display:grid; grid-template-columns:110px 1fr auto; gap:14px; align-items:center; }
+  .fx .n{ font-size:12px; font-weight:700; } .fx .n small{ display:block; font-weight:500; color:var(--muted); font-size:11px; }
+  .fx .t{ height:30px; border-radius:10px; background:rgba(26,19,21,.05); overflow:hidden; }
+  .fx .t div{ height:100%; border-radius:10px; }
+  .fx .v{ font-family:var(--font-title); font-weight:600; font-size:16px; text-align:right; font-variant-numeric:tabular-nums; min-width:120px; }
+  .fx .v small{ display:block; font-family:var(--font-body); font-size:11px; color:var(--muted); font-weight:500; }
+  .cols{ display:flex; align-items:flex-end; gap:12px; height:190px; margin-top:18px; padding-top:28px; }
+  .col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:8px; min-width:0; }
+  .col .bar{ width:100%; max-width:64px; border-radius:14px 14px 8px 8px; background:repeating-linear-gradient(135deg, rgba(233,103,9,.22) 0 6px, rgba(233,103,9,.1) 6px 12px); position:relative; }
+  .col.top .bar{ background:var(--grad-accent); box-shadow:0 8px 20px rgba(233,103,9,.25); }
+  .col .bar em{ position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-style:normal; font-size:11px; font-weight:800; white-space:nowrap; }
+  .col .m{ font-size:11px; color:var(--muted); font-weight:600; }
+
+  /* clientes: abas + lista */
+  .clientes{ padding:20px 22px; margin-bottom:16px; }
+  .c-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+  .tabs2{ display:flex; gap:4px; background:rgba(26,19,21,.06); border-radius:999px; padding:4px; overflow-x:auto; }
+  .tabs2 button{ border:0; background:none; border-radius:999px; padding:8px 14px; font-size:12.5px; font-weight:700; color:var(--ink-2); cursor:pointer; white-space:nowrap; display:inline-flex; gap:6px; align-items:center; }
+  .tabs2 button .cnt{ font-size:10.5px; font-weight:800; padding:1px 7px; border-radius:99px; background:rgba(26,19,21,.08); }
+  .tabs2 button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.08); }
+  .tabs2 button.on .cnt{ background:var(--orange); color:#fff; }
+  .sub-tabs{ display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 4px; }
+  .sub-tabs button{ border:1px solid var(--line); background:rgba(255,255,255,.6); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .sub-tabs button.on{ border-color:var(--ink); background:var(--ink); color:#fff; }
+  .c-desc{ font-size:12px; color:var(--muted); margin:10px 0 6px; }
+  .lista{ display:grid; }
+  .li{ display:grid; grid-template-columns:minmax(0,2.4fr) 140px 130px 110px 56px; gap:14px; align-items:center; padding:12px 10px; border-radius:16px; cursor:pointer; }
+  .li + .li{ border-top:1px solid rgba(26,19,21,.06); }
+  .li:hover{ background:rgba(255,255,255,.7); border-color:transparent; }
+  .li.cab{ cursor:default; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding-top:4px; padding-bottom:8px; }
+  .li.cab:hover{ background:none; }
+  .who{ display:flex; gap:12px; align-items:center; min-width:0; }
+  .av{ flex:0 0 38px; height:38px; border-radius:12px; display:grid; place-items:center; font-weight:800; font-size:13px; }
+  .who b{ display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .who small{ display:block; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ct{ font-size:12px; min-width:0; overflow:hidden; } .ct a.lnk{ color:var(--ink-2); font-weight:600; } .ct .sub2 a.lnk{ color:var(--muted); font-weight:500; } .ct .sub2{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vv{ text-align:right; font-variant-numeric:tabular-nums; } .vv b{ font-size:14px; } .vv small{ display:block; font-size:11px; color:var(--muted); }
+  .dias{ display:inline-block; font-size:11px; font-weight:800; padding:4px 9px; border-radius:99px; }
+  .d1{ background:#fff4c9; color:#8a6a00; } .d2{ background:var(--orange-soft); color:#b5680a; } .d3{ background:var(--red-soft); color:var(--red); } .d0{ background:var(--surface-2); color:var(--muted); }
+  .score{ display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; font-weight:800; font-size:12.5px; }
+  .score.A{ background:var(--green-soft); color:var(--green); } .score.B{ background:#fff4c9; color:#8a6a00; } .score.C{ background:var(--orange-soft); color:#b5680a; } .score.D{ background:var(--red-soft); color:var(--red); } .score.N{ background:var(--surface-2); color:var(--muted); }
+  .wa{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#0f7a3d; background:var(--green-soft); padding:6px 11px; border-radius:99px; text-decoration:none; }
+  .rodape{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .btn-glass{ border:1px solid rgba(26,19,21,.12); background:rgba(255,255,255,.7); border-radius:999px; padding:8px 16px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .btn-glass:hover{ background:#fff; } .btn-ink{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .empty{ padding:30px; text-align:center; color:var(--muted); font-size:13px; }
+  details.how summary{ cursor:pointer; font-size:12px; font-weight:700; color:var(--orange); margin-top:12px; }
+  details.how p{ font-size:12px; color:var(--ink-2); margin-top:6px; line-height:1.55; }
+  .note{ font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .tbl-wrap{ overflow-x:auto; }
+
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } .hero .k.dark{ grid-column:1/-1; } .li{ grid-template-columns:minmax(0,2fr) 120px 110px 56px; } .li > :nth-child(3){ display:none; } }
+  @media (max-width:720px){ .hero,.duo{ grid-template-columns:1fr; } .toolbar{ border-radius:22px; } .k .val{ font-size:28px; } .fx{ grid-template-columns:90px 1fr; } .fx .v{ grid-column:1/-1; text-align:left; }
+    .li{ grid-template-columns:minmax(0,1fr) auto; } .li > :nth-child(n+3){ display:none; } .li.cab{ display:none; } }
+  @media print{ .sidebar,.toolbar,.pastas,.no-print{ display:none !important; } .shell{ display:block; } body::before{ display:none; } .glass{ background:#fff; backdrop-filter:none; } }
+  .hero{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .k{ justify-content:flex-start; min-height:0; padding:16px 20px; gap:6px; }
+  .k .val{ font-size:26px; letter-spacing:-.6px; }
+  .hero{ align-items:stretch; }
+  .gcard{ flex-direction:row; align-items:center; justify-content:space-between; } .gcard .lbl{ align-self:flex-start; }
+  .k .lbl{ font-size:13px; color:var(--ink-2); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border-radius:26px; }
+  .k.hot .lbl{ color:rgba(255,255,255,.9); }
+  .gcard{ padding-bottom:12px; } .gauge{ width:118px; flex:0 0 118px; margin:-4px -4px -8px 0; }
+  .gauge text{ font-family:var(--font-title); font-size:40px; font-weight:600; fill:var(--ink); letter-spacing:-1px; }
+  .pill-dt{ font-size:12px; font-weight:700; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.8); }
+  .box h2{ font-size:14px; } .box{ padding:16px 20px; } .duo,.tri,.hero{ gap:12px; margin-bottom:12px; } .col .bar{ max-width:52px; }
+  .cols{ height:150px; padding-top:22px; }
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .hero{ grid-template-columns:1fr; } }
+  /* v3: painel × analítico */
+  .tt{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .vw{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:99px; padding:4px; }
+  .vw button{ border:0; background:none; padding:8px 18px; border-radius:99px; font-size:13px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .vw button.on{ background:var(--orange); color:#fff; box-shadow:0 6px 16px rgba(233,103,9,.3); }
+  .mini{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .m1{ padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px; border-radius:18px; }
+  .m1 span{ font-size:12.5px; color:var(--ink-2); } .m1 b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .m1 b small{ font-size:.55em; opacity:.6; font-weight:500; }
+  .g-main{ display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:12px; }
+  .g-tri{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .bh{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .chips-f{ display:inline-flex; gap:2px; background:rgba(26,19,21,.05); border-radius:99px; padding:3px; }
+  .chips-f button{ border:0; background:none; padding:5px 11px; border-radius:99px; font-size:11.5px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .chips-f button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 8px rgba(26,19,21,.08); }
+  .g-main .cols{ height:230px; }
+  .cols-st .col{ gap:8px; }
+  .stk{ width:100%; max-width:38px; display:flex; flex-direction:column; border-radius:10px; overflow:visible; position:relative; gap:2px; }
+  .stk i{ display:block; border-radius:8px; min-height:3px; }
+  .stk i.a{ background:linear-gradient(180deg,#e3055f,#c0392b); } .stk i.b{ background:repeating-linear-gradient(135deg, rgba(233,103,9,.5) 0 5px, rgba(233,103,9,.25) 5px 10px); }
+  .stk em{ position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10.5px; font-weight:800; white-space:nowrap; }
+  .leg2{ display:flex; gap:14px; font-size:11.5px; color:var(--ink-2); margin-top:8px; }
+  .leg2 i{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .leg2 i.a{ background:#d6114d; } .leg2 i.b{ background:rgba(233,103,9,.45); }
+  .ana .top5{ display:grid; gap:4px; margin-top:12px; }
+  .top5 button{ display:grid; grid-template-columns:38px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:7px 6px; border-radius:14px; cursor:pointer; text-align:left; color:inherit; }
+  .top5 button:hover{ background:rgba(255,255,255,.75); }
+  .top5 .nm b{ display:block; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .top5 .nm small{ font-size:11px; color:var(--muted); }
+  .top5 .vl{ font-size:13px; font-weight:800; color:var(--red); }
+  .rank{ display:grid; gap:10px; margin-top:14px; }
+  .rk{ display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:0; text-align:left; cursor:pointer; color:inherit; }
+  .ic2{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--orange-soft); color:var(--orange); }
+  .rk .nmr{ min-width:0; } .rk .nmr b{ font-size:12px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tr2{ height:6px; border-radius:99px; background:rgba(26,19,21,.06); margin-top:5px; overflow:hidden; } .tr2 i{ display:block; height:100%; border-radius:99px; background:var(--grad-accent-bar); }
+  .rk .vr{ font-size:12.5px; font-weight:800; white-space:nowrap; }
+  .donut{ display:flex; align-items:center; gap:16px; margin-top:12px; } .donut svg{ width:120px; flex:0 0 120px; }
+  .dl{ display:grid; gap:10px; flex:1; } .dl div{ display:grid; grid-template-columns:10px 1fr auto; gap:4px 8px; align-items:center; font-size:12.5px; }
+  .dl i{ width:10px; height:10px; border-radius:50%; } .dl b{ font-weight:800; } .dl small{ grid-column:2/-1; color:var(--muted); font-size:11px; margin-top:-4px; }
+  .sub-kv{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+  .sub-kv div{ background:rgba(255,255,255,.6); border-radius:12px; padding:8px 12px; } .sub-kv span{ display:block; font-size:11px; color:var(--muted); } .sub-kv b{ font-size:14px; }
+  @media (max-width:1100px){ .g-main{ grid-template-columns:1fr; } .g-tri{ grid-template-columns:1fr 1fr; } .mini{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .g-tri,.mini{ grid-template-columns:1fr; } }
+  /* pop-up do cliente */
+  #modalBox.modal-box{ padding:0; border-radius:26px; overflow:hidden; max-width:760px; width:calc(100% - 32px); background:rgba(255,255,255,.92); -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px); }
+  .pop{ padding:24px; }
+  .pop-h{ display:flex; gap:14px; align-items:center; }
+  .pop-h .av{ flex-basis:52px; height:52px; border-radius:16px; font-size:17px; }
+  .pop-t{ flex:1; min-width:0; } .pop-t h2{ font-size:20px; letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pop-t > div{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px; font-size:12px; color:var(--muted); }
+  .pop-t > div span + span::before{ content:"·"; margin-right:8px; }
+  .chip-t{ display:inline-flex; gap:5px; align-items:center; padding:3px 9px; border-radius:99px; background:var(--orange-soft); color:#b5680a; font-weight:700; } .chip-t svg{ width:12px; height:12px; }
+  .pop-t > div .chip-t + span::before{ content:""; margin:0; }
+  .pop-x{ width:38px; height:38px; border-radius:50%; border:1px solid rgba(26,19,21,.1); background:#fff; display:grid; place-items:center; cursor:pointer; color:var(--ink); }
+  .pop-k{ display:grid; grid-template-columns:1.2fr 1.2fr .8fr; gap:10px; margin-top:18px; }
+  .pk{ border-radius:18px; padding:14px 16px; background:rgba(26,19,21,.04); display:flex; flex-direction:column; gap:4px; }
+  .pk span{ font-size:12px; color:var(--ink-2); } .pk b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .pk b small{ font-size:.55em; opacity:.6; margin-right:3px; }
+  .pk.hot{ background:linear-gradient(140deg,#e96709,#f7a21b); color:#fff; } .pk.hot span{ color:rgba(255,255,255,.9); }
+  .pk .score{ width:36px; height:36px; }
+  .pop-hist{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+  .pop-hist > div{ border:1px solid rgba(26,19,21,.07); border-radius:14px; padding:10px 14px; } .pop-hist span{ display:block; font-size:11px; color:var(--muted); } .pop-hist b{ font-size:15px; }
+  .pop-l{ margin-top:16px; max-height:320px; overflow-y:auto; }
+  .pl{ display:grid; grid-template-columns:100px minmax(0,1fr) 90px 110px 80px; gap:10px; align-items:center; padding:10px 8px; font-size:12.5px; border-top:1px solid rgba(26,19,21,.06); }
+  .pl.cab{ border-top:0; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; position:sticky; top:0; background:rgba(255,255,255,.95); }
+  .pl small{ display:block; font-size:11px; color:var(--muted); }
+  .pl.venc{ background:linear-gradient(90deg, rgba(227,5,95,.05), transparent); }
+  @media (max-width:720px){ .pop-k,.pop-hist{ grid-template-columns:1fr 1fr; } .pl{ grid-template-columns:90px 1fr 90px; } .pl > :nth-child(3), .pl > :nth-child(5){ display:none; } }
+
+  .tb-wrap{ overflow-x:auto; margin-top:12px; }
+  .tb{ width:100%; border-collapse:collapse; font-size:12.5px; min-width:900px; }
+  .tb th{ text-align:left; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding:8px 10px; white-space:nowrap; }
+  .tb th.num, .tb td.num{ text-align:right; }
+  .tb td{ padding:11px 10px; border-top:1px solid rgba(26,19,21,.06); vertical-align:middle; }
+  .tb tbody tr:hover td{ background:rgba(255,255,255,.7); }
+  .tb tr.clk{ cursor:pointer; }
+  .sd{ display:flex; align-items:flex-end; gap:3px; height:190px; margin-top:16px; }
+  .sdc{ flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; min-width:0; }
+  .sdc i{ display:block; width:100%; max-width:22px; border-radius:6px 6px 3px 3px; background:repeating-linear-gradient(135deg, rgba(233,103,9,.32) 0 4px, rgba(233,103,9,.14) 4px 8px); }
+  .sdc.top i{ background:var(--grad-accent); }
+  .sdc span{ font-size:9.5px; color:var(--muted); height:12px; white-space:nowrap; }
+  .rt{ display:inline-block; margin-left:6px; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:99px; background:rgba(26,19,21,.06); color:var(--muted); }
+  .rt.g{ background:var(--green-soft); color:var(--green); } .rt.y{ background:#fff4c9; color:#8a6a00; } .rt.r{ background:var(--red-soft); color:var(--red); }
+  .alerta{ margin-top:14px; padding:10px 12px; border-radius:14px; background:var(--red-soft); color:#7a2a20; font-size:12px; display:grid; gap:3px; }
+  .k .lbl .chip, .m1 .chip{ font-size:10px; padding:2px 7px; }
+  .ic2{ font-size:11px; font-weight:800; }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -121,6 +345,26 @@ function colunas(rows, rot, alt){
   return `<div class="chart-scroll"><div style="min-width:${rows.length*20}px"><div class="cols ${alt?'alt':''}">${rows.map(r=>`<div class="c" title="${esc(dBR(r.l))}: ${esc(rot(r.v))}"><div class="v">${r.v?NUM(r.v):''}</div><div class="b" style="height:${r.v/max*100}%"></div></div>`).join('')}</div>
     <div class="cols-l">${rows.map((r,i)=>`<span>${r.l.slice(8)}${i===0||r.l.slice(8)==='01'?`<i>${MES3[+r.l.slice(5,7)-1]}</i>`:''}</span>`).join('')}</div></div></div>`; }
 
+// ---------- visual BI (mesmo padrão dos outros módulos) ----------
+let VIEW='painel', ANA='canais';
+const CH={serie:'inv', camp:'inv'};
+const MES3B=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const kv = v => { const [i,c]=(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}).split(','); return `<small>R$</small>${i}<span style="opacity:.45">,${c}</span>`; };
+const kC = v => v>=1e6?'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi':v>=1e3?'R$ '+(v/1e3).toFixed(v>=1e4?0:1).replace('.',',')+' mil':'R$ '+Math.round(v||0);
+const chipsB=(k,ops)=>`<div class="chips-f no-print">${ops.map(([id,l])=>`<button class="${CH[k]===id?'on':''}" onclick="CH.${k}='${id}';render()">${l}</button>`).join('')}</div>`;
+function gaugeB(pct){ const N=22,on=Math.round(Math.min(100,pct)/100*N),cx=110,cy=104; let s='';
+  for(let i=0;i<N;i++){ const a=Math.PI*(1-i/(N-1)),c=Math.cos(a),n=Math.sin(a); s+=`<line x1="${cx+c*76}" y1="${cy-n*76}" x2="${cx+c*96}" y2="${cy-n*96}" stroke="${i<on?'var(--orange)':'rgba(26,19,21,.09)'}" stroke-width="9" stroke-linecap="round"/>`; }
+  return `<svg class="gauge" viewBox="0 0 220 112">${s}<text x="110" y="104" text-anchor="middle">${(pct||0).toFixed(0)}%</text></svg>`; }
+// série diária: barras finas, a maior em laranja, rótulo do dia a cada poucos dias
+function serieB(rows, fmt){ const max=Math.max(1,...rows.map(r=>r.v)), passo=Math.max(1,Math.ceil(rows.length/10));
+  return `<div class="sd">${rows.map((r,i)=>`<div class="sdc ${r.v===max&&r.v>0?'top':''}" title="${dBR(r.l)}: ${esc(fmt(r.v))}"><i style="height:${Math.max(2,r.v/max*100)}%"></i><span>${i%passo===0?r.l.slice(8)+(i===0||r.l.slice(8)==='01'?'/'+MES3B[+r.l.slice(5,7)-1]:''):''}</span></div>`).join('')}</div>`; }
+const rankB=(rows,fmt,tag)=>{ const max=Math.max(1,...rows.map(r=>r.v)); return `<div class="rank">${rows.map((r,i)=>`<div class="rk"><span class="ic2">${i+1}</span><div class="nmr"><b title="${esc(r.l)}">${esc(r.l)}</b><div class="tr2"><i style="width:${r.v/max*100}%"></i></div></div><div class="vr">${fmt(r)}${tag?tag(r):''}</div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div>`; };
+function donutB(parts){ const tot=parts.reduce((s,p)=>s+p.v,0)||1,C=2*Math.PI*42; let off=0;
+  const arcs=parts.map(p=>{ const len=p.v/tot*C,d=`<circle cx="60" cy="60" r="42" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${Math.max(0,len-3)} ${C}" stroke-dashoffset="${-off}" stroke-linecap="round" transform="rotate(-90 60 60)"/>`; off+=len; return d; }).join('');
+  return `<div class="donut"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="42" fill="none" stroke="rgba(26,19,21,.06)" stroke-width="16"/>${arcs}</svg><div class="dl">${parts.map(p=>`<div><i style="background:${p.c}"></i><span>${esc(p.l)}</span><b>${p.fmt||p.v}</b><small>${Math.round(p.v/tot*100)}%</small></div>`).join('')}</div></div>`; }
+const roasTag = r => { const x=r.inv?r.rec/r.inv:0; return `<span class="rt ${x>=3?'g':x>=1.5?'y':x>0?'r':''}">${x?NUM(x,1)+'x':'—'}</span>`; };
+const viewSw = () => `<div class="vw no-print"><button class="${VIEW==='painel'?'on':''}" onclick="VIEW='painel';render()">Painel</button><button class="${VIEW==='analitico'?'on':''}" onclick="VIEW='analitico';render()">Analítico</button></div>`;
+
 function render(){
   const cs=campanhas();
   if(!S.camp) S.camp = TODAS;
@@ -153,53 +397,56 @@ function render(){
   const fmax=Math.max(1,...funil.map(f=>f.v));
   const razao = cm? ped/cm : null;
 
-  document.getElementById('main').innerHTML = `
-  <div class="page-head">
-    <div><h1>Campanhas</h1><div class="sub">Marketing (Meta Ads) cruzado com as vendas reais da Yampi · dados até ${dBR(ultimo)} · atualização diária às 07:00</div></div>
-    <div class="row no-print"><button class="btn btn-ghost btn-sm" onclick="window.print()">Imprimir / PDF</button></div>
-  </div>
-  <div class="filters">
-    <div class="filter-pills">${pill('tudo','Tudo')}${pill('hoje','Hoje')}${pill('u7','Últimos 7 dias')}${pill('u30','Últimos 30 dias')}${pill('u90','Últimos 90 dias')}${pill('mes','Este mês')}${pill('mesant','Mês passado')}${pill('custom','Personalizado')}</div>
+  const PER=[['tudo','Todo o período'],['hoje','Hoje'],['u7','Últimos 7 dias'],['u30','Últimos 30 dias'],['u90','Últimos 90 dias'],['mes','Este mês'],['mesant','Mês passado'],['custom','Personalizado…']];
+  const serieRec=[]; if(diasC.length){ for(let d=diasC[0]; d<=diasC[diasC.length-1]; d=addDias(d,1)) serieRec.push({l:d,v:soma(res.filter(r=>r.dia===d),'receita_produto')}); }
+  const SER={inv:[serieInv,v=>BRL(v)],ped:[seriePed,v=>NUM(v)+' pedidos'],rec:[serieRec,v=>BRL(v)]}[sku?CH.serie:'inv'];
+  const porTipo={}; ads.forEach(r=>{ const t=TIPO[r.criativo_tipo]||'Outro'; porTipo[t]=(porTipo[t]||0)+(Number(r.investimento)||0); });
+  const tipos=Object.entries(porTipo).sort((a,b)=>b[1]-a[1]), CT=['var(--orange)','var(--purple)','var(--yellow)','#b9b0a6'];
+  const top=(geral?campanhasLin.map(x=>({l:x.nome,inv:x.inv,rec:x.rec,ped:x.ped,cl:x.cl})):anuncios.map(a=>({l:a.anuncio,inv:a.inv,rec:0,ped:0,cl:a.cl})))
+    .map(x=>({...x,v:CH.camp==='rec'&&geral?x.rec:x.inv})).sort((a,b)=>b.v-a.v).slice(0,6);
+  const funilB=funil.map((f,i)=>({l:f.l,v:f.v,p:i>0&&funil[i-1].v?f.v/funil[i-1].v*100:null}));
+  const fmx=Math.max(1,...funilB.map(f=>f.v));
+
+  const toolbar=`<div class="toolbar glass no-print">
+    <div class="sel"><select onchange="S.preset=this.value;if(this.value==='custom'&&!S.ini){S.ini=addDias(HOJE,-30);S.fim=HOJE;}render()">${PER.map(([id,l])=>`<option value="${id}" ${S.preset===id?'selected':''}>${l}</option>`).join('')}</select></div>
     ${S.preset==='custom'?`<div class="dates"><input type="date" value="${S.ini}" onchange="S.ini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.fim}" onchange="S.fim=this.value;render()"></div>`:''}
+    <div class="sel" style="flex:1;min-width:220px"><select style="width:100%" onchange="S.camp=this.value;render()"><option value="${TODAS}" ${geral?'selected':''}>Todas as campanhas</option>${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===S.camp?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div>
+    <span class="pill-dt">até ${dBR(ultimo)}</span></div>`;
+
+  const painel=`
+  <div class="hero">
+    <div class="k glass"><div class="lbl">Investimento</div><div class="val">${kv(inv)}</div></div>
+    <div class="k hot"><div class="lbl">${sku?'Receita real (Yampi)':'Compras no pixel'}</div><div class="val">${sku?kv(rec):NUM(cm)}</div></div>
+    <div class="k glass"><div class="lbl">${sku?'Pedidos reais':'Custo por compra'}</div><div class="val">${sku?NUM(ped):cm?kv(inv/cm):'—'}</div></div>
+    <div class="k glass gcard"><div class="lbl">Cliques que chegam à página</div>${gaugeB(cl?Math.min(100,lp/cl*100):0)}</div>
   </div>
-  <div class="filters"><select onchange="S.camp=this.value;render()"><option value="${TODAS}" ${geral?'selected':''}>Todas as campanhas · visão geral · ${BRL(soma(cs,'inv'))}</option>${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===S.camp?'selected':''}>${esc(x.nome)} · ${BRL(x.inv)}${vinc[x.id]?' · com vendas cruzadas':''}</option>`).join('')}</select><span class="note">${S.preset==='tudo'?'Todo o período':dBR(ia)+' a '+dBR(ib)}</span></div>
-
-  ${sku?`<div class="aviso"><b>Como ler o resultado:</b> sem UTM nem pixel de origem, o vínculo entre campanha e venda é feito por <b>produto e data</b> (${geral?'pedidos dos produtos vinculados às campanhas, nos dias em que cada uma esteve no ar; campanhas sem produto vinculado só têm as métricas do Meta':'pedidos do SKU '+esc(sku)+' nos dias em que a campanha esteve no ar'}). É uma estimativa útil, mas pedidos de outras origens (orgânico, indicação) no mesmo dia entram na conta. Quando houver UTM, o cruzamento passa a ser direto.</div>`:''}
-
-  <div class="grid-4" style="margin-bottom:18px;">
-    <div class="card kpi"><div class="kpi-label">Investimento</div><div class="kpi-value">${BRL(inv)}</div><div class="kpi-foot">${NUM(imp)} impressões · ${NUM(alc)} pessoas alcançadas</div></div>
-    <div class="card kpi"><div class="kpi-label">Cliques no link</div><div class="kpi-value">${NUM(cl)}</div><div class="kpi-foot">CTR ${imp?NUM(cl/imp*100,2)+'%':'—'} · CPC ${cl?BRL(inv/cl):'—'}</div></div>
-    <div class="card kpi"><div class="kpi-label">Visualizações da página</div><div class="kpi-value">${NUM(lp)}</div><div class="kpi-foot">${cl?NUM(lp/cl*100,0)+'% dos cliques chegaram à página':'—'}</div></div>
-    <div class="card kpi"><div class="kpi-label">Compras no pixel do Meta</div><div class="kpi-value">${NUM(cm)}</div><div class="kpi-foot">${cm?'custo por compra '+BRL(inv/cm):'sem compras no pixel'}</div></div>
+  <div class="mini">
+    <div class="glass m1"><span>CPC</span><b>${cl?kC(inv/cl):'—'}</b></div>
+    <div class="glass m1"><span>${sku?'Custo por pedido':'Cliques'}</span><b>${sku?(ped?kC(inv/ped):'—'):NUM(cl)}</b></div>
+    <div class="glass m1"><span>${sku?'ROAS':'Visualizações'}</span><b>${sku?(inv?NUM(rec/inv,2)+'x':'—'):NUM(lp)}</b></div>
+    <div class="glass m1"><span>CTR</span><b>${imp?NUM(cl/imp*100,2)+'<small>%</small>':'—'}</b></div>
   </div>
-
-  ${sku?`<div class="panel" style="border-left:4px solid var(--orange)"><h2>Sucesso da campanha — vendas reais do produto</h2><div class="desc">Pedidos do produto (Yampi) nos dias da campanha, contra o investimento.</div>
-    <div class="tiles4" style="margin-bottom:0">
-      <div class="tile t-orange"><div class="t-label" style="font-weight:700">Pedidos reais</div><div class="t-foot"><div><div class="t-value">${NUM(ped)}</div><div class="t-label">${NUM(cli)} clientes · ${BRL(rec)} de receita</div></div></div></div>
-      <div class="tile t-purple"><div class="t-label" style="font-weight:700">Custo por pedido real</div><div class="t-foot"><div><div class="t-value">${ped?BRL(inv/ped):'—'}</div><div class="t-label">investimento ÷ pedidos reais</div></div></div></div>
-      <div class="tile t-yellow"><div class="t-label" style="font-weight:700">Retorno sobre o investimento</div><div class="t-foot"><div><div class="t-value">${inv?NUM(rec/inv,2)+'x':'—'}</div><div class="t-label">receita do produto ÷ investimento</div></div></div></div>
-      <div class="tile t-pink"><div class="t-label" style="font-weight:700">Conversão clique → pedido</div><div class="t-foot"><div><div class="t-value">${cl?NUM(ped/cl*100,1)+'%':'—'}</div><div class="t-label">${razao!=null?'Yampi vê '+NUM(razao*100,0)+'% das compras do pixel':'pedidos reais ÷ cliques no link'}</div></div></div></div>
-    </div></div>`:`<div class="panel"><h2>Sucesso da campanha</h2><div class="desc">${geral?'Nenhuma campanha do período tem produto vinculado':'Esta campanha ainda não tem produto vinculado'}, então só aparecem as métricas do Meta. O vínculo campanha → produto é cadastrado no cruzamento (tabela <code>report_campanha_resultado_dia</code>).</div></div>`}
-
-  <div class="grid-2" style="margin-bottom:18px;">
-    <div class="panel" style="margin-bottom:0"><h2>Investimento por dia</h2><div class="desc">${esc(c.nome)}</div>${serieInv.length?colunas(serieInv, v=>BRL(v)):'<div class="desc">Sem dados no período.</div>'}</div>
-    ${sku?`<div class="panel" style="margin-bottom:0"><h2>Pedidos reais por dia</h2><div class="desc">${geral?'Campanhas com produto vinculado':'Produto '+esc(sku)} (Yampi)</div>${colunas(seriePed, v=>NUM(v)+' pedidos', true)}</div>`:`<div class="panel" style="margin-bottom:0"><h2>Funil</h2><div class="desc">Do alcance à compra</div></div>`}
+  <div class="g-main">
+    <div class="box glass"><div class="bh"><h2>Por dia</h2>${sku?chipsB('serie',[['inv','Investimento'],['ped','Pedidos'],['rec','Receita']]):''}</div>${SER[0].length?serieB(SER[0],SER[1]):'<div class="empty">Sem dados no período.</div>'}</div>
+    <div class="box glass ana"><div class="bh"><h2>Funil</h2><button class="btn-glass" onclick="VIEW='analitico';render();scrollTo(0,0)">Analítico →</button></div>
+      <div class="rank">${funilB.map(f=>`<div class="rk"><span class="ic2">${f.p!=null&&f.l.indexOf('Pedidos')<0?NUM(f.p,0)+'%':''}</span><div class="nmr"><b>${f.l}</b><div class="tr2"><i style="width:${f.v/fmx*100}%"></i></div></div><div class="vr">${NUM(f.v)}</div></div>`).join('')}</div></div>
   </div>
+  <div class="g-duo2">
+    <div class="box glass"><div class="bh"><h2>${geral?'Campanhas':'Anúncios'}</h2>${geral&&sku?chipsB('camp',[['inv','Investimento'],['rec','Receita']]):''}</div>${rankB(top,r=>kC(r.v),r=>geral&&r.rec?' '+roasTag(r):'')}</div>
+    <div class="box glass"><div class="bh"><h2>Verba por formato</h2></div>${tipos.length?donutB(tipos.map(([l,v],i)=>({l,v,c:CT[i%4],fmt:kC(v)}))):'<div class="empty">Sem dados.</div>'}</div>
+  </div>`;
 
-  <div class="panel"><h2>Funil ${geral?'geral':'da campanha'}</h2><div class="desc">Do anúncio à venda${sku?', incluindo o pedido real na Yampi':''}</div>
-    ${funil.map((f,i)=>`<div class="bar-row"><div class="top"><b>${f.l}</b><span class="muted">${NUM(f.v)}${i>0&&funil[i-1].v&&f.l.indexOf('Pedidos')<0?` · ${NUM(f.v/funil[i-1].v*100,1)}% da etapa anterior`:''}</span></div><div class="track"><div class="fill" style="width:${Math.max(1.5,f.v/fmax*100)}%;background:${f.l.indexOf('Pedidos')===0?'var(--green)':'var(--orange)'}"></div></div></div>`).join('')}</div>
+  const tbCamp=`<table class="tb"><thead><tr><th>Campanha</th><th class="num">Investimento</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC</th><th class="num">Compras (Meta)</th><th class="num">Pedidos reais</th><th class="num">Receita</th><th class="num">ROAS</th></tr></thead><tbody>
+    ${campanhasLin.map(x=>`<tr class="clk" onclick="S.camp='${esc(x.id)}';VIEW='painel';render();scrollTo(0,0)"><td><b>${esc(x.nome)}</b><small style="display:block;color:var(--muted)">${esc(x.sit||'')}${vinc[x.id]?' · vendas cruzadas':''}</small></td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.imp)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${x.imp?NUM(x.cl/x.imp*100,2)+'%':'—'}</td><td class="num">${x.cl?BRL(x.inv/x.cl):'—'}</td><td class="num">${NUM(x.cm)}</td><td class="num"><b>${vinc[x.id]?NUM(x.ped):'—'}</b></td><td class="num">${vinc[x.id]?BRL(x.rec):'—'}</td><td class="num">${vinc[x.id]?roasTag(x):'—'}</td></tr>`).join('')||'<tr><td colspan="10"><div class="empty">Sem campanhas no período.</div></td></tr>'}</tbody></table>`;
+  const tbAds=`<table class="tb"><thead><tr><th>Criativo / anúncio</th><th class="num">Investimento</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC</th><th class="num">Página</th><th class="num">Checkout</th><th class="num">Compras (Meta)</th></tr></thead><tbody>
+    ${anuncios.map(a=>`<tr><td>${celulaAd(a)}</td><td class="num">${BRL(a.inv)}</td><td class="num">${NUM(a.imp)}</td><td class="num">${NUM(a.cl)}</td><td class="num">${a.imp?NUM(a.cl/a.imp*100,2)+'%':'—'}</td><td class="num">${a.cl?BRL(a.inv/a.cl):'—'}</td><td class="num">${NUM(a.lp)}</td><td class="num">${NUM(a.ck)}</td><td class="num">${NUM(a.cm)}</td></tr>`).join('')||'<tr><td colspan="9"><div class="empty">Sem anúncios no período.</div></td></tr>'}</tbody></table>`;
+  const analitico=`<div class="clientes glass"><div class="c-head"><h2 style="font-size:15px">${geral?'Campanhas':esc(c.nome)}</h2>${geral?'':`<button class="btn-glass no-print" onclick="S.camp='${TODAS}';render()">← Todas as campanhas</button>`}</div>
+    <div class="tb-wrap">${geral?tbCamp:tbAds}</div></div>`;
 
-  ${geral?`<div class="panel">
-    <div class="card-head"><div><h2>Campanhas</h2><div class="desc">Desempenho de cada campanha no período · clique em uma linha para abrir a campanha</div></div></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Campanha</th><th class="num">Investimento</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC</th><th class="num">Compras (Meta)</th><th class="num">Custo/compra</th><th class="num">Pedidos reais</th><th class="num">Retorno</th></tr></thead><tbody>
-    ${campanhasLin.map(x=>`<tr class="clk" onclick="S.camp='${esc(x.id)}';render();window.scrollTo(0,0)"><td><b>${esc(x.nome)}</b><div class="sub2">${esc(x.sit||'')}${vinc[x.id]?' · com vendas cruzadas':''}</div></td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.imp)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${x.imp?NUM(x.cl/x.imp*100,2)+'%':'—'}</td><td class="num">${x.cl?BRL(x.inv/x.cl):'—'}</td><td class="num">${NUM(x.cm)}</td><td class="num">${x.cm?BRL(x.inv/x.cm):'—'}</td><td class="num">${vinc[x.id]?NUM(x.ped):'—'}</td><td class="num">${vinc[x.id]&&x.inv?NUM(x.rec/x.inv,2)+'x':'—'}</td></tr>`).join('') || '<tr><td colspan="10"><div class="empty-state">Sem campanhas no período.</div></td></tr>'}
-    </tbody></table></div>
-  </div>`:`<div class="panel">
-    <div class="card-head"><div><h2>Anúncios</h2><div class="desc">Desempenho por anúncio no período</div></div></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Criativo / anúncio</th><th class="num">Investimento</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC</th><th class="num">Página</th><th class="num">Checkout</th><th class="num">Compras (Meta)</th><th class="num">Custo/compra</th></tr></thead><tbody>
-    ${anuncios.map(a=>`<tr><td>${celulaAd(a)}</td><td class="num">${BRL(a.inv)}</td><td class="num">${NUM(a.imp)}</td><td class="num">${NUM(a.cl)}</td><td class="num">${a.imp?NUM(a.cl/a.imp*100,2)+'%':'—'}</td><td class="num">${a.cl?BRL(a.inv/a.cl):'—'}</td><td class="num">${NUM(a.lp)}</td><td class="num">${NUM(a.ck)}</td><td class="num">${NUM(a.cm)}</td><td class="num">${a.cm?BRL(a.inv/a.cm):'—'}</td></tr>`).join('') || '<tr><td colspan="10"><div class="empty-state">Sem anúncios no período.</div></td></tr>'}
-    </tbody></table></div>
-  </div>`}`;
+  document.getElementById('main').innerHTML = `
+  <div class="r-head"><div class="tt"><h1>Campanhas</h1>${viewSw()}</div><button class="btn-glass no-print" onclick="window.print()">Imprimir / PDF</button></div>
+  ${toolbar}
+  ${VIEW==='painel'?painel:analitico}`;
   document.querySelectorAll('.chart-scroll').forEach(e=>{ e.scrollLeft = e.scrollWidth; });   // abre no dia mais recente
 }
 render();

@@ -36,6 +36,231 @@
   .pill-c{ display:inline-block; font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:999px; }
   .bom{ background:var(--green-soft); color:var(--green); } .ok{ background:#fff4c9; color:#8a6a00; } .ruim{ background:var(--red-soft); color:var(--red); } .sem{ background:var(--surface-2); color:var(--muted); }
   @media print{ .sidebar,.filters,.cmpbar,.no-print{ display:none !important; } .shell{ display:block; } }
+
+/* ===== BI ===== */
+  /* ===== Contas a receber · v2 (vidro) ===== */
+  body{ background:#efe9e3; }
+  body::before{ content:""; position:fixed; inset:-20%; z-index:-1; pointer-events:none;
+    background:radial-gradient(38% 34% at 78% 8%, rgba(233,103,9,.22), transparent 70%),
+               radial-gradient(30% 30% at 12% 70%, rgba(115,27,88,.16), transparent 70%),
+               radial-gradient(26% 26% at 60% 92%, rgba(253,204,3,.18), transparent 70%); filter:blur(10px); }
+  main{ padding-top:28px !important; }
+  
+  .glass{ background:rgba(255,255,255,.58); -webkit-backdrop-filter:blur(22px) saturate(170%); backdrop-filter:blur(22px) saturate(170%);
+    border:1px solid rgba(255,255,255,.75); border-radius:26px; box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 40px rgba(60,30,20,.07); }
+  .r-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .r-head h1{ font-size:34px; letter-spacing:-.8px; }
+  .r-head .sub{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .muted{ color:var(--muted); } .red{ color:var(--red); font-weight:700; }
+  .sub2{ font-size:11px; color:var(--muted); }
+  a.lnk{ color:var(--orange); font-weight:700; text-decoration:none; } a.lnk:hover{ text-decoration:underline; }
+
+  /* barra de filtros */
+  .toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:8px; margin-bottom:12px; border-radius:999px; }
+  .segm{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:999px; padding:3px; }
+  .segm button{ border:0; background:none; padding:7px 14px; border-radius:999px; font-size:12px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .segm button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.1); }
+  .sel{ position:relative; }
+  .sel select{ appearance:none; -webkit-appearance:none; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:9px 34px 9px 14px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; width:auto; }
+  .sel::after{ content:""; position:absolute; right:14px; top:50%; width:6px; height:6px; border-right:2px solid var(--ink-2); border-bottom:2px solid var(--ink-2); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .dates{ display:flex; gap:6px; align-items:center; font-size:12px; }
+  .dates input{ width:auto; border:0; background:rgba(26,19,21,.06); border-radius:999px; padding:7px 12px; font-size:12px; }
+  .busca{ flex:1; min-width:200px; position:relative; }
+  .busca input{ width:100%; border:0; background:rgba(255,255,255,.8); border-radius:999px; padding:9px 14px 9px 36px; font-size:12.5px; }
+  .busca svg{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); }
+  .sw{ display:inline-flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; color:var(--ink-2); cursor:pointer; margin:0 8px 0 0; white-space:nowrap; }
+  .sw input{ display:none; }
+  .sw i{ width:30px; height:18px; border-radius:99px; background:rgba(26,19,21,.15); position:relative; transition:.2s; }
+  .sw i::after{ content:""; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .sw input:checked + i{ background:var(--orange); } .sw input:checked + i::after{ left:14px; }
+
+  /* pastas por tipo de comércio */
+  .pastas{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 6px; margin-bottom:20px; scrollbar-width:none; }
+  .pasta{ flex:0 0 auto; display:flex; align-items:center; gap:10px; border:1px solid rgba(255,255,255,.75); background:rgba(255,255,255,.45); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border-radius:16px; padding:9px 14px 9px 10px; cursor:pointer; text-align:left; transition:.15s; }
+  .pasta:hover{ background:rgba(255,255,255,.8); }
+  .pasta .ico{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:rgba(26,19,21,.06); color:var(--ink-2); } .pasta.on .ico{ color:var(--orange); }
+  .pasta b{ display:block; font-size:12.5px; } .pasta small{ font-size:11px; color:var(--muted); }
+  .pasta.on{ background:#fff; border-color:var(--orange); box-shadow:0 0 0 1px var(--orange) inset; } .pasta.on .ico{ background:var(--orange-soft); }
+
+  /* topo: KPIs */
+  .hero{ display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+  .k{ padding:22px 24px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .k .lbl{ font-size:12px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .k .val{ font-family:var(--font-title); font-size:34px; font-weight:600; letter-spacing:-1px; line-height:1.05; font-variant-numeric:tabular-nums; }
+  .k .val small{ font-size:.5em; font-weight:500; opacity:.55; margin-right:4px; letter-spacing:0; }
+  .k .foot{ font-size:11.5px; color:var(--muted); }
+  .k.dark{ background:linear-gradient(150deg,#241a1d 0%,#140e10 100%); color:#fff; border:0; }
+  .k.dark .lbl, .k.dark .foot{ color:rgba(255,255,255,.6); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border:0; box-shadow:0 14px 40px rgba(233,103,9,.28); }
+  .k.hot .lbl,.k.hot .foot{ color:rgba(255,255,255,.82); }
+  .badge{ display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px; background:rgba(255,255,255,.18); }
+  .badge.r{ background:var(--red-soft); color:var(--red); } .badge.g{ background:var(--green-soft); color:var(--green); }
+  .stack{ display:flex; height:12px; border-radius:99px; overflow:hidden; gap:3px; margin-top:12px; }
+  .stack span{ display:block; height:100%; border-radius:99px; min-width:4px; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; margin-top:8px; }
+  .legend i{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+  .k.dark .legend{ color:rgba(255,255,255,.75); }
+
+  /* gráficos */
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .box{ padding:22px 24px; }
+  .box h2{ font-size:15px; font-weight:700; } .box .desc{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .faixas{ display:grid; gap:14px; margin-top:18px; }
+  .fx{ display:grid; grid-template-columns:110px 1fr auto; gap:14px; align-items:center; }
+  .fx .n{ font-size:12px; font-weight:700; } .fx .n small{ display:block; font-weight:500; color:var(--muted); font-size:11px; }
+  .fx .t{ height:30px; border-radius:10px; background:rgba(26,19,21,.05); overflow:hidden; }
+  .fx .t div{ height:100%; border-radius:10px; }
+  .fx .v{ font-family:var(--font-title); font-weight:600; font-size:16px; text-align:right; font-variant-numeric:tabular-nums; min-width:120px; }
+  .fx .v small{ display:block; font-family:var(--font-body); font-size:11px; color:var(--muted); font-weight:500; }
+  .cols{ display:flex; align-items:flex-end; gap:12px; height:190px; margin-top:18px; padding-top:28px; }
+  .col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:8px; min-width:0; }
+  .col .bar{ width:100%; max-width:64px; border-radius:14px 14px 8px 8px; background:repeating-linear-gradient(135deg, rgba(233,103,9,.22) 0 6px, rgba(233,103,9,.1) 6px 12px); position:relative; }
+  .col.top .bar{ background:var(--grad-accent); box-shadow:0 8px 20px rgba(233,103,9,.25); }
+  .col .bar em{ position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-style:normal; font-size:11px; font-weight:800; white-space:nowrap; }
+  .col .m{ font-size:11px; color:var(--muted); font-weight:600; }
+
+  /* clientes: abas + lista */
+  .clientes{ padding:20px 22px; margin-bottom:16px; }
+  .c-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+  .tabs2{ display:flex; gap:4px; background:rgba(26,19,21,.06); border-radius:999px; padding:4px; overflow-x:auto; }
+  .tabs2 button{ border:0; background:none; border-radius:999px; padding:8px 14px; font-size:12.5px; font-weight:700; color:var(--ink-2); cursor:pointer; white-space:nowrap; display:inline-flex; gap:6px; align-items:center; }
+  .tabs2 button .cnt{ font-size:10.5px; font-weight:800; padding:1px 7px; border-radius:99px; background:rgba(26,19,21,.08); }
+  .tabs2 button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 10px rgba(26,19,21,.08); }
+  .tabs2 button.on .cnt{ background:var(--orange); color:#fff; }
+  .sub-tabs{ display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 4px; }
+  .sub-tabs button{ border:1px solid var(--line); background:rgba(255,255,255,.6); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .sub-tabs button.on{ border-color:var(--ink); background:var(--ink); color:#fff; }
+  .c-desc{ font-size:12px; color:var(--muted); margin:10px 0 6px; }
+  .lista{ display:grid; }
+  .li{ display:grid; grid-template-columns:minmax(0,2.4fr) 140px 130px 110px 56px; gap:14px; align-items:center; padding:12px 10px; border-radius:16px; cursor:pointer; }
+  .li + .li{ border-top:1px solid rgba(26,19,21,.06); }
+  .li:hover{ background:rgba(255,255,255,.7); border-color:transparent; }
+  .li.cab{ cursor:default; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding-top:4px; padding-bottom:8px; }
+  .li.cab:hover{ background:none; }
+  .who{ display:flex; gap:12px; align-items:center; min-width:0; }
+  .av{ flex:0 0 38px; height:38px; border-radius:12px; display:grid; place-items:center; font-weight:800; font-size:13px; }
+  .who b{ display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .who small{ display:block; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ct{ font-size:12px; min-width:0; overflow:hidden; } .ct a.lnk{ color:var(--ink-2); font-weight:600; } .ct .sub2 a.lnk{ color:var(--muted); font-weight:500; } .ct .sub2{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vv{ text-align:right; font-variant-numeric:tabular-nums; } .vv b{ font-size:14px; } .vv small{ display:block; font-size:11px; color:var(--muted); }
+  .dias{ display:inline-block; font-size:11px; font-weight:800; padding:4px 9px; border-radius:99px; }
+  .d1{ background:#fff4c9; color:#8a6a00; } .d2{ background:var(--orange-soft); color:#b5680a; } .d3{ background:var(--red-soft); color:var(--red); } .d0{ background:var(--surface-2); color:var(--muted); }
+  .score{ display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; font-weight:800; font-size:12.5px; }
+  .score.A{ background:var(--green-soft); color:var(--green); } .score.B{ background:#fff4c9; color:#8a6a00; } .score.C{ background:var(--orange-soft); color:#b5680a; } .score.D{ background:var(--red-soft); color:var(--red); } .score.N{ background:var(--surface-2); color:var(--muted); }
+  .wa{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#0f7a3d; background:var(--green-soft); padding:6px 11px; border-radius:99px; text-decoration:none; }
+  .rodape{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .btn-glass{ border:1px solid rgba(26,19,21,.12); background:rgba(255,255,255,.7); border-radius:999px; padding:8px 16px; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .btn-glass:hover{ background:#fff; } .btn-ink{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .empty{ padding:30px; text-align:center; color:var(--muted); font-size:13px; }
+  details.how summary{ cursor:pointer; font-size:12px; font-weight:700; color:var(--orange); margin-top:12px; }
+  details.how p{ font-size:12px; color:var(--ink-2); margin-top:6px; line-height:1.55; }
+  .note{ font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .tbl-wrap{ overflow-x:auto; }
+
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } .hero .k.dark{ grid-column:1/-1; } .li{ grid-template-columns:minmax(0,2fr) 120px 110px 56px; } .li > :nth-child(3){ display:none; } }
+  @media (max-width:720px){ .hero,.duo{ grid-template-columns:1fr; } .toolbar{ border-radius:22px; } .k .val{ font-size:28px; } .fx{ grid-template-columns:90px 1fr; } .fx .v{ grid-column:1/-1; text-align:left; }
+    .li{ grid-template-columns:minmax(0,1fr) auto; } .li > :nth-child(n+3){ display:none; } .li.cab{ display:none; } }
+  @media print{ .sidebar,.toolbar,.pastas,.no-print{ display:none !important; } .shell{ display:block; } body::before{ display:none; } .glass{ background:#fff; backdrop-filter:none; } }
+  .hero{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .k{ justify-content:flex-start; min-height:0; padding:16px 20px; gap:6px; }
+  .k .val{ font-size:26px; letter-spacing:-.6px; }
+  .hero{ align-items:stretch; }
+  .gcard{ flex-direction:row; align-items:center; justify-content:space-between; } .gcard .lbl{ align-self:flex-start; }
+  .k .lbl{ font-size:13px; color:var(--ink-2); }
+  .k.hot{ background:linear-gradient(140deg,#e96709 0%,#f28a0c 60%,#f7a21b 100%); color:#fff; border-radius:26px; }
+  .k.hot .lbl{ color:rgba(255,255,255,.9); }
+  .gcard{ padding-bottom:12px; } .gauge{ width:118px; flex:0 0 118px; margin:-4px -4px -8px 0; }
+  .gauge text{ font-family:var(--font-title); font-size:40px; font-weight:600; fill:var(--ink); letter-spacing:-1px; }
+  .pill-dt{ font-size:12px; font-weight:700; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.8); }
+  .box h2{ font-size:14px; } .box{ padding:16px 20px; } .duo,.tri,.hero{ gap:12px; margin-bottom:12px; } .col .bar{ max-width:52px; }
+  .cols{ height:150px; padding-top:22px; }
+  @media (max-width:1100px){ .hero{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .hero{ grid-template-columns:1fr; } }
+  /* v3: painel × analítico */
+  .tt{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .vw{ display:inline-flex; background:rgba(26,19,21,.06); border-radius:99px; padding:4px; }
+  .vw button{ border:0; background:none; padding:8px 18px; border-radius:99px; font-size:13px; font-weight:700; color:var(--ink-2); cursor:pointer; }
+  .vw button.on{ background:var(--orange); color:#fff; box-shadow:0 6px 16px rgba(233,103,9,.3); }
+  .mini{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .m1{ padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px; border-radius:18px; }
+  .m1 span{ font-size:12.5px; color:var(--ink-2); } .m1 b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .m1 b small{ font-size:.55em; opacity:.6; font-weight:500; }
+  .g-main{ display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:12px; }
+  .g-tri{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:12px; }
+  .bh{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .chips-f{ display:inline-flex; gap:2px; background:rgba(26,19,21,.05); border-radius:99px; padding:3px; }
+  .chips-f button{ border:0; background:none; padding:5px 11px; border-radius:99px; font-size:11.5px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .chips-f button.on{ background:#fff; color:var(--ink); box-shadow:0 2px 8px rgba(26,19,21,.08); }
+  .g-main .cols{ height:230px; }
+  .cols-st .col{ gap:8px; }
+  .stk{ width:100%; max-width:38px; display:flex; flex-direction:column; border-radius:10px; overflow:visible; position:relative; gap:2px; }
+  .stk i{ display:block; border-radius:8px; min-height:3px; }
+  .stk i.a{ background:linear-gradient(180deg,#e3055f,#c0392b); } .stk i.b{ background:repeating-linear-gradient(135deg, rgba(233,103,9,.5) 0 5px, rgba(233,103,9,.25) 5px 10px); }
+  .stk em{ position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-style:normal; font-size:10.5px; font-weight:800; white-space:nowrap; }
+  .leg2{ display:flex; gap:14px; font-size:11.5px; color:var(--ink-2); margin-top:8px; }
+  .leg2 i{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .leg2 i.a{ background:#d6114d; } .leg2 i.b{ background:rgba(233,103,9,.45); }
+  .ana .top5{ display:grid; gap:4px; margin-top:12px; }
+  .top5 button{ display:grid; grid-template-columns:38px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:7px 6px; border-radius:14px; cursor:pointer; text-align:left; color:inherit; }
+  .top5 button:hover{ background:rgba(255,255,255,.75); }
+  .top5 .nm b{ display:block; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .top5 .nm small{ font-size:11px; color:var(--muted); }
+  .top5 .vl{ font-size:13px; font-weight:800; color:var(--red); }
+  .rank{ display:grid; gap:10px; margin-top:14px; }
+  .rk{ display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:10px; align-items:center; border:0; background:none; padding:0; text-align:left; cursor:pointer; color:inherit; }
+  .ic2{ width:30px; height:30px; border-radius:10px; display:grid; place-items:center; background:var(--orange-soft); color:var(--orange); }
+  .rk .nmr{ min-width:0; } .rk .nmr b{ font-size:12px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tr2{ height:6px; border-radius:99px; background:rgba(26,19,21,.06); margin-top:5px; overflow:hidden; } .tr2 i{ display:block; height:100%; border-radius:99px; background:var(--grad-accent-bar); }
+  .rk .vr{ font-size:12.5px; font-weight:800; white-space:nowrap; }
+  .donut{ display:flex; align-items:center; gap:16px; margin-top:12px; } .donut svg{ width:120px; flex:0 0 120px; }
+  .dl{ display:grid; gap:10px; flex:1; } .dl div{ display:grid; grid-template-columns:10px 1fr auto; gap:4px 8px; align-items:center; font-size:12.5px; }
+  .dl i{ width:10px; height:10px; border-radius:50%; } .dl b{ font-weight:800; } .dl small{ grid-column:2/-1; color:var(--muted); font-size:11px; margin-top:-4px; }
+  .sub-kv{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+  .sub-kv div{ background:rgba(255,255,255,.6); border-radius:12px; padding:8px 12px; } .sub-kv span{ display:block; font-size:11px; color:var(--muted); } .sub-kv b{ font-size:14px; }
+  @media (max-width:1100px){ .g-main{ grid-template-columns:1fr; } .g-tri{ grid-template-columns:1fr 1fr; } .mini{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:720px){ .g-tri,.mini{ grid-template-columns:1fr; } }
+  /* pop-up do cliente */
+  #modalBox.modal-box{ padding:0; border-radius:26px; overflow:hidden; max-width:760px; width:calc(100% - 32px); background:rgba(255,255,255,.92); -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px); }
+  .pop{ padding:24px; }
+  .pop-h{ display:flex; gap:14px; align-items:center; }
+  .pop-h .av{ flex-basis:52px; height:52px; border-radius:16px; font-size:17px; }
+  .pop-t{ flex:1; min-width:0; } .pop-t h2{ font-size:20px; letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pop-t > div{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px; font-size:12px; color:var(--muted); }
+  .pop-t > div span + span::before{ content:"·"; margin-right:8px; }
+  .chip-t{ display:inline-flex; gap:5px; align-items:center; padding:3px 9px; border-radius:99px; background:var(--orange-soft); color:#b5680a; font-weight:700; } .chip-t svg{ width:12px; height:12px; }
+  .pop-t > div .chip-t + span::before{ content:""; margin:0; }
+  .pop-x{ width:38px; height:38px; border-radius:50%; border:1px solid rgba(26,19,21,.1); background:#fff; display:grid; place-items:center; cursor:pointer; color:var(--ink); }
+  .pop-k{ display:grid; grid-template-columns:1.2fr 1.2fr .8fr; gap:10px; margin-top:18px; }
+  .pk{ border-radius:18px; padding:14px 16px; background:rgba(26,19,21,.04); display:flex; flex-direction:column; gap:4px; }
+  .pk span{ font-size:12px; color:var(--ink-2); } .pk b{ font-family:var(--font-title); font-size:22px; font-weight:600; letter-spacing:-.5px; } .pk b small{ font-size:.55em; opacity:.6; margin-right:3px; }
+  .pk.hot{ background:linear-gradient(140deg,#e96709,#f7a21b); color:#fff; } .pk.hot span{ color:rgba(255,255,255,.9); }
+  .pk .score{ width:36px; height:36px; }
+  .pop-hist{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+  .pop-hist > div{ border:1px solid rgba(26,19,21,.07); border-radius:14px; padding:10px 14px; } .pop-hist span{ display:block; font-size:11px; color:var(--muted); } .pop-hist b{ font-size:15px; }
+  .pop-l{ margin-top:16px; max-height:320px; overflow-y:auto; }
+  .pl{ display:grid; grid-template-columns:100px minmax(0,1fr) 90px 110px 80px; gap:10px; align-items:center; padding:10px 8px; font-size:12.5px; border-top:1px solid rgba(26,19,21,.06); }
+  .pl.cab{ border-top:0; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; position:sticky; top:0; background:rgba(255,255,255,.95); }
+  .pl small{ display:block; font-size:11px; color:var(--muted); }
+  .pl.venc{ background:linear-gradient(90deg, rgba(227,5,95,.05), transparent); }
+  @media (max-width:720px){ .pop-k,.pop-hist{ grid-template-columns:1fr 1fr; } .pl{ grid-template-columns:90px 1fr 90px; } .pl > :nth-child(3), .pl > :nth-child(5){ display:none; } }
+
+  .tb-wrap{ overflow-x:auto; margin-top:12px; }
+  .tb{ width:100%; border-collapse:collapse; font-size:12.5px; min-width:900px; }
+  .tb th{ text-align:left; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding:8px 10px; white-space:nowrap; }
+  .tb th.num, .tb td.num{ text-align:right; }
+  .tb td{ padding:11px 10px; border-top:1px solid rgba(26,19,21,.06); vertical-align:middle; }
+  .tb tbody tr:hover td{ background:rgba(255,255,255,.7); }
+  .tb tr.clk{ cursor:pointer; }
+  .sd{ display:flex; align-items:flex-end; gap:3px; height:190px; margin-top:16px; }
+  .sdc{ flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; min-width:0; }
+  .sdc i{ display:block; width:100%; max-width:22px; border-radius:6px 6px 3px 3px; background:repeating-linear-gradient(135deg, rgba(233,103,9,.32) 0 4px, rgba(233,103,9,.14) 4px 8px); }
+  .sdc.top i{ background:var(--grad-accent); }
+  .sdc span{ font-size:9.5px; color:var(--muted); height:12px; white-space:nowrap; }
+  .rt{ display:inline-block; margin-left:6px; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:99px; background:rgba(26,19,21,.06); color:var(--muted); }
+  .rt.g{ background:var(--green-soft); color:var(--green); } .rt.y{ background:#fff4c9; color:#8a6a00; } .rt.r{ background:var(--red-soft); color:var(--red); }
+  .alerta{ margin-top:14px; padding:10px 12px; border-radius:14px; background:var(--red-soft); color:#7a2a20; font-size:12px; display:grid; gap:3px; }
+  .k .lbl .chip, .m1 .chip{ font-size:10px; padding:2px 7px; }
+  .ic2{ font-size:11px; font-weight:800; }
 </style>
 <style>
   .nav-area{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.55); padding:14px 14px 2px; white-space:nowrap; opacity:0; transition:opacity .16s ease .04s; }
@@ -122,6 +347,26 @@ function colunas(rows, rot, alt){ const max=Math.max(1,...rows.map(r=>r.v));
   return `<div class="cols ${alt?'alt':''}">${rows.map(r=>`<div class="c" title="${esc(r.l)}: ${esc(rot(r.v))}"><div class="v">${r.v?NUM(r.v):''}</div><div class="b" style="height:${r.v/max*100}%"></div></div>`).join('')}</div><div class="cols-l">${rows.map(r=>`<span>${r.l.slice(8)}</span>`).join('')}</div>`; }
 const sel = r => r>=3?['bom','Bom']:r>=1.5?['ok','Médio']:r>0?['ruim','Baixo']:['sem','—'];
 
+// ---------- visual BI (mesmo padrão dos outros módulos) ----------
+let VIEW='painel', ANA='canais';
+const CH={serie:'inv', camp:'rec'};
+const MES3B=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const kv = v => { const [i,c]=(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}).split(','); return `<small>R$</small>${i}<span style="opacity:.45">,${c}</span>`; };
+const kC = v => v>=1e6?'R$ '+(v/1e6).toFixed(1).replace('.',',')+' mi':v>=1e3?'R$ '+(v/1e3).toFixed(v>=1e4?0:1).replace('.',',')+' mil':'R$ '+Math.round(v||0);
+const chipsB=(k,ops)=>`<div class="chips-f no-print">${ops.map(([id,l])=>`<button class="${CH[k]===id?'on':''}" onclick="CH.${k}='${id}';render()">${l}</button>`).join('')}</div>`;
+function gaugeB(pct){ const N=22,on=Math.round(Math.min(100,pct)/100*N),cx=110,cy=104; let s='';
+  for(let i=0;i<N;i++){ const a=Math.PI*(1-i/(N-1)),c=Math.cos(a),n=Math.sin(a); s+=`<line x1="${cx+c*76}" y1="${cy-n*76}" x2="${cx+c*96}" y2="${cy-n*96}" stroke="${i<on?'var(--orange)':'rgba(26,19,21,.09)'}" stroke-width="9" stroke-linecap="round"/>`; }
+  return `<svg class="gauge" viewBox="0 0 220 112">${s}<text x="110" y="104" text-anchor="middle">${(pct||0).toFixed(0)}%</text></svg>`; }
+// série diária: barras finas, a maior em laranja, rótulo do dia a cada poucos dias
+function serieB(rows, fmt){ const max=Math.max(1,...rows.map(r=>r.v)), passo=Math.max(1,Math.ceil(rows.length/10));
+  return `<div class="sd">${rows.map((r,i)=>`<div class="sdc ${r.v===max&&r.v>0?'top':''}" title="${dBR(r.l)}: ${esc(fmt(r.v))}"><i style="height:${Math.max(2,r.v/max*100)}%"></i><span>${i%passo===0?r.l.slice(8)+(i===0||r.l.slice(8)==='01'?'/'+MES3B[+r.l.slice(5,7)-1]:''):''}</span></div>`).join('')}</div>`; }
+const rankB=(rows,fmt,tag)=>{ const max=Math.max(1,...rows.map(r=>r.v)); return `<div class="rank">${rows.map((r,i)=>`<div class="rk"><span class="ic2">${i+1}</span><div class="nmr"><b title="${esc(r.l)}">${esc(r.l)}</b><div class="tr2"><i style="width:${r.v/max*100}%"></i></div></div><div class="vr">${fmt(r)}${tag?tag(r):''}</div></div>`).join('')||'<div class="empty">Sem dados.</div>'}</div>`; };
+function donutB(parts){ const tot=parts.reduce((s,p)=>s+p.v,0)||1,C=2*Math.PI*42; let off=0;
+  const arcs=parts.map(p=>{ const len=p.v/tot*C,d=`<circle cx="60" cy="60" r="42" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${Math.max(0,len-3)} ${C}" stroke-dashoffset="${-off}" stroke-linecap="round" transform="rotate(-90 60 60)"/>`; off+=len; return d; }).join('');
+  return `<div class="donut"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="42" fill="none" stroke="rgba(26,19,21,.06)" stroke-width="16"/>${arcs}</svg><div class="dl">${parts.map(p=>`<div><i style="background:${p.c}"></i><span>${esc(p.l)}</span><b>${p.fmt||p.v}</b><small>${Math.round(p.v/tot*100)}%</small></div>`).join('')}</div></div>`; }
+const roasTag = r => { const x=r.inv?r.rec/r.inv:0; return `<span class="rt ${x>=3?'g':x>=1.5?'y':x>0?'r':''}">${x?NUM(x,1)+'x':'—'}</span>`; };
+const viewSw = () => `<div class="vw no-print"><button class="${VIEW==='painel'?'on':''}" onclick="VIEW='painel';render()">Painel</button><button class="${VIEW==='analitico'?'on':''}" onclick="VIEW='analitico';render()">Analítico</button></div>`;
+
 function render(){
   const per=periodo(), cmpR=comparacao(per), M=metr(per), C=cmpR?metr(cmpR):null;
   const pill=(id,l)=>`<button class="fpill ${S.preset===id?'active':''}" onclick="S.preset='${id}';if('${id}'==='custom'&&!S.ini){S.ini=addDias(HOJE,-13);S.fim=HOJE;}render()">${l}</button>`;
@@ -146,54 +391,66 @@ function render(){
   const canais=Object.keys(NOME).filter(k=>M.por[k]);
   const th = (k,l) => `<th class="num"><a href="#" class="lnk" onclick="S.ordemAd='${k}';render();return false" style="${S.ordemAd===k?'text-decoration:underline':'font-weight:600;color:inherit'}">${l}</a></th>`;
 
-  document.getElementById('main').innerHTML = `
-  <div class="page-head">
-    <div><h1>Canais e UTM</h1><div class="sub">Marketing · investimento (Meta e Google) × pedidos reais da Yampi atribuídos pela UTM · ${dBR(per[0])} a ${dBR(per[1])} · atualização diária às 07:30</div></div>
-    <div class="row no-print"><button class="btn btn-ghost btn-sm" onclick="window.print()">Imprimir / PDF</button></div>
+  const PER=[['hoje','Hoje'],['ontem','Ontem'],['u7','Últimos 7 dias'],['u30','Últimos 30 dias'],['mes','Este mês'],['mesant','Mês passado'],['custom','Personalizado…']];
+  const CMP=[['nenhum','Sem comparação'],['anterior','vs período anterior'],['semana','vs semana anterior'],['mes','vs mês anterior'],['custom','vs personalizado…']];
+  const dChip=(cur,prev,inv)=>delta(cur,prev,inv);
+  const serieRec=ds.map(d=>({l:d,v:soma(M.c.filter(r=>r.dia===d&&PAGOS.includes(r.canal)),'receita')}));
+  const SER={inv:[serieInv,v=>BRL(v)],ped:[seriePed,v=>NUM(v)+' pedidos'],rec:[serieRec,v=>BRL(v)]}[CH.serie];
+  const canalRows=canais.filter(k=>M.por[k].inv||M.por[k].ped).map(k=>({l:NOME[k],v:M.por[k].rec,inv:M.por[k].inv,rec:M.por[k].rec,ped:M.por[k].ped})).sort((a,b)=>b.v-a.v);
+  const campTop=campRows.map(x=>({l:x.nome,v:CH.camp==='rec'?x.rec:x.inv?x.rec/x.inv:0,inv:x.inv,rec:x.rec,ped:x.ped})).sort((a,b)=>b.v-a.v).slice(0,6);
+  const adTop=adRows.slice().sort((a,b)=>b.ped-a.ped||b.rec-a.rec).slice(0,6).map(x=>({l:x.anuncio,v:x.ped,inv:x.inv,rec:x.rec,ped:x.ped}));
+  const pagos=PAGOS.map(k=>({k,v:(M.por[k]||{inv:0}).inv}));
+  const tk=M.ped?M.rec/M.ped:0, tkC=C&&C.ped?C.rec/C.ped:null;
+  const cl=soma(PAGOS.map(k=>M.por[k]||{cl:0}),'cl');
+
+  const toolbar=`<div class="toolbar glass no-print">
+    <div class="sel"><select onchange="S.preset=this.value;if(this.value==='custom'&&!S.ini){S.ini=addDias(HOJE,-13);S.fim=HOJE;}render()">${PER.map(([id,l])=>`<option value="${id}" ${S.preset===id?'selected':''}>${l}</option>`).join('')}</select></div>
+    ${S.preset==='custom'?`<div class="dates"><input type="date" value="${S.ini}" onchange="S.ini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.fim}" onchange="S.fim=this.value;render()"></div>`:''}
+    <div class="sel"><select onchange="S.cmp=this.value;if(this.value==='custom'&&!S.cini){S.cini=addDias(periodo()[0],-14);S.cfim=addDias(periodo()[0],-1);}render()">${CMP.map(([id,l])=>`<option value="${id}" ${S.cmp===id?'selected':''}>${l}</option>`).join('')}</select></div>
+    ${S.cmp==='custom'?`<div class="dates"><input type="date" value="${S.cini}" onchange="S.cini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.cfim}" onchange="S.cfim=this.value;render()"></div>`:''}
+    <span class="pill-dt" style="margin-left:auto">${dBR(per[0])} – ${dBR(per[1])}</span></div>`;
+
+  const painel=`
+  <div class="hero">
+    <div class="k glass"><div class="lbl">Investimento ${dChip(M.inv,C&&C.inv)}</div><div class="val">${kv(M.inv)}</div></div>
+    <div class="k hot"><div class="lbl">Receita atribuída ${dChip(M.rec,C&&C.rec)}</div><div class="val">${kv(M.rec)}</div></div>
+    <div class="k glass"><div class="lbl">ROAS ${dChip(M.roas||0,C&&C.roas)}</div><div class="val">${M.roas!=null?NUM(M.roas,2)+'<small style="font-size:.5em;opacity:.55">x</small>':'—'}</div></div>
+    <div class="k glass gcard"><div class="lbl">Pedidos com UTM</div>${gaugeB(M.cobertura)}</div>
   </div>
-  <div class="filters"><div class="filter-pills">${pill('hoje','Hoje')}${pill('ontem','Ontem')}${pill('u7','Últimos 7 dias')}${pill('u30','Últimos 30 dias')}${pill('mes','Este mês')}${pill('mesant','Mês passado')}${pill('custom','Personalizado')}</div>
-    ${S.preset==='custom'?`<div class="dates"><input type="date" value="${S.ini}" onchange="S.ini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.fim}" onchange="S.fim=this.value;render()"></div>`:''}</div>
-  <div class="cmpbar"><label>Comparar com</label>
-    <select onchange="S.cmp=this.value;if(this.value==='custom'&&!S.cini){S.cini=addDias(periodo()[0],-14);S.cfim=addDias(periodo()[0],-1);}render()">
-      <option value="nenhum" ${S.cmp==='nenhum'?'selected':''}>Sem comparação</option><option value="anterior" ${S.cmp==='anterior'?'selected':''}>Período anterior (mesma duração)</option>
-      <option value="semana" ${S.cmp==='semana'?'selected':''}>Mesmo período da semana anterior</option><option value="mes" ${S.cmp==='mes'?'selected':''}>Mesmo período do mês anterior</option><option value="custom" ${S.cmp==='custom'?'selected':''}>Escolher período…</option></select>
-    ${S.cmp==='custom'?`<input type="date" value="${S.cini}" onchange="S.cini=this.value;render()"><span class="muted">até</span><input type="date" value="${S.cfim}" onchange="S.cfim=this.value;render()">`:''}
-    ${cmpR?`<span class="note">comparando com ${dBR(cmpR[0])} a ${dBR(cmpR[1])}</span>`:''}</div>
-
-  <div class="aviso"><b>Como ler:</b> o pedido é atribuído ao canal pela UTM que veio nele (último clique). Hoje <b>${PCT(M.cobertura)}</b> dos pedidos pagos do período chegam com origem; o restante cai em “sem origem rastreada” e não entra no retorno dos canais. Por isso o retorno real tende a ser <b>maior</b> do que o mostrado aqui. No Meta, os pedidos são ligados pelo nome da campanha (UTM campaign) e do anúncio (UTM term).</div>
-
-  <div class="g5">
-    <div class="card kpi"><div class="kpi-label">INVESTIMENTO ${delta(M.inv,C&&C.inv)}</div><div class="big">${BRL(M.inv)}</div><div class="kpi-foot">Meta + Google</div></div>
-    <div class="card kpi"><div class="kpi-label">PEDIDOS ATRIBUÍDOS ${delta(M.ped,C&&C.ped)}</div><div class="big">${NUM(M.ped)}</div><div class="kpi-foot">via UTM dos canais pagos</div></div>
-    <div class="card kpi"><div class="kpi-label">RECEITA ATRIBUÍDA ${delta(M.rec,C&&C.rec)}</div><div class="big">${BRL(M.rec)}</div><div class="kpi-foot">pedidos pagos</div></div>
-    <div class="card kpi"><div class="kpi-label">CUSTO POR PEDIDO ${delta(M.cpa||0,C&&C.cpa,true)}</div><div class="big">${M.cpa!=null?BRL(M.cpa):'—'}</div><div class="kpi-foot">investimento ÷ pedidos</div></div>
-    <div class="card kpi"><div class="kpi-label">RETORNO (ROAS) ${delta(M.roas||0,C&&C.roas)}</div><div class="big">${M.roas!=null?NUM(M.roas,2)+'x':'—'}</div><div class="kpi-foot">receita ÷ investimento</div></div>
+  <div class="mini">
+    <div class="glass m1"><span>Pedidos atribuídos ${dChip(M.ped,C&&C.ped)}</span><b>${NUM(M.ped)}</b></div>
+    <div class="glass m1"><span>Custo por pedido ${dChip(M.cpa||0,C&&C.cpa,true)}</span><b>${M.cpa!=null?kC(M.cpa):'—'}</b></div>
+    <div class="glass m1"><span>Ticket médio ${dChip(tk,tkC)}</span><b>${tk?kC(tk):'—'}</b></div>
+    <div class="glass m1"><span>Cliques</span><b>${NUM(cl)}</b></div>
   </div>
-
-  <div class="panel"><div class="card-head"><div><h2>Desempenho por canal</h2><div class="desc">Investimento da plataforma × pedidos da Yampi com a UTM daquele canal.</div></div></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Canal</th><th class="num">Investimento</th><th class="num">Cliques</th><th class="num">Compras na plataforma</th><th class="num">Pedidos (Yampi)</th><th class="num">Receita</th><th class="num">Custo/pedido</th><th class="num">Retorno</th><th class="num">% dos pedidos</th></tr></thead><tbody>
-    ${canais.map(k=>{ const x=M.por[k], r=dv(x.rec,x.inv)||0, s=sel(r); return `<tr><td><b>${NOME[k]}</b></td><td class="num">${x.inv?BRL(x.inv):'—'}</td><td class="num">${x.cl?NUM(x.cl):'—'}</td><td class="num">${x.cp?NUM(x.cp,0):'—'}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.inv&&x.ped?BRL(x.inv/x.ped):'—'}</td><td class="num">${x.inv?`<span class="pill-c ${s[0]}">${NUM(r,2)}x</span>`:'<span class="muted">sem investimento</span>'}</td><td class="num">${PCT(dv(x.ped,M.totPed)*100||0,1)}</td></tr>`; }).join('')}
-    </tbody></table></div></div>
-
-  <div class="g2">
-    <div class="panel" style="margin-bottom:0"><h2>Investimento por dia</h2><div class="desc">Meta + Google</div>${colunas(serieInv, v=>BRL(v))}</div>
-    <div class="panel" style="margin-bottom:0"><h2>Pedidos atribuídos por dia</h2><div class="desc">Pedidos com UTM de Meta ou Google</div>${colunas(seriePed, v=>NUM(v)+' pedidos', true)}</div>
+  <div class="g-main">
+    <div class="box glass"><div class="bh"><h2>Por dia</h2>${chipsB('serie',[['inv','Investimento'],['ped','Pedidos'],['rec','Receita']])}</div>${serieB(SER[0],SER[1])}</div>
+    <div class="box glass ana"><div class="bh"><h2>Por canal</h2><button class="btn-glass" onclick="VIEW='analitico';ANA='canais';render();scrollTo(0,0)">Analítico →</button></div>
+      ${rankB(canalRows,r=>kC(r.rec),r=>r.inv?' '+roasTag(r):'')}</div>
   </div>
-
-  <div class="panel"><div class="card-head"><div><h2>Campanhas do Meta</h2><div class="desc">Compras no pixel do Meta × pedidos reais da Yampi (campanha da UTM).</div></div></div>
-    <div class="tbl-wrap"><table><thead><tr><th>Campanha</th><th class="num">Investimento</th><th class="num">Cliques</th><th class="num">Compras (pixel Meta)</th><th class="num">Pedidos (Yampi)</th><th class="num">Receita</th><th class="num">Custo/pedido</th><th class="num">Retorno</th></tr></thead><tbody>
-    ${campRows.map(x=>{ const r=dv(x.rec,x.inv)||0, s=sel(r); return `<tr><td><b>${esc(x.nome)}</b></td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${NUM(x.cp)}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.ped&&x.inv?BRL(x.inv/x.ped):'—'}</td><td class="num">${x.inv?`<span class="pill-c ${s[0]}">${NUM(r,2)}x</span>`:'—'}</td></tr>`; }).join('') || '<tr><td colspan="8"><div class="empty-state">Sem dados no período.</div></td></tr>'}
-    </tbody></table></div></div>
-
-  <div class="panel"><div class="card-head"><div><h2>Criativos (anúncios do Meta)</h2><div class="desc">Qual criativo vende de verdade. O olho abre o anúncio no Gerenciador de Anúncios do Meta (campanha > conjunto > anúncio). <a class="lnk" target="_blank" rel="noopener" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=104419281852083">Ver todos na Biblioteca de Anúncios ↗</a>. Clique no título da coluna para ordenar.</div></div></div>
-    ${semEntrega.length?`<div class="aviso">Ativos sem entrega no período (o Meta ainda não distribuiu verba para eles): ${semEntrega.map(a=>`<b>${esc(a.anuncio)}</b> <span class="muted">(${esc(a.campanha)})</span>`).join(' · ')}.</div>`:''}
-    ${semPedido.length?`<div class="aviso" style="background:var(--red-soft);border-color:#eec8c2;color:#7a2a20">Atenção: ${semPedido.map(a=>`<b>${esc(a.anuncio)}</b> (${BRL(a.inv)})`).join(' · ')} — investimento sem nenhum pedido atribuído no período.</div>`:''}
-    <div class="tbl-wrap"><table><thead><tr><th>Criativo / campanha</th>${th('investimento','Investimento')}<th class="num">Cliques</th><th class="num">Compras (Meta)</th>${th('pedidos','Pedidos (Yampi)')}<th class="num">Receita</th>${th('cpa','Custo/pedido')}${th('retorno','Retorno')}</tr></thead><tbody>
-    ${adRows.slice(0,S.pagAd).map(x=>{ const r=dv(x.rec,x.inv)||0, s=sel(r); return `<tr><td>${celula(x)}</td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${NUM(x.cp)}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.ped&&x.inv?BRL(x.inv/x.ped):'—'}</td><td class="num">${x.inv?`<span class="pill-c ${s[0]}">${NUM(r,2)}x</span>`:'—'}</td></tr>`; }).join('') || '<tr><td colspan="8"><div class="empty-state">Sem anúncios no período.</div></td></tr>'}
-    </tbody></table></div>
-    ${adRows.length>S.pagAd?`<div style="text-align:center;margin-top:10px" class="no-print"><button class="btn btn-ghost btn-sm" onclick="S.pagAd+=20;render()">Ver mais (${adRows.length-S.pagAd})</button></div>`:''}
+  <div class="g-tri">
+    <div class="box glass"><div class="bh"><h2>Campanhas do Meta</h2>${chipsB('camp',[['rec','Receita'],['roas','ROAS']])}</div>${rankB(campTop,r=>CH.camp==='rec'?kC(r.rec):NUM(r.v,1)+'x')}</div>
+    <div class="box glass"><div class="bh"><h2>Criativos que vendem</h2></div>${rankB(adTop,r=>NUM(r.ped)+' ped.')}</div>
+    <div class="box glass"><div class="bh"><h2>Verba por plataforma</h2></div>${donutB([{l:'Meta Ads',v:pagos[0].v,c:'var(--orange)',fmt:kC(pagos[0].v)},{l:'Google Ads',v:pagos[1].v,c:'var(--purple)',fmt:kC(pagos[1].v)}])}
+      ${semPedido.length?`<div class="alerta"><b>Sem pedido</b>${semPedido.map(a=>`<span>${esc(a.anuncio)} · ${kC(a.inv)}</span>`).join('')}</div>`:''}</div>
   </div>`;
+
+  const tbCanais=`<table class="tb"><thead><tr><th>Canal</th><th class="num">Investimento</th><th class="num">Cliques</th><th class="num">Compras (plataforma)</th><th class="num">Pedidos (Yampi)</th><th class="num">Receita</th><th class="num">CPA</th><th class="num">ROAS</th></tr></thead><tbody>
+    ${canais.map(k=>{ const x=M.por[k]; return `<tr><td><b>${NOME[k]}</b></td><td class="num">${x.inv?BRL(x.inv):'—'}</td><td class="num">${x.cl?NUM(x.cl):'—'}</td><td class="num">${x.cp?NUM(x.cp):'—'}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.inv&&x.ped?BRL(x.inv/x.ped):'—'}</td><td class="num">${x.inv?roasTag(x):'—'}</td></tr>`; }).join('')}</tbody></table>`;
+  const tbCamp=`<table class="tb"><thead><tr><th>Campanha</th><th class="num">Investimento</th><th class="num">Cliques</th><th class="num">Compras (Meta)</th><th class="num">Pedidos (Yampi)</th><th class="num">Receita</th><th class="num">CPA</th><th class="num">ROAS</th></tr></thead><tbody>
+    ${campRows.map(x=>`<tr><td><b>${esc(x.nome)}</b></td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${NUM(x.cp)}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.ped?BRL(x.inv/x.ped):'—'}</td><td class="num">${roasTag(x)}</td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">Sem campanhas no período.</div></td></tr>'}</tbody></table>`;
+  const tbAds=`<table class="tb"><thead><tr><th>Criativo / campanha</th>${th('investimento','Investimento')}<th class="num">Cliques</th><th class="num">Compras (Meta)</th>${th('pedidos','Pedidos (Yampi)')}<th class="num">Receita</th>${th('cpa','CPA')}${th('retorno','ROAS')}</tr></thead><tbody>
+    ${adRows.slice(0,S.pagAd).map(x=>`<tr><td>${celula(x)}</td><td class="num">${BRL(x.inv)}</td><td class="num">${NUM(x.cl)}</td><td class="num">${NUM(x.cp)}</td><td class="num"><b>${NUM(x.ped)}</b></td><td class="num">${BRL(x.rec)}</td><td class="num">${x.ped?BRL(x.inv/x.ped):'—'}</td><td class="num">${roasTag(x)}</td></tr>`).join('')||'<tr><td colspan="8"><div class="empty">Sem criativos no período.</div></td></tr>'}</tbody></table>
+    ${adRows.length>S.pagAd?`<div class="rodape"><span class="note">Mostrando ${S.pagAd} de ${adRows.length}</span><button class="btn-glass no-print" onclick="S.pagAd+=20;render()">Ver mais</button></div>`:''}`;
+  const analitico=`<div class="clientes glass"><div class="c-head"><div class="tabs2">${[['canais','Canais',canais.length],['camp','Campanhas',campRows.length],['ads','Criativos',adRows.length]].map(([id,l,n])=>`<button class="${ANA===id?'on':''}" onclick="ANA='${id}';render()">${l} <span class="cnt">${n}</span></button>`).join('')}</div></div>
+    <div class="tb-wrap">${ANA==='canais'?tbCanais:ANA==='camp'?tbCamp:tbAds}</div></div>`;
+
+  document.getElementById('main').innerHTML = `
+  <div class="r-head"><div class="tt"><h1>Canais e UTM</h1>${viewSw()}</div><button class="btn-glass no-print" onclick="window.print()">Imprimir / PDF</button></div>
+  ${toolbar}
+  ${VIEW==='painel'?painel:analitico}`;
 }
+
 render();
 </script>
 <script src="mobile-menu.js"></script><script src="acessibilidade.js"></script><script>(function(){var h='<a class="home-btn" href="home.html"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 11.5 12 4l9 7.5\"/><path d=\"M5.5 10v9.5h13V10\"/></svg>Início</a>';function p(){document.querySelectorAll('.page-head').forEach(function(e){var d=e.firstElementChild;if(d&&!d.querySelector('.home-btn'))d.insertAdjacentHTML('afterbegin',h)})}new MutationObserver(p).observe(document.documentElement,{childList:true,subtree:true});p()})()</script><script>addEventListener('beforeprint',function(){var s=document.getElementById('printTopo');if(!s){s=document.createElement('style');s.id='printTopo';document.head.appendChild(s)}var d=new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});s.textContent='@media print{@page{@top-right{content:\"Canais e UTM · '+d+'\";font:9pt Arial,Helvetica,sans-serif;color:#444}}}'})</script>
