@@ -50,7 +50,7 @@ function evento(e) {
 
 async function rastrear(codigo, t) {
   try {
-    const r = await fetch(`${API}/srorastro/v1/objetos/${encodeURIComponent(codigo)}?resultado=T`, { headers: { Authorization: `Bearer ${t}`, Accept: "application/json" } });
+    const r = await fetch(`${API}/srorastro/v1/objetos/${encodeURIComponent(codigo)}?resultado=T`, { headers: { Authorization: `Bearer ${t}`, Accept: "application/json", "Accept-Language": "pt-BR" } });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) return { codigo, ok: false, situacao: null, ultimo_evento: null, eventos: [], erro: `HTTP ${r.status} ${(j.msgs || []).join("; ")}`.trim() };
     const obj = (j.objetos || [])[0] || {};
