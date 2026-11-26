@@ -11,6 +11,9 @@
     },
     "api/cte/[acao].mjs": {
       "maxDuration": 60
+    },
+    "api/logistica/[acao].mjs": {
+      "maxDuration": 60
     }
   },
   "crons": [
